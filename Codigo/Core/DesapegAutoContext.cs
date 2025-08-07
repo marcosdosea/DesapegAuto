@@ -17,7 +17,7 @@ public partial class DesapegAutoContext : DbContext
 
     public virtual DbSet<Anuncio> Anuncios { get; set; }
 
-    public virtual DbSet<Concessionarium> Concessionaria { get; set; }
+    public virtual DbSet<Concessionaria> Concessionaria { get; set; }
 
     public virtual DbSet<Marca> Marcas { get; set; }
 
@@ -60,7 +60,7 @@ public partial class DesapegAutoContext : DbContext
             entity.Property(e => e.Visualizacoes).HasColumnName("visualizacoes");
         });
 
-        modelBuilder.Entity<Concessionarium>(entity =>
+        modelBuilder.Entity<Concessionaria>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
 
