@@ -4,10 +4,10 @@ namespace Core.Service
 {
     public interface IVeiculoService
     {
-        uint Create(Veiculo veiculo);
+        int Create(Veiculo veiculo);
         void Edit(Veiculo veiculo);
-        void Delete(uint id);
-        Veiculo? Get(uint id);
+        void Delete(int id);
+        Veiculo? Get(int id);
         IEnumerable<Veiculo> GetAll();
     }
 }
