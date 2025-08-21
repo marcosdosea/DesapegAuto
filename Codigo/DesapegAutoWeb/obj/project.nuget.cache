@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "4BxHrlR1SEg=",
+  "dgSpecHash": "G51Zy4KM4JI=",
   "success": true,
-  "projectFilePath": "C:\\Users\\Cassiano Menezes\\source\\repos\\DesapegAuto\\DesapegAutoWeb\\DesapegAutoWeb.csproj",
+  "projectFilePath": "C:\\Users\\Cassiano Menezes\\Desktop\\DesapegAuto\\Codigo\\DesapegAutoWeb\\DesapegAutoWeb.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Cassiano Menezes\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\Cassiano Menezes\\.nuget\\packages\\microsoft.aspnetcore.cryptography.internal\\8.0.18\\microsoft.aspnetcore.cryptography.internal.8.0.18.nupkg.sha512",
