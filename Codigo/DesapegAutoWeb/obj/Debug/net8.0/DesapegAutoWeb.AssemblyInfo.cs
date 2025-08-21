@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DesapegAutoWeb")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+170e031b39dd59a2f77e1182e80c0a90ea6387b7")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8c2e5b5c376d4e17cf4c9636e6c19ef9055811d3")]
 [assembly: System.Reflection.AssemblyProductAttribute("DesapegAutoWeb")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DesapegAutoWeb")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
