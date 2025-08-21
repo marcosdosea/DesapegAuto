@@ -91,5 +91,10 @@ namespace DesapegAutoWeb.Controllers
             veiculoService.Delete(id);
             return RedirectToAction(nameof(Index));
         }
+
+        public RedirectToActionResult Edit(VeiculoViewModel veiculoViewModel)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

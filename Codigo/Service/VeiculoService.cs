@@ -152,5 +152,20 @@ namespace Service
                     Placa = v.Placa
                 }).ToList();
         }
+
+        void IVeiculoService.Delete(uint v)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<VeiculoDTO> GetByQuilometragem(int quilometragem, int v)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<VeiculoDTO> GetByPreco(decimal preco, int v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

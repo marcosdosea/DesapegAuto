@@ -12,8 +12,9 @@ namespace Core.Service
         IEnumerable<Veiculo> GetAll();
         IEnumerable<VeiculoDTO> GetByConcessionaria(int idConcessionaria);
         IEnumerable<VeiculoDTO> GetByAno(int ano);
-        IEnumerable<VeiculoDTO> GetByQuilometragem(int quilometragem);
-        IEnumerable<VeiculoDTO> GetByPreco(decimal preco);
+        IEnumerable<VeiculoDTO> GetByQuilometragem(int quilometragem, int v);
+        IEnumerable<VeiculoDTO> GetByPreco(decimal preco, int v);
         IEnumerable<VeiculoDTO> GetByPlaca(string placa);
+        void Delete(uint v);
     }
 }
