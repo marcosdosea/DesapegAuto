@@ -17,17 +17,26 @@ public partial class DesapegAutoContext : DbContext
 
     public virtual DbSet<Anuncio> Anuncios { get; set; }
 
+    public virtual DbSet<Categoria> Categoria { get; set; }
+
     public virtual DbSet<Concessionaria> Concessionaria { get; set; }
 
     public virtual DbSet<Marca> Marcas { get; set; }
 
     public virtual DbSet<Modelo> Modelos { get; set; }
 
+    public virtual DbSet<Pessoa> Pessoas { get; set; }
+
     public virtual DbSet<Usuario> Usuarios { get; set; }
 
     public virtual DbSet<Veiculo> Veiculos { get; set; }
 
+    public virtual DbSet<VeiculoHasVersao> VeiculoHasVersaos { get; set; }
+
     public virtual DbSet<Venda> Venda { get; set; }
+
+    public virtual DbSet<Versao> Versaos { get; set; }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -58,6 +67,18 @@ public partial class DesapegAutoContext : DbContext
                 .HasMaxLength(20)
                 .HasColumnName("statusAnuncio");
             entity.Property(e => e.Visualizacoes).HasColumnName("visualizacoes");
+        });
+
+        modelBuilder.Entity<Categoria>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("categoria");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Nome)
+                .HasMaxLength(50)
+                .HasColumnName("nome");
         });
 
         modelBuilder.Entity<Concessionaria>(entity =>
@@ -118,6 +139,27 @@ public partial class DesapegAutoContext : DbContext
                 .HasColumnName("versoes");
         });
 
+        modelBuilder.Entity<Pessoa>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("pessoa");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Cpf)
+                .HasMaxLength(11)
+                .HasColumnName("cpf");
+            entity.Property(e => e.Email)
+                .HasMaxLength(50)
+                .HasColumnName("email");
+            entity.Property(e => e.Nome)
+                .HasMaxLength(50)
+                .HasColumnName("nome");
+            entity.Property(e => e.Telefone)
+                .HasMaxLength(11)
+                .HasColumnName("telefone");
+        });
+
         modelBuilder.Entity<Usuario>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
@@ -171,6 +213,20 @@ public partial class DesapegAutoContext : DbContext
             entity.Property(e => e.Quilometragem).HasColumnName("quilometragem");
         });
 
+        modelBuilder.Entity<VeiculoHasVersao>(entity =>
+        {
+            entity.HasKey(e => new { e.IdVeiculo, e.IdVersao }).HasName("PRIMARY");
+
+            entity.ToTable("veiculo_has_versao");
+
+            entity.HasIndex(e => e.IdVeiculo, "fk_veiculo_has_versao_veiculo1_idx");
+
+            entity.HasIndex(e => e.IdVersao, "fk_veiculo_has_versao_versao1_idx");
+
+            entity.Property(e => e.IdVeiculo).HasColumnName("idVeiculo");
+            entity.Property(e => e.IdVersao).HasColumnName("idVersao");
+        });
+
         modelBuilder.Entity<Venda>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
@@ -193,6 +249,21 @@ public partial class DesapegAutoContext : DbContext
             entity.Property(e => e.ValorFinal)
                 .HasPrecision(10)
                 .HasColumnName("valorFinal");
+        });
+
+        modelBuilder.Entity<Versao>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("versao");
+
+            entity.HasIndex(e => e.IdModelo, "fk_versao_modelo1_idx");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.IdModelo).HasColumnName("idModelo");
+            entity.Property(e => e.Nome)
+                .HasMaxLength(50)
+                .HasColumnName("nome");
         });
 
         OnModelCreatingPartial(modelBuilder);

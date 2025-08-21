@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Cassiano Menezes\\source\\repos\\DesapegAuto\\DesapegAutoWeb\\DesapegAutoWeb.csproj": {}
+    "C:\\Users\\Cassiano Menezes\\Desktop\\DesapegAuto\\Codigo\\DesapegAutoWeb\\DesapegAutoWeb.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Cassiano Menezes\\source\\repos\\DesapegAuto\\DesapegAutoWeb\\DesapegAutoWeb.csproj": {
+    "C:\\Users\\Cassiano Menezes\\Desktop\\DesapegAuto\\Codigo\\DesapegAutoWeb\\DesapegAutoWeb.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Cassiano Menezes\\source\\repos\\DesapegAuto\\DesapegAutoWeb\\DesapegAutoWeb.csproj",
+        "projectUniqueName": "C:\\Users\\Cassiano Menezes\\Desktop\\DesapegAuto\\Codigo\\DesapegAutoWeb\\DesapegAutoWeb.csproj",
         "projectName": "DesapegAutoWeb",
-        "projectPath": "C:\\Users\\Cassiano Menezes\\source\\repos\\DesapegAuto\\DesapegAutoWeb\\DesapegAutoWeb.csproj",
+        "projectPath": "C:\\Users\\Cassiano Menezes\\Desktop\\DesapegAuto\\Codigo\\DesapegAutoWeb\\DesapegAutoWeb.csproj",
         "packagesPath": "C:\\Users\\Cassiano Menezes\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Cassiano Menezes\\source\\repos\\DesapegAuto\\DesapegAutoWeb\\obj\\",
+        "outputPath": "C:\\Users\\Cassiano Menezes\\Desktop\\DesapegAuto\\Codigo\\DesapegAutoWeb\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

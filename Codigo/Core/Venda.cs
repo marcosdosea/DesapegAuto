@@ -11,13 +11,9 @@ public partial class Venda
 
     public int IdUsuario { get; set; }
 
-    public int IdVeiculo { get; set; }
-
     public DateTime DataVenda { get; set; }
 
     public decimal ValorFinal { get; set; }
 
     public string FormaPagamento { get; set; } = null!;
-
-    public string Status { get; set; } = null;
 }
