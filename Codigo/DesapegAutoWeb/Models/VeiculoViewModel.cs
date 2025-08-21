@@ -8,7 +8,8 @@ namespace DesapegAutoWeb.Models
         [Key]
         public int Id { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "A concessionária é obrigatória.")]
+        [Display(Name = "Concessionária")]
         public int IdConcessionaria { get; set; }
 
         [Required(ErrorMessage = "O modelo é obrigatório.")]
@@ -20,7 +21,8 @@ namespace DesapegAutoWeb.Models
         public int IdMarca { get; set; }
 
         [Required(ErrorMessage = "O ano é obrigatório.")]
-        [Display(Name = "Ano")]
+        [Display(Name = "Ano de Fabricação")]
+        [Range(1900, 2025, ErrorMessage = "O ano deve ser válido.")] 
         public int Ano { get; set; }
 
         [Required(ErrorMessage = "A cor é obrigatória.")]
@@ -28,16 +30,25 @@ namespace DesapegAutoWeb.Models
         public string Cor { get; set; } = null!;
 
         [Required(ErrorMessage = "A quilometragem é obrigatória.")]
+        [Display(Name = "Quilometragem")]
+        [Range(0, int.MaxValue, ErrorMessage = "A quilometragem não pode ser um valor negativo.")]
         public int Quilometragem { get; set; }
 
         [Required(ErrorMessage = "O preço é obrigatório.")]
         [Display(Name = "Preço")]
         [DisplayFormat(DataFormatString = "{0:C}")]
+        [Range(0.01, double.MaxValue, ErrorMessage = "O preço deve ser maior que zero.")]
         public decimal Preco { get; set; }
 
         [Required(ErrorMessage = "A placa é obrigatória.")]
-        [StringLength(7)]
+        [StringLength(7, MinimumLength = 7, ErrorMessage = "A placa deve ter 7 caracteres.")]
         public string Placa { get; set; } = null!;
+
+        /// <summary>
+        /// Status do Veículo. Ex: D (Disponível), V (Vendido), P (Pendente), I (Indisponível)
+        /// </summary>
+        [Display(Name = "Status do Veículo")]
+        public string? Status { get; set; }
 
 
         // --- Propriedades "Ajudantes" que só existem aqui para a TELA ---
