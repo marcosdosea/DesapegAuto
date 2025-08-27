@@ -20,8 +20,7 @@ namespace Service
         /// <returns>ID da nova marca cadastrada</returns>
         public int Create(Marca marca)
         {
-            // Regra de negócio: Verifica se já existe uma marca com o mesmo nome (ignorando maiúsculas/minúsculas)
-            var marcaExistente = context.Marcas
+            Marca? marcaExistente = context.Marcas
                 .FirstOrDefault(m => m.Nome.ToLower() == marca.Nome.ToLower());
 
             if (marcaExistente != null)
@@ -32,6 +31,40 @@ namespace Service
             context.Add(marca);
             context.SaveChanges();
             return marca.Id;
+        }
+
+        /// <summary>
+        /// Editar os dados de uma marca existente
+        /// </summary>
+        /// <param name="marca">Dados da marca a serem atualizados</param>
+        public void Edit(Marca marca)
+        {
+            context.Update(marca);
+            context.SaveChanges();
+        }
+
+        /// <summary>
+        /// Apagar uma marca da base de dados
+        /// </summary>
+        /// <param name="id">ID da marca a ser apagada</param>
+        public void Delete(int id)
+        {
+            var marca = context.Marcas.Find(id);
+            if (marca != null)
+            {
+                context.Remove(marca);
+                context.SaveChanges();
+            }
+        }
+
+        /// <summary>
+        /// Obter os dados de uma marca específica pelo ID
+        /// </summary>
+        /// <param name="id">ID da marca</param>
+        /// <returns>Dados da marca encontrada ou null</returns>
+        public Marca? Get(int id)
+        {
+            return context.Marcas.Find(id);
         }
 
         /// <summary>
