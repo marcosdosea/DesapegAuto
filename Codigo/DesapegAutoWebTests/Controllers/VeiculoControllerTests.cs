@@ -30,14 +30,14 @@ namespace DesapegAutoWebTests.Controllers
                 .Verifiable();
             mockService.Setup(service => service.Create(It.IsAny<Veiculo>()))
                 .Returns(4);
-            mockService.Setup(service => service.Delete(It.IsAny<uint>()))
+            mockService.Setup(service => service.Delete(It.IsAny<int>()))
                 .Verifiable();
 
             controller = new VeiculoController(mockService.Object, mapper);
         }
 
         [TestMethod()]
-        public void IndexTest_Valido()
+        public void IndexTestValido()
         {
             // Act
             var result = controller.Index();
@@ -52,7 +52,7 @@ namespace DesapegAutoWebTests.Controllers
         }
 
         [TestMethod()]
-        public void DetailsTest_Valido()
+        public void DetailsTestValido()
         {
             // Act
             var result = controller.Details(1);
@@ -67,7 +67,7 @@ namespace DesapegAutoWebTests.Controllers
         }
 
         [TestMethod()]
-        public void CreateTest_Get_Valido()
+        public void CreateTestGetValido()
         {
             // Act
             var result = controller.Create();
@@ -77,7 +77,7 @@ namespace DesapegAutoWebTests.Controllers
         }
 
         [TestMethod()]
-        public void CreateTest_Post_Valid()
+        public void CreateTestPostValid()
         {
             // Act
             var result = controller.Create(GetNewVeiculo());
@@ -90,7 +90,7 @@ namespace DesapegAutoWebTests.Controllers
         }
 
         [TestMethod()]
-        public void CreateTest_Post_Invalid()
+        public void CreateTestPostInvalid()
         {
             // Arrange
             controller.ModelState.AddModelError("Placa", "Campo requerido");
@@ -106,7 +106,7 @@ namespace DesapegAutoWebTests.Controllers
         }
 
         [TestMethod()]
-        public void EditTest_Get_Valid()
+        public void EditTestGetValid()
         {
             // Act
             var result = controller.Edit(1);
@@ -121,10 +121,10 @@ namespace DesapegAutoWebTests.Controllers
         }
 
         [TestMethod()]
-        public void EditTest_Post_Valid()
+        public void EditTestPostValid()
         {
             // Act
-            var result = controller.Edit(GetTargetVeiculoModel());
+            var result = controller.Edit(1, GetTargetVeiculoModel());
 
             // Assert
             Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
@@ -134,7 +134,7 @@ namespace DesapegAutoWebTests.Controllers
         }
 
         [TestMethod()]
-        public void DeleteTest_Get_Valid()
+        public void DeleteTestGetValid()
         {
             // Act
             var result = controller.Delete(1);
@@ -149,7 +149,7 @@ namespace DesapegAutoWebTests.Controllers
         }
 
         [TestMethod()]
-        public void DeleteTest_Post_Valid()
+        public void DeleteTestPostValid()
         {
             // Act
             var result = controller.Delete(1, GetTargetVeiculoModel());

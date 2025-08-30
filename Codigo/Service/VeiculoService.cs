@@ -103,38 +103,38 @@ namespace Service
                 }).ToList();
         }
 
-        public IEnumerable<VeiculoDTO> GetByQuilometragem(int quilometragem)
+        public IEnumerable<VeiculoDTO> GetByQuilometragem(int quilometragem, int v)
         {
-            // Busca veículos com quilometragem menor ou igual à informada
+            // Busca veículos com quilometragem entre 'quilometragem' e 'v'
             return _context.Veiculos
-                .Where(v => v.Quilometragem <= quilometragem)
-                 .Select(v => new VeiculoDTO
-                 {
-                     Id = v.Id,
-                     Concessionaria = v.IdConcessionaria,
-                     Ano = v.Ano,
-                     Cor = v.Cor,
-                     Quilometragem = v.Quilometragem,
-                     Preco = v.Preco,
-                     Placa = v.Placa
-                 }).ToList();
+                .Where(veiculo => veiculo.Quilometragem >= quilometragem && veiculo.Quilometragem <= v)
+                .Select(veiculo => new VeiculoDTO
+                {
+                    Id = veiculo.Id,
+                    Concessionaria = veiculo.IdConcessionaria,
+                    Ano = veiculo.Ano,
+                    Cor = veiculo.Cor,
+                    Quilometragem = veiculo.Quilometragem,
+                    Preco = veiculo.Preco,
+                    Placa = veiculo.Placa
+                })
+                .ToList();
         }
 
-        public IEnumerable<VeiculoDTO> GetByPreco(decimal preco)
+        public IEnumerable<VeiculoDTO> GetByPreco(decimal precoMin, int precoMax)
         {
-            // Busca veículos com preço menor ou igual ao informado
             return _context.Veiculos
-                .Where(v => v.Preco <= preco)
+                .Where(v => v.Preco >= precoMin && v.Preco <= precoMax)
                 .Select(v => new VeiculoDTO
                 {
                     Id = v.Id,
-                    Concessionaria = v.IdConcessionaria,
+                    Placa = v.Placa,
                     Ano = v.Ano,
-                    Cor = v.Cor,
                     Quilometragem = v.Quilometragem,
                     Preco = v.Preco,
-                    Placa = v.Placa
-                }).ToList();
+                    Cor = v.Cor
+                })
+                .ToList();
         }
 
         public IEnumerable<VeiculoDTO> GetByPlaca(string placa)
@@ -153,17 +153,8 @@ namespace Service
                 }).ToList();
         }
 
-        void IVeiculoService.Delete(uint v)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerable<VeiculoDTO> GetByQuilometragem(int quilometragem, int v)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerable<VeiculoDTO> GetByPreco(decimal preco, int v)
+       
+        public void Delete(uint v)
         {
             throw new NotImplementedException();
         }
