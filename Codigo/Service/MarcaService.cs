@@ -77,14 +77,14 @@ namespace Service
         }
 
         /// <summary>
-        /// Buscar marcas que contenham o nome pesquisado
+        /// Buscar marcas que contenham o nome pesquisado (case insensitive)
         /// </summary>
         /// <param name="nome">Nome a ser pesquisado</param>
         /// <returns>Lista de marcas encontradas</returns>
         public IEnumerable<Marca> GetByNome(string nome)
         {
             return context.Marcas
-                .Where(m => m.Nome.Contains(nome))
+                .Where(m => m.Nome.ToLower().Contains(nome.ToLower()))
                 .AsNoTracking()
                 .ToList();
         }

@@ -12,8 +12,8 @@ namespace Service.Tests
     [TestClass()]
     public class VeiculoServiceTests
     {
-        private static DesapegAutoContext _context;
-        private static IVeiculoService _veiculoService;
+        private static DesapegAutoContext? _context;
+        private static IVeiculoService? _veiculoService;
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext testContext)
@@ -30,9 +30,9 @@ namespace Service.Tests
             // Adiciona dados de teste
             _context.Veiculos.AddRange(new List<Veiculo>
             {
-                new Veiculo { Id = 1, Placa = "ABC-1234", Ano = 2020, Quilometragem = (int)50000.0, Preco = 30000.00m, IdConcessionaria = 1 },
-                new Veiculo { Id = 2, Placa = "DEF-5678", Ano = 2021, Quilometragem = (int)25000.0, Preco = 45000.00m, IdConcessionaria = 1 },
-                new Veiculo { Id = 3, Placa = "GHI-9012", Ano = 2020, Quilometragem = (int)60000.0, Preco = 28000.00m, IdConcessionaria = 2 }
+                new Veiculo { Id = 1, Placa = "ABC-1234", Ano = 2020, Quilometragem = 50000, Preco = 30000.00m, IdConcessionaria = 1, IdModelo = 0, IdMarca = 0, Cor = "" },
+                new Veiculo { Id = 2, Placa = "DEF-5678", Ano = 2021, Quilometragem = 25000, Preco = 45000.00m, IdConcessionaria = 1, IdModelo = 0, IdMarca = 0, Cor = "" },
+                new Veiculo { Id = 3, Placa = "GHI-9012", Ano = 2020, Quilometragem = 60000, Preco = 28000.00m, IdConcessionaria = 2, IdModelo = 0, IdMarca = 0, Cor = "" }
             });
 
             _context.SaveChanges();
@@ -48,12 +48,16 @@ namespace Service.Tests
                 Id = 4,
                 Placa = "JKL-0123",
                 Ano = 2022,
-                Quilometragem = (int)10000.0,
-                Preco = 55000.00m
+                Quilometragem = 10000,
+                Preco = 55000.00m,
+                IdConcessionaria = 1,
+                IdModelo = 0,
+                IdMarca = 0,
+                Cor = ""
             };
 
             // Act
-            _veiculoService.Create(veiculo);
+            _veiculoService!.Create(veiculo);
 
             // Assert
             var veiculoCriado = _veiculoService.Get(4);
@@ -65,7 +69,8 @@ namespace Service.Tests
         public void EditTest()
         {
             // Arrange
-            var veiculo = _veiculoService.Get(1);
+            var veiculo = _veiculoService!.Get(1);
+            Assert.IsNotNull(veiculo, "Veículo não encontrado para edição.");
             veiculo.Placa = "EDIT-0000";
 
             // Act
@@ -73,6 +78,7 @@ namespace Service.Tests
 
             // Assert
             var veiculoEditado = _veiculoService.Get(1);
+            Assert.IsNotNull(veiculoEditado, "Veículo editado não encontrado.");
             Assert.AreEqual("EDIT-0000", veiculoEditado.Placa);
         }
 
@@ -80,10 +86,10 @@ namespace Service.Tests
         public void DeleteTest()
         {
             // Arrange
-            int veiculosAntes = _veiculoService.GetAll().Count();
+            int veiculosAntes = _veiculoService!.GetAll().Count();
 
             // Act
-            _veiculoService.Delete((uint)2);
+            _veiculoService.Delete((int)2);
 
             // Assert
             int veiculosDepois = _veiculoService.GetAll().Count();
@@ -94,7 +100,7 @@ namespace Service.Tests
         public void GetTest()
         {
             // Act
-            var veiculo = _veiculoService.Get(1);
+            var veiculo = _veiculoService!.Get(1);
 
             // Assert
             Assert.IsNotNull(veiculo);
@@ -105,7 +111,7 @@ namespace Service.Tests
         public void GetAllTest()
         {
             // Act
-            var veiculos = _veiculoService.GetAll();
+            var veiculos = _veiculoService!.GetAll();
 
             // Assert
             Assert.IsNotNull(veiculos);
@@ -116,7 +122,7 @@ namespace Service.Tests
         public void GetByConcessionariaTest()
         {
             // Act
-            var veiculos = _veiculoService.GetByConcessionaria(1);
+            var veiculos = _veiculoService!.GetByConcessionaria(1);
 
             // Assert
             Assert.IsNotNull(veiculos);
@@ -127,7 +133,7 @@ namespace Service.Tests
         public void GetByAnoTest()
         {
             // Act
-            var veiculos = _veiculoService.GetByAno(2020);
+            var veiculos = _veiculoService!.GetByAno(2020);
 
             // Assert
             Assert.IsNotNull(veiculos);
@@ -138,7 +144,7 @@ namespace Service.Tests
         public void GetByQuilometragemTest()
         {
             // Act
-            var veiculos = _veiculoService.GetByQuilometragem((int)40000, (int)70000);
+            var veiculos = _veiculoService!.GetByQuilometragem(40000, 70000);
 
             // Assert
             Assert.IsNotNull(veiculos);
@@ -149,7 +155,7 @@ namespace Service.Tests
         public void GetByPrecoTest()
         {
             // Act
-            var veiculos = _veiculoService.GetByPreco(25000, 35000);
+            var veiculos = _veiculoService!.GetByPreco(25000, 35000);
 
             // Assert
             Assert.IsNotNull(veiculos);
@@ -160,7 +166,7 @@ namespace Service.Tests
         public void GetByPlacaTest()
         {
             // Act
-            var veiculo = _veiculoService.GetByPlaca("ABC-1234");
+            var veiculo = _veiculoService!.GetByPlaca("ABC-1234");
 
             // Assert
             Assert.IsNotNull(veiculo);
