@@ -1,8 +1,5 @@
-﻿using System;
+﻿using Core.DTO;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Core.Service
 {
@@ -13,5 +10,8 @@ namespace Core.Service
         void Delete(int id);
         Modelo? Get(int id);
         IEnumerable<Modelo> GetAll();
+        IEnumerable<ModeloDTO> GetByMarca(int idMarca);
+        IEnumerable<ModeloDTO> GetByCategoria(string categoria);
+        IEnumerable<ModeloDTO> GetByNome(string nome);
     }
 }
