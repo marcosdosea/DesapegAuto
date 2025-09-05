@@ -1,3 +1,8 @@
+using Microsoft.EntityFrameworkCore;
+using Core;
+using Core.Service;
+using Service;
+
 namespace DesapegAutoWeb
 {
     public class Program
@@ -8,6 +13,17 @@ namespace DesapegAutoWeb
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+            // Register DbContext (in-memory for simple setup)
+            builder.Services.AddDbContext<DesapegAutoContext>(options =>
+                options.UseInMemoryDatabase("DesapegAuto"));
+
+            // Register application services
+            builder.Services.AddScoped<IVeiculoService, VeiculoService>();
+            builder.Services.AddScoped<IMarcaService, MarcaService>();
+
+            // Register AutoMapper scanning current assembly
+            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             var app = builder.Build();
 
