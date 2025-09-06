@@ -14,4 +14,9 @@ public partial class Modelo
     public string Versoes { get; set; } = null!;
 
     public int IdMarca { get; set; }
+
+    public virtual Marca IdMarcaNavigation { get; set; } = null!;
+
+    
+    public virtual ICollection<Versao> Versaos { get; set; }
 }
