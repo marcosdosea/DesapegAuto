@@ -235,7 +235,7 @@ public partial class DesapegAutoContext : DbContext
 
             entity.HasIndex(e => e.IdConcessionaria, "fk_venda_concessionaria1_idx");
 
-            entity.HasIndex(e => e.IdUsuario, "fk_venda_usuario1_idx");
+            entity.HasIndex(e => e.IdPessoa, "fk_venda_pessoa1_idx");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.DataVenda)
@@ -245,7 +245,7 @@ public partial class DesapegAutoContext : DbContext
                 .HasMaxLength(45)
                 .HasColumnName("formaPagamento");
             entity.Property(e => e.IdConcessionaria).HasColumnName("idConcessionaria");
-            entity.Property(e => e.IdUsuario).HasColumnName("idUsuario");
+            entity.Property(e => e.IdPessoa).HasColumnName("idPessoa");
             entity.Property(e => e.ValorFinal)
                 .HasPrecision(10)
                 .HasColumnName("valorFinal");
