@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Core;
+using Core.Exceptions;
 using Core.Service;
 using DesapegAutoWeb.Models;
 using Microsoft.AspNetCore.Mvc;

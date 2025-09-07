@@ -11,22 +11,20 @@ namespace Service.Tests
     [TestClass()]
     public class MarcaServiceTests
     {
-        private static DesapegAutoContext? _context;
-        private static IMarcaService? _marcaService;
+        private DesapegAutoContext? _context;
+        private IMarcaService? _marcaService;
 
-        [ClassInitialize]
-        public static void ClassInitialize(TestContext testContext)
+        [TestInitialize]
+        public void TestInitialize()
         {
-            // Configura o DbContext para usar um banco de dados em memória
             var options = new DbContextOptionsBuilder<DesapegAutoContext>()
-                .UseInMemoryDatabase(databaseName: "DesapegAuto")
+                .UseInMemoryDatabase(databaseName: System.Guid.NewGuid().ToString())
                 .Options;
 
             _context = new DesapegAutoContext(options);
             _context.Database.EnsureDeleted();
             _context.Database.EnsureCreated();
 
-            // Adiciona dados iniciais (seeding) para os testes
             _context.Marcas.AddRange(new List<Marca>
             {
                 new Marca { Id = 1, Nome = "Ford" },
