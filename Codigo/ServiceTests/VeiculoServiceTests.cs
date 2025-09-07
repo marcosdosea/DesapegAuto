@@ -12,22 +12,20 @@ namespace Service.Tests
     [TestClass()]
     public class VeiculoServiceTests
     {
-        private static DesapegAutoContext? _context;
-        private static IVeiculoService? _veiculoService;
+        private DesapegAutoContext? _context;
+        private IVeiculoService? _veiculoService;
 
-        [ClassInitialize]
-        public static void ClassInitialize(TestContext testContext)
+        [TestInitialize]
+        public void TestInitialize()
         {
-            // Configura o DbContext em memória para os testes
             var options = (new DbContextOptionsBuilder<DesapegAutoContext>())
-                .UseInMemoryDatabase(databaseName: "DesapegAuto")
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
                 .Options;
 
             _context = new DesapegAutoContext(options);
             _context.Database.EnsureDeleted();
             _context.Database.EnsureCreated();
 
-            // Adiciona dados de teste
             _context.Veiculos.AddRange(new List<Veiculo>
             {
                 new Veiculo { Id = 1, Placa = "ABC-1234", Ano = 2020, Quilometragem = 50000, Preco = 30000.00m, IdConcessionaria = 1, IdModelo = 0, IdMarca = 0, Cor = "" },
