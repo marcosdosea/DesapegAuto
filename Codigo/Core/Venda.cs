@@ -9,7 +9,7 @@ public partial class Venda
 
     public int IdConcessionaria { get; set; }
 
-    public int IdUsuario { get; set; }
+    public int IdPessoa { get; set; }
 
     public DateTime DataVenda { get; set; }
 
