@@ -1,12 +1,12 @@
-﻿@model IEnumerable<DesapegAutoWeb.Models.MarcaViewModel>
+﻿@model IEnumerable<DesapegAutoWeb.Models.CategoriaViewModel>
 
 @{
-    ViewData["Title"] = "Administração";
+    ViewData["Title"] = "Administração de Categorias";
 }
 
 <div class="container mt-4">
     <div class="dashboard-header">
-        <h1 class="admin-title">Administração</h1>
+        <h1 class="admin-title">Administração de Categorias</h1>
         <div class="user-actions">
             <span class="welcome-text">Olá, Administrador</span>
             <a href="#" class="user-icon">
@@ -21,20 +21,20 @@
     <div class="row">
         <div class="col-md-6 mb-4">
             <div class="admin-card h-100">
-                <h2 class="section-title">Cadastrar Marca</h2>
+                <h2 class="section-title">Cadastrar Categoria</h2>
                 <form asp-action="Create" method="post" class="mt-3">
                     <div class="form-group mb-3">
-                        <label for="nomeMarca" class="form-label">Nome da Marca</label>
-                        <input type="text" class="form-control" id="nomeMarca" name="Nome" required placeholder="Ex: Toyota">
+                        <label for="nomeCategoria" class="form-label">Nome da Categoria</label>
+                        <input type="text" class="form-control" id="nomeCategoria" name="Nome" required placeholder="Ex: Sedan">
                     </div>
-                    <button type="submit" class="admin-btn">Inserir Marca</button>
+                    <button type="submit" class="admin-btn">Inserir Categoria</button>
                 </form>
             </div>
         </div>
 
         <div class="col-md-6 mb-4">
             <div class="admin-card h-100">
-                <h2 class="section-title">Marcas Existentes</h2>
+                <h2 class="section-title">Categorias Existentes</h2>
                 @if (Model.Any())
                 {
                     <ul class="list-unstyled mt-3">
@@ -51,12 +51,12 @@
                 {
                     <div class="empty-state">
                         <i class="fa-solid fa-car-side empty-state-icon"></i>
-                        <p>Nenhuma marca cadastrada.</p>
+                        <p>Nenhuma categoria cadastrada.</p>
                     </div>
                 }
 
                 <div class="mt-4 text-end">
-                    <a asp-action="Index" asp-controller="Categoria" class="btn btn-secondary me-2">Ir para Categorias</a>
+                    <a asp-action="Index" asp-controller="Marcas" class="btn btn-secondary me-2">Ir para Marcas</a>
                     <a asp-action="Index" asp-controller="Modelos" class="btn btn-secondary">Ir para Modelos</a>
                 </div>
             </div>

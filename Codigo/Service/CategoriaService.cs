@@ -1,10 +1,14 @@
 ﻿using Core;
 using Core.Service;
 using Microsoft.EntityFrameworkCore;
+using Core.Exceptions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Service
 {
-    internal class CategoriaService : ICategoriaService
+    public class CategoriaService : ICategoriaService
     {
         private readonly DesapegAutoContext context;
 
