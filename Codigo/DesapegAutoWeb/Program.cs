@@ -23,8 +23,8 @@ namespace DesapegAutoWeb
             builder.Services.AddScoped<IMarcaService, MarcaService>();
             builder.Services.AddScoped<IVendaService, VendaService>();
             builder.Services.AddScoped<IVersaoService, VersaoService>();
-            builder.Services.AddScoped<IConcessionariaService, ConcessionariaService>();
-            builder.Services.AddScoped<IPessoaService, PessoaService>();
+            //builder.Services.AddScoped<IConcessionariaService, ConcessionariaService>();
+            //builder.Services.AddScoped<IPessoaService, PessoaService>();
             builder.Services.AddScoped<IModeloService, ModeloService>();
 
             // Register AutoMapper scanning current assembly
