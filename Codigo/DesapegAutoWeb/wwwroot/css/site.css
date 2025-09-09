@@ -316,6 +316,13 @@ body {
 }
 
 /* Cards de administrador */
+.admin-title {
+    color: var(--primary-color);
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+}
+
 .admin-card {
     background: white;
     border-radius: 12px;
@@ -326,42 +333,6 @@ body {
     height: 100%;
 }
 
-    .admin-card:hover, .admin-card.card-hover {
-        transform: translateY(-4px);
-        box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-    }
-
-.admin-card-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 1rem;
-}
-
-.admin-card-icon {
-    background: var(--primary-color);
-    color: white;
-    width: 48px;
-    height: 48px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 1rem;
-    font-size: 1.25rem;
-}
-
-.admin-card h3 {
-    color: var(--text-color);
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin: 0;
-}
-
-.admin-card-body p {
-    color: var(--text-muted);
-    margin-bottom: 1.5rem;
-}
-
 .admin-btn {
     background: var(--primary-color);
     border: none;
@@ -370,11 +341,39 @@ body {
     font-weight: 600;
     transition: all 0.3s ease;
     width: 100%;
+    color: white;
 }
 
     .admin-btn:hover {
         background: var(--primary-dark);
         transform: translateY(-1px);
+    }
+
+.btn-secondary {
+    background-color: var(--secondary-color);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    text-decoration: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+    .btn-secondary:hover {
+        background-color: var(--border-color);
+        color: var(--text-color);
+    }
+
+.text-danger {
+    color: var(--danger-color) !important;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+    .text-danger:hover {
+        color: var(--primary-dark) !important;
     }
 
 /* Cards de estatísticas */

@@ -1,41 +1,71 @@
 ﻿@model IEnumerable<DesapegAutoWeb.Models.MarcaViewModel>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Administração";
 }
 
-<h1>Index</h1>
+<div class="container mt-4">
+    <div class="dashboard-header">
+        <h1 class="admin-title">Administração</h1>
+        <div class="user-actions">
+            <span class="welcome-text">Olá, Administrador</span>
+            <a href="#" class="user-icon">
+                <i class="fa-solid fa-user-circle"></i>
+            </a>
+            <a href="#" class="help-icon">
+                <i class="fa-solid fa-circle-question"></i>
+            </a>
+        </div>
+    </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Nome)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Nome)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-                @Html.ActionLink("Details", "Details", new {id=item.Id }) |
-                @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-            </td>
-        </tr>
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="admin-card h-100">
+                <h2 class="section-title">Cadastrar Marca</h2>
+                <form asp-action="Create" method="post" class="mt-3">
+                    <div class="form-group mb-3">
+                        <label for="nomeMarca" class="form-label">Nome da Marca</label>
+                        <input type="text" class="form-control" id="nomeMarca" name="Nome" required placeholder="Ex: Toyota">
+                    </div>
+                    <button type="submit" class="admin-btn">Inserir Marca</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="admin-card h-100">
+                <h2 class="section-title">Marcas Existentes</h2>
+                @if (Model.Any())
+                {
+                    <ul class="list-unstyled mt-3">
+                        @foreach (var item in Model)
+                        {
+                            <li class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                                <span>@Html.DisplayFor(modelItem => item.Nome)</span>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="text-danger">Remover</a>
+                            </li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <div class="empty-state">
+                        <i class="fa-solid fa-car-side empty-state-icon"></i>
+                        <p>Nenhuma marca cadastrada.</p>
+                    </div>
+                }
+
+                <div class="mt-4 text-end">
+                    <a asp-action="Index" asp-controller="Categorias" class="btn btn-secondary me-2">Ir para Categorias</a>
+                    <a asp-action="Index" asp-controller="Modelos" class="btn btn-secondary">Ir para Modelos</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
-    </tbody>
-</table>
