@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Core;
 using Core.Service;
 using DesapegAutoWeb.Mappers;
@@ -13,78 +13,67 @@ using System.Linq;
 namespace DesapegAutoWeb.Controllers.Tests
 {
     [TestClass()]
-    public class MarcaControllerTests
+    public class CategoriaControllerTests
     {
-        private static MarcaController controller;
+        private static CategoriaController controller;
 
         [TestInitialize]
         public void Initialize()
         {
-            // Arrange
-            var mockService = new Mock<IMarcaService>();
+            var mockService = new Mock<ICategoriaService>();
             IMapper mapper = new MapperConfiguration(cfg =>
-                cfg.AddProfile(new MarcaProfile())).CreateMapper();
+                cfg.AddProfile(new CategoriaProfile())).CreateMapper();
 
             mockService.Setup(service => service.GetAll())
-                .Returns(GetTestMarcas());
+                .Returns(GetTestCategorias());
             mockService.Setup(service => service.Get(1))
-                .Returns(GetTargetMarca());
-            mockService.Setup(service => service.Edit(It.IsAny<Marca>()))
+                .Returns(GetTargetCategoria());
+            mockService.Setup(service => service.Edit(It.IsAny<Categoria>()))
                 .Verifiable();
-            mockService.Setup(service => service.Create(It.IsAny<Marca>()))
-                .Returns(4); // Retorna o ID da nova marca criada
+            mockService.Setup(service => service.Create(It.IsAny<Categoria>()))
+                .Returns(4);
             mockService.Setup(service => service.Delete(It.IsAny<int>()))
                 .Verifiable();
 
-            controller = new MarcaController(mockService.Object, mapper);
+            controller = new CategoriaController(mockService.Object, mapper);
         }
 
         [TestMethod()]
         public void IndexTestValido()
         {
-            // Act
             var result = controller.Index();
 
-            // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             ViewResult viewResult = (ViewResult)result;
-            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(IEnumerable<MarcaViewModel>));
+            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(IEnumerable<CategoriaViewModel>));
 
-            var listaMarcas = (IEnumerable<MarcaViewModel>)viewResult.ViewData.Model;
-            Assert.AreEqual(3, listaMarcas.Count());
+            var listaCategorias = (IEnumerable<CategoriaViewModel>)viewResult.ViewData.Model;
+            Assert.AreEqual(3, listaCategorias.Count());
         }
 
         [TestMethod()]
         public void DetailsTestValido()
         {
-            // Act
             var result = controller.Details(1);
 
-            // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             ViewResult viewResult = (ViewResult)result;
-            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(MarcaViewModel));
-            MarcaViewModel marcaModel = (MarcaViewModel)viewResult.ViewData.Model;
-            Assert.AreEqual("Ford", marcaModel.Nome);
+            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(CategoriaViewModel));
+            CategoriaViewModel categoriaModel = (CategoriaViewModel)viewResult.ViewData.Model;
+            Assert.AreEqual("SUV", categoriaModel.Nome);
         }
 
         [TestMethod()]
         public void CreateTestGetValido()
         {
-            // Act
             var result = controller.Create();
-
-            // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
         }
 
         [TestMethod()]
         public void CreateTestPostValido()
         {
-            // Act
-            var result = controller.Create(GetNewMarca());
-
-            // Assert
+            var result = controller.Create(GetNewCategoria());
             Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
             RedirectToActionResult redirectToActionResult = (RedirectToActionResult)result;
             Assert.IsNull(redirectToActionResult.ControllerName);
@@ -94,41 +83,29 @@ namespace DesapegAutoWeb.Controllers.Tests
         [TestMethod()]
         public void CreateTestPostInvalido()
         {
-            // Arrange
             controller.ModelState.AddModelError("Nome", "Campo requerido");
-
-            // Act
-            var result = controller.Create(GetNewMarca());
-
-            // Assert
+            var result = controller.Create(GetNewCategoria());
             Assert.AreEqual(1, controller.ModelState.ErrorCount);
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             ViewResult viewResult = (ViewResult)result;
-            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(MarcaViewModel));
+            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(CategoriaViewModel));
         }
-
 
         [TestMethod()]
         public void EditTestGetValido()
         {
-            // Act
             var result = controller.Edit(1);
-
-            // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             ViewResult viewResult = (ViewResult)result;
-            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(MarcaViewModel));
-            MarcaViewModel marcaModel = (MarcaViewModel)viewResult.ViewData.Model;
-            Assert.AreEqual("Ford", marcaModel.Nome);
+            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(CategoriaViewModel));
+            CategoriaViewModel categoriaModel = (CategoriaViewModel)viewResult.ViewData.Model;
+            Assert.AreEqual("SUV", categoriaModel.Nome);
         }
 
         [TestMethod()]
         public void EditTestPostValido()
         {
-            // Act
-            var result = controller.Edit(GetTargetMarcaModel());
-
-            // Assert
+            var result = controller.Edit(GetTargetCategoriaModel());
             Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
             RedirectToActionResult redirectToActionResult = (RedirectToActionResult)result;
             Assert.IsNull(redirectToActionResult.ControllerName);
@@ -138,67 +115,47 @@ namespace DesapegAutoWeb.Controllers.Tests
         [TestMethod()]
         public void DeleteTestGetValido()
         {
-            // Act
             var result = controller.Delete(1);
-
-            // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             ViewResult viewResult = (ViewResult)result;
-            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(MarcaViewModel));
-            MarcaViewModel marcaModel = (MarcaViewModel)viewResult.ViewData.Model;
-            Assert.AreEqual("Ford", marcaModel.Nome);
+            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(CategoriaViewModel));
+            CategoriaViewModel categoriaModel = (CategoriaViewModel)viewResult.ViewData.Model;
+            Assert.AreEqual("SUV", categoriaModel.Nome);
         }
 
         [TestMethod()]
         public void DeleteTestPostValido()
         {
-            // Act
             var result = controller.DeleteConfirmed(1);
-
-            // Assert
             Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
             RedirectToActionResult redirectToActionResult = (RedirectToActionResult)result;
             Assert.IsNull(redirectToActionResult.ControllerName);
             Assert.AreEqual("Index", redirectToActionResult.ActionName);
         }
 
-        // Métodos auxiliares para gerar dados de teste
-        private MarcaViewModel GetNewMarca()
+        private CategoriaViewModel GetNewCategoria()
         {
-            return new MarcaViewModel
-            {
-                Id = 4,
-                Nome = "Honda"
-            };
+            return new CategoriaViewModel { Id = 4, Nome = "Crossover" };
         }
 
-        private static Marca GetTargetMarca()
+        private static Categoria GetTargetCategoria()
         {
-            return new Marca
-            {
-                Id = 1,
-                Nome = "Ford"
-            };
+            return new Categoria { Id = 1, Nome = "SUV" };
         }
 
-        private MarcaViewModel GetTargetMarcaModel()
+        private CategoriaViewModel GetTargetCategoriaModel()
         {
-            return new MarcaViewModel
-            {
-                Id = 1,
-                Nome = "Ford"
-            };
+            return new CategoriaViewModel { Id = 1, Nome = "SUV" };
         }
 
-        private static IEnumerable<Marca> GetTestMarcas()
+        private static IEnumerable<Categoria> GetTestCategorias()
         {
-            return new List<Marca>
+            return new List<Categoria>
             {
-                new Marca { Id = 1, Nome = "Ford" },
-                new Marca { Id = 2, Nome = "Chevrolet" },
-                new Marca { Id = 3, Nome = "Toyota" }
+                new Categoria { Id = 1, Nome = "SUV" },
+                new Categoria { Id = 2, Nome = "Sedan" },
+                new Categoria { Id = 3, Nome = "Hatch" }
             };
         }
-    
     }
 }
