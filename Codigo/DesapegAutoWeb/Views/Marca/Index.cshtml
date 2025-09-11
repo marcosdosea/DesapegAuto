@@ -1,23 +1,21 @@
 ﻿@model IEnumerable<DesapegAutoWeb.Models.MarcaViewModel>
 
 @{
-    ViewData["Title"] = "Administração";
+    ViewData["Title"] = "Administração de Marcas";
 }
 
-<div class="container mt-4">
-    <div class="dashboard-header">
-        <h1 class="admin-title">Administração</h1>
-        <div class="user-actions">
-            <span class="welcome-text">Olá, Administrador</span>
-            <a href="#" class="user-icon">
-                <i class="fa-solid fa-user-circle"></i>
-            </a>
-            <a href="#" class="help-icon">
-                <i class="fa-solid fa-circle-question"></i>
-            </a>
-        </div>
+<div class="dashboard-header-container">
+    <div class="dashboard-header-left">
+        <h1 class="dashboard-title">Administração</h1>
     </div>
+    <div class="dashboard-header-right">
+        <span class="welcome-text-dashboard">Olá, Administrador</span>
+        <i class="fa-solid fa-user-circle dashboard-icon"></i>
+        <i class="fa-solid fa-circle-question dashboard-icon"></i>
+    </div>
+</div>
 
+<div class="container mt-4">
     <div class="row">
         <div class="col-md-6 mb-4">
             <div class="admin-card h-100">
