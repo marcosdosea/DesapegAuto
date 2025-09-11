@@ -27,6 +27,7 @@ namespace DesapegAutoWeb
             //builder.Services.AddScoped<IPessoaService, PessoaService>();
             builder.Services.AddScoped<IModeloService, ModeloService>();
             builder.Services.AddScoped<ICategoriaService, CategoriaService>();
+            builder.Services.AddScoped<IAnuncioService, AnuncioService>();
 
             // Register AutoMapper scanning current assembly
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
