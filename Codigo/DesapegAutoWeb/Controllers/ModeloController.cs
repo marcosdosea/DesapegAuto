@@ -1,7 +1,10 @@
 ﻿using AutoMapper;
 using Core;
 using Core.Service;
+using DesapegAutoWeb.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace DesapegAutoWeb.Controllers
 {
@@ -22,8 +25,8 @@ namespace DesapegAutoWeb.Controllers
         public ActionResult Index()
         {
             var listaModelos = modeloService.GetAll();
-            // Por enquanto, usando Modelo diretamente em vez de ModeloViewModel
-            return View(listaModelos);
+            var listaModelosVm = mapper.Map<IEnumerable<ModeloViewModel>>(listaModelos);
+            return View(listaModelosVm);
         }
 
         // GET: Modelo/Details/5
@@ -34,27 +37,30 @@ namespace DesapegAutoWeb.Controllers
             {
                 return NotFound();
             }
-            return View(modelo);
+            var vm = mapper.Map<ModeloViewModel>(modelo);
+            return View(vm);
         }
 
         // GET: Modelo/Create
         public ActionResult Create()
         {
-            // Por enquanto retornamos direto a view, mais tarde ajustaremos para incluir o dropdown de marcas
-            return View();
+            var vm = new ModeloViewModel();
+            // Optionally populate vm.Marcas from marcaService here
+            return View(vm);
         }
 
         // POST: Modelo/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Modelo modelo)
+        public ActionResult Create(ModeloViewModel modeloViewModel)
         {
             if (ModelState.IsValid)
             {
+                var modelo = mapper.Map<Modelo>(modeloViewModel);
                 modeloService.Create(modelo);
                 return RedirectToAction(nameof(Index));
             }
-            return View(modelo);
+            return View(modeloViewModel);
         }
 
         // GET: Modelo/Edit/5
@@ -65,25 +71,27 @@ namespace DesapegAutoWeb.Controllers
             {
                 return NotFound();
             }
-            return View(modelo);
+            var vm = mapper.Map<ModeloViewModel>(modelo);
+            return View(vm);
         }
 
         // POST: Modelo/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, Modelo modelo)
+        public ActionResult Edit(int id, ModeloViewModel modeloViewModel)
         {
-            if (id != modelo.Id)
+            if (id != modeloViewModel.Id)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
+                var modelo = mapper.Map<Modelo>(modeloViewModel);
                 modeloService.Edit(modelo);
                 return RedirectToAction(nameof(Index));
             }
-            return View(modelo);
+            return View(modeloViewModel);
         }
 
         // GET: Modelo/Delete/5
@@ -94,7 +102,8 @@ namespace DesapegAutoWeb.Controllers
             {
                 return NotFound();
             }
-            return View(modelo);
+            var vm = mapper.Map<ModeloViewModel>(modelo);
+            return View(vm);
         }
 
         // POST: Modelo/Delete/5
@@ -109,20 +118,45 @@ namespace DesapegAutoWeb.Controllers
         // Additional Methods from IModeloService
         public ActionResult GetByMarca(int idMarca)
         {
-            var modelos = modeloService.GetByMarca(idMarca);
-            return View("Index", modelos);
+            var modelosDto = modeloService.GetByMarca(idMarca);
+            // Map DTO -> ViewModel
+            var vms = modelosDto.Select(m => new ModeloViewModel
+            {
+                Id = m.Id,
+                Nome = m.Nome ?? string.Empty,
+                Versoes = m.Versoes,
+                IdMarca = m.IdMarca,
+                Categoria = string.Empty
+            });
+            return View("Index", vms);
         }
 
         public ActionResult GetByCategoria(string categoria)
         {
-            var modelos = modeloService.GetByCategoria(categoria);
-            return View("Index", modelos);
+            var modelosDto = modeloService.GetByCategoria(categoria);
+            var vms = modelosDto.Select(m => new ModeloViewModel
+            {
+                Id = m.Id,
+                Nome = m.Nome ?? string.Empty,
+                Versoes = m.Versoes,
+                IdMarca = m.IdMarca,
+                Categoria = categoria
+            });
+            return View("Index", vms);
         }
 
         public ActionResult GetByNome(string nome)
         {
-            var modelos = modeloService.GetByNome(nome);
-            return View("Index", modelos);
+            var modelosDto = modeloService.GetByNome(nome);
+            var vms = modelosDto.Select(m => new ModeloViewModel
+            {
+                Id = m.Id,
+                Nome = m.Nome ?? string.Empty,
+                Versoes = m.Versoes,
+                IdMarca = m.IdMarca,
+                Categoria = string.Empty
+            });
+            return View("Index", vms);
         }
     }
 }

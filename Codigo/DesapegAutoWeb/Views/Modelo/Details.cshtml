@@ -1,0 +1,31 @@
+@model DesapegAutoWeb.Models.ModeloViewModel
+
+@{
+    ViewData["Title"] = "Detalhes do Modelo";
+}
+
+<div class="admin-card mt-4">
+    <h2>Detalhes do Modelo</h2>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">ID</dt>
+        <dd class="col-sm-10">@Model.Id</dd>
+
+        <dt class="col-sm-2">Nome</dt>
+        <dd class="col-sm-10">@Model.Nome</dd>
+
+        <dt class="col-sm-2">Categoria</dt>
+        <dd class="col-sm-10">@Model.Categoria</dd>
+
+        <dt class="col-sm-2">Versões</dt>
+        <dd class="col-sm-10">@Model.Versoes</dd>
+
+        <dt class="col-sm-2">Id Marca</dt>
+        <dd class="col-sm-10">@Model.IdMarca</dd>
+    </dl>
+
+    <div class="mt-3">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary me-2">Editar</a>
+        <a asp-action="Index" class="btn btn-secondary">Voltar</a>
+    </div>
+</div>
