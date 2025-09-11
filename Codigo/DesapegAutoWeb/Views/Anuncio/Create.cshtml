@@ -1,0 +1,174 @@
+@model DesapegAutoWeb.Models.AnuncioViewModel
+
+@{
+    ViewData["Title"] = "Anunciar Veículo";
+}
+
+<div class="dashboard-header-container">
+    <div class="dashboard-header-left">
+        <h1 class="dashboard-title">Anunciar Veículo</h1>
+    </div>
+    <div class="dashboard-header-right">
+        <span class="welcome-text-dashboard">Olá, Concessionária</span>
+        <i class="fa-solid fa-user-circle dashboard-icon"></i>
+        <i class="fa-solid fa-circle-question dashboard-icon"></i>
+    </div>
+</div>
+
+<div class="container mt-4">
+    <div class="card p-4">
+        <form asp-action="Create" method="post" enctype="multipart/form-data">
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="marca" class="form-label">Marca</label>
+                        <select id="marca" name="MarcaId" class="form-control" required>
+                            <option value="">Selecione a marca</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="modelo" class="form-label">Modelo</label>
+                        <input type="text" class="form-control" id="modelo" name="Modelo" required />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="cor" class="form-label">Cor</label>
+                        <select id="cor" name="Cor" class="form-control" required>
+                            <option value="">Selecione a cor</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="ano" class="form-label">Ano</label>
+                        <input type="number" class="form-control" id="ano" name="Ano" required />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="quilometragem" class="form-label">Quilometragem</label>
+                        <input type="number" class="form-control" id="quilometragem" name="Quilometragem" required />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="preco" class="form-label">Preço</label>
+                        <input type="number" class="form-control" id="preco" name="Preco" required />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="placa" class="form-label">Placa</label>
+                        <input type="text" class="form-control" id="placa" name="Placa" required />
+                    </div>
+                </div>
+            </div>
+
+            <hr class="my-4" />
+
+            <div class="form-group mb-4">
+                <label for="descricao" class="form-label">Descrição</label>
+                <textarea class="form-control" id="descricao" name="Descricao" rows="6" required></textarea>
+            </div>
+
+            <div class="row g-3 mb-4">
+                <h4 class="mb-3">Opcionais</h4>
+                <div class="col-md-6">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="Opcionais" value="Ar condicionado" id="ar-condicionado">
+                        <label class="form-check-label" for="ar-condicionado">Ar condicionado</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="Opcionais" value="Vidros elétricos" id="vidros-eletricos">
+                        <label class="form-check-label" for="vidros-eletricos">Vidros elétricos</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="Opcionais" value="Airbag" id="airbag">
+                        <label class="form-check-label" for="airbag">Airbag</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="Opcionais" value="Controle de tração" id="controle-tracao">
+                        <label class="form-check-label" for="controle-tracao">Controle de tração</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="Opcionais" value="Central multimídia" id="central-multimidia">
+                        <label class="form-check-label" for="central-multimidia">Central multimídia</label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="Opcionais" value="Direção hidráulica" id="direcao-hidraulica">
+                        <label class="form-check-label" for="direcao-hidraulica">Direção hidráulica</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="Opcionais" value="Travas elétricas" id="travas-eletricas">
+                        <label class="form-check-label" for="travas-eletricas">Travas elétricas</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="Opcionais" value="Freios ABS" id="freios-abs">
+                        <label class="form-check-label" for="freios-abs">Freios ABS</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="Opcionais" value="Bancos em couro" id="bancos-couro">
+                        <label class="form-check-label" for="bancos-couro">Bancos em couro</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="Opcionais" value="Câmera de ré" id="camera-re">
+                        <label class="form-check-label" for="camera-re">Câmera de ré</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <h4 class="mb-3">Fotos</h4>
+                <div class="drag-drop-area text-center">
+                    <input type="file" id="fotos" name="fotos" multiple hidden />
+                    <label for="fotos" class="drag-drop-label">
+                        <i class="fas fa-plus-circle"></i> Adicionar fotos
+                    </label>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end mt-4">
+                <a asp-action="Index" class="btn btn-light me-2">Cancelar</a>
+                <button type="submit" class="btn btn-primary">Anunciar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
+<style>
+    /* Estilo para a área de arrastar e soltar fotos */
+    .drag-drop-area {
+        border: 2px dashed #ccc;
+        border-radius: 8px;
+        padding: 50px;
+        cursor: pointer;
+        transition: border-color 0.3s ease;
+    }
+
+    .drag-drop-area:hover {
+        border-color: #007bff;
+    }
+
+    .drag-drop-label {
+        color: #007bff;
+        cursor: pointer;
+        font-weight: 500;
+        font-size: 1.1rem;
+    }
+
+    .drag-drop-label .fas {
+        margin-right: 5px;
+    }
+</style>

@@ -1,0 +1,22 @@
+@model DesapegAutoWeb.Models.AnuncioViewModel
+@{
+    ViewData["Title"] = "Detalhes do Anúncio";
+}
+<h2>Detalhes do Anúncio</h2>
+<div>
+    <dl class="row">
+        <dt class="col-sm-2">Veículo</dt>
+        <dd class="col-sm-10">@Model.IdVeiculo</dd>
+        <dt class="col-sm-2">Descrição</dt>
+        <dd class="col-sm-10">@Model.Descricao</dd>
+        <dt class="col-sm-2">Opcionais</dt>
+        <dd class="col-sm-10">@Model.Opcionais</dd>
+        <dt class="col-sm-2">Status</dt>
+        <dd class="col-sm-10">@Model.StatusAnuncio</dd>
+        <dt class="col-sm-2">Data Publicação</dt>
+        <dd class="col-sm-10">@Model.DataPublicacao.ToShortDateString()</dd>
+        <dt class="col-sm-2">Visualizações</dt>
+        <dd class="col-sm-10">@Model.Visualizacoes</dd>
+    </dl>
+    <a asp-action="Index" class="btn btn-secondary">Voltar</a>
+</div>
