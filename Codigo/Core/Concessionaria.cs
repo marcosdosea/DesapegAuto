@@ -7,7 +7,7 @@ public partial class Concessionaria
 {
     public int Id { get; set; }
 
-    public int IdEndereco { get; set; }
+    public string Endereco { get; set; } = null!;
 
     public string Cnpj { get; set; } = null!;
 
