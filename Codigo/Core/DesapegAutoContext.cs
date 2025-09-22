@@ -94,7 +94,9 @@ public partial class DesapegAutoContext : DbContext
             entity.Property(e => e.Email)
                 .HasMaxLength(50)
                 .HasColumnName("email");
-            entity.Property(e => e.IdEndereco).HasColumnName("idEndereco");
+            entity.Property(e => e.Endereco)
+                .HasMaxLength(80)
+                .HasColumnName("endereco");
             entity.Property(e => e.Nome)
                 .HasMaxLength(50)
                 .HasColumnName("nome");
