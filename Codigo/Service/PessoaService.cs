@@ -1,5 +1,6 @@
 using Core;
 using Core.Service;
+using Core.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +26,22 @@ namespace Service
         /// <returns>O ID da pessoa cadastrada.</returns>
         public int Create(Pessoa pessoa)
         {
+            var pessoaExistente = context.Pessoas
+                .FirstOrDefault(p => p.Cpf.ToLower() == pessoa.Cpf.ToLower());
+
+            if (pessoaExistente != null)
+            {
+                throw new ServiceException("Erro: CPF já cadastrado no sistema.");
+            }
+
+            var emailExistente = context.Pessoas
+                .FirstOrDefault(p => p.Email.ToLower() == pessoa.Email.ToLower());
+
+            if (emailExistente != null)
+            {
+                throw new ServiceException("Erro: E-mail já cadastrado no sistema.");
+            }
+
             context.Add(pessoa);
             context.SaveChanges();
             return pessoa.Id;
@@ -36,6 +53,28 @@ namespace Service
         /// <param name="pessoa">Objeto pessoa com os dados atualizados.</param>
         public void Edit(Pessoa pessoa)
         {
+            var pessoaExistente = context.Pessoas.Find(pessoa.Id);
+            if (pessoaExistente == null)
+            {
+                throw new ServiceException("Erro: Pessoa não encontrada. A operação foi cancelada.");
+            }
+
+            var cpfExistente = context.Pessoas
+                .FirstOrDefault(p => p.Id != pessoa.Id && 
+                                   p.Cpf.ToLower() == pessoa.Cpf.ToLower());
+            if (cpfExistente != null)
+            {
+                throw new ServiceException("Erro: CPF já cadastrado para outra pessoa.");
+            }
+
+            var emailExistente = context.Pessoas
+                .FirstOrDefault(p => p.Id != pessoa.Id && 
+                                   p.Email.ToLower() == pessoa.Email.ToLower());
+            if (emailExistente != null)
+            {
+                throw new ServiceException("Erro: E-mail já cadastrado para outra pessoa.");
+            }
+
             context.Update(pessoa);
             context.SaveChanges();
         }
@@ -47,11 +86,13 @@ namespace Service
         public void Delete(int idPessoa)
         {
             var pessoa = context.Pessoas.Find(idPessoa);
-            if (pessoa != null)
+            if (pessoa == null)
             {
-                context.Remove(pessoa);
-                context.SaveChanges();
+                throw new ServiceException("Erro: Pessoa não encontrada. A operação foi cancelada.");
             }
+
+            context.Remove(pessoa);
+            context.SaveChanges();
         }
 
         /// <summary>

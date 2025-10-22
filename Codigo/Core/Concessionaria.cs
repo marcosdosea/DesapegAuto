@@ -7,7 +7,7 @@ public partial class Concessionaria
 {
     public int Id { get; set; }
 
-    public string Endereco { get; set; } = null!;
+    public string Endereco { get; set; } = string.Empty;
 
     public string Cnpj { get; set; } = null!;
 
@@ -18,4 +18,6 @@ public partial class Concessionaria
     public string Telefone { get; set; } = null!;
 
     public string Senha { get; set; } = null!;
+
+    public int IdEndereco { get; set; }
 }
