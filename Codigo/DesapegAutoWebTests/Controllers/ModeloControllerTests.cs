@@ -3,6 +3,7 @@ using Core;
 using Core.Service;
 using DesapegAutoWeb.Controllers;
 using DesapegAutoWeb.Mappers;
+using DesapegAutoWeb.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -47,8 +48,8 @@ namespace DesapegAutoWebTests.Controllers
             var result = controller.Index();
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             var viewResult = (ViewResult)result;
-            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(IEnumerable<Modelo>));
-            var lista = (IEnumerable<Modelo>)viewResult.ViewData.Model;
+            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(IEnumerable<ModeloViewModel>));
+            var lista = (IEnumerable<ModeloViewModel>)viewResult.ViewData.Model;
             Assert.AreEqual(2, lista.Count());
         }
 
@@ -58,8 +59,8 @@ namespace DesapegAutoWebTests.Controllers
             var result = controller.Details(1);
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             var viewResult = (ViewResult)result;
-            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(Modelo));
-            var model = (Modelo)viewResult.ViewData.Model;
+            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(ModeloViewModel));
+            var model = (ModeloViewModel)viewResult.ViewData.Model;
             Assert.AreEqual(1, model.Id);
         }
 
@@ -73,8 +74,8 @@ namespace DesapegAutoWebTests.Controllers
         [TestMethod]
         public void CreateTest_Post_Valido()
         {
-            var modelo = new Modelo { Id = 3, Nome = "Novo Modelo" };
-            var result = controller.Create(modelo);
+            var modeloVm = new ModeloViewModel { Id = 3, Nome = "Novo Modelo" };
+            var result = controller.Create(modeloVm);
             Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
             var redirect = (RedirectToActionResult)result;
             Assert.AreEqual("Index", redirect.ActionName);
@@ -86,7 +87,7 @@ namespace DesapegAutoWebTests.Controllers
             var result = controller.Delete(1);
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             var viewResult = (ViewResult)result;
-            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(Modelo));
+            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(ModeloViewModel));
         }
 
         [TestMethod]

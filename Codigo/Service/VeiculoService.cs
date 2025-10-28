@@ -1,6 +1,7 @@
 ﻿using Core;
 using Core.DTO;
 using Core.Service;
+using Core.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Service
@@ -21,6 +22,14 @@ namespace Service
         /// <returns>ID do veículo</returns>
         public int Create(Veiculo veiculo)
         {
+            var veiculoExistente = _context.Veiculos
+                .FirstOrDefault(v => v.Placa.ToLower() == veiculo.Placa.ToLower());
+
+            if (veiculoExistente != null)
+            {
+                throw new ServiceException("Erro: Já existe um veículo cadastrado com esta placa.");
+            }
+
             _context.Add(veiculo);
             _context.SaveChanges();
             return veiculo.Id;
@@ -32,6 +41,20 @@ namespace Service
         /// <param name="veiculo">Dados do veículo</param>
         public void Edit(Veiculo veiculo)
         {
+            var veiculoExistente = _context.Veiculos.Find(veiculo.Id);
+            if (veiculoExistente == null)
+            {
+                throw new ServiceException("Erro: Veículo não encontrado. A operação foi cancelada.");
+            }
+
+            var veiculoMesmaPlaca = _context.Veiculos
+                .FirstOrDefault(v => v.Id != veiculo.Id && 
+                                   v.Placa.ToLower() == veiculo.Placa.ToLower());
+            if (veiculoMesmaPlaca != null)
+            {
+                throw new ServiceException("Erro: Já existe outro veículo cadastrado com esta placa.");
+            }
+
             _context.Update(veiculo);
             _context.SaveChanges();
         }
@@ -43,11 +66,13 @@ namespace Service
         public void Delete(int id)
         {
             var veiculo = _context.Veiculos.Find(id);
-            if (veiculo != null)
+            if (veiculo == null)
             {
-                _context.Remove(veiculo);
-                _context.SaveChanges();
+                throw new ServiceException("Erro: Veículo não encontrado. A operação foi cancelada.");
             }
+
+            _context.Remove(veiculo);
+            _context.SaveChanges();
         }
 
         /// <summary>
@@ -68,8 +93,6 @@ namespace Service
         {
             return _context.Veiculos.AsNoTracking();
         }
-
-        // --- Métodos de busca específicos que retornam DTO ---
 
         public IEnumerable<VeiculoDTO> GetByConcessionaria(int idConcessionaria)
         {
@@ -105,7 +128,6 @@ namespace Service
 
         public IEnumerable<VeiculoDTO> GetByQuilometragem(int quilometragem, int v)
         {
-            // Busca veículos com quilometragem entre 'quilometragem' e 'v'
             return _context.Veiculos
                 .Where(veiculo => veiculo.Quilometragem >= quilometragem && veiculo.Quilometragem <= v)
                 .Select(veiculo => new VeiculoDTO
@@ -153,10 +175,9 @@ namespace Service
                 }).ToList();
         }
 
-       
         public void Delete(uint v)
         {
-            throw new NotImplementedException();
+            throw new ServiceException("Método não implementado.");
         }
     }
 }

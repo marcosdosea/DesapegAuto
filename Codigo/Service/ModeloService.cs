@@ -1,6 +1,7 @@
 using Core;
 using Core.DTO;
 using Core.Service;
+using Core.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,14 @@ namespace Service
 
         public int Create(Modelo modelo)
         {
+            var modeloExistente = context.Modelos
+                .FirstOrDefault(m => m.Nome.ToLower() == modelo.Nome.ToLower() && m.IdMarca == modelo.IdMarca);
+                
+            if (modeloExistente != null)
+            {
+                throw new ServiceException("Erro: Modelo já existente para esta marca.");
+            }
+
             context.Add(modelo);
             context.SaveChanges();
             return modelo.Id;
@@ -25,6 +34,21 @@ namespace Service
 
         public void Edit(Modelo modelo)
         {
+            var modeloExistente = context.Modelos.Find(modelo.Id);
+            if (modeloExistente == null)
+            {
+                throw new ServiceException("Erro: Modelo não encontrado. A operação foi cancelada.");
+            }
+
+            var modeloMesmoNome = context.Modelos
+                .FirstOrDefault(m => m.Id != modelo.Id && 
+                                   m.Nome.ToLower() == modelo.Nome.ToLower() && 
+                                   m.IdMarca == modelo.IdMarca);
+            if (modeloMesmoNome != null)
+            {
+                throw new ServiceException("Erro: Já existe outro modelo com este nome para esta marca.");
+            }
+
             context.Update(modelo);
             context.SaveChanges();
         }
@@ -32,11 +56,13 @@ namespace Service
         public void Delete(int id)
         {
             var modelo = context.Modelos.Find(id);
-            if (modelo != null)
+            if (modelo == null)
             {
-                context.Remove(modelo);
-                context.SaveChanges();
+                throw new ServiceException("Erro: Modelo não encontrado. A operação foi cancelada.");
             }
+
+            context.Remove(modelo);
+            context.SaveChanges();
         }
 
         public Modelo? Get(int id)

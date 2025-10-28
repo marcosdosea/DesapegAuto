@@ -29,7 +29,7 @@ namespace Service
 
             if (categoriaExistente != null)
             {
-                throw new Exception("Categoria já existente na base de dados.");
+                throw new ServiceException("Erro: Categoria já existente na base de dados.");
             }
 
             context.Add(categoria);
@@ -43,6 +43,19 @@ namespace Service
         /// <param name="categoria">Dados da categoria a serem atualizados</param>
         public void Edit(Categoria categoria)
         {
+            var categoriaExistente = context.Categoria.Find(categoria.Id);
+            if (categoriaExistente == null)
+            {
+                throw new ServiceException("Erro: Categoria não encontrada. A operação foi cancelada.");
+            }
+
+            var categoriaMesmoNome = context.Categoria
+                .FirstOrDefault(c => c.Id != categoria.Id && c.Nome.ToLower() == categoria.Nome.ToLower());
+            if (categoriaMesmoNome != null)
+            {
+                throw new ServiceException("Erro: Já existe outra categoria com este nome.");
+            }
+
             context.Update(categoria);
             context.SaveChanges();
         }
@@ -54,11 +67,13 @@ namespace Service
         public void Delete(int id)
         {
             var categoria = context.Categoria.Find(id);
-            if (categoria != null)
+            if (categoria == null)
             {
-                context.Remove(categoria);
-                context.SaveChanges();
+                throw new ServiceException("Erro: Categoria não encontrada. A operação foi cancelada.");
             }
+
+            context.Remove(categoria);
+            context.SaveChanges();
         }
 
         /// <summary>
