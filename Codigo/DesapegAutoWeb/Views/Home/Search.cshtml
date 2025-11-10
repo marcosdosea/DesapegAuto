@@ -1,0 +1,205 @@
+@model IEnumerable<DesapegAutoWeb.Models.AnuncioViewModel>
+@{
+    ViewData["Title"] = "Resultados da pesquisa";
+}
+
+<div class="home-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="welcome-section">
+                    <h1 class="welcome-text">Olá, João Silva</h1>
+                    <div class="user-actions">
+                        <a href="#" class="btn btn-link user-icon">
+                            <i class="fas fa-user"></i>
+                        </a>
+                        <a href="#" class="btn btn-link help-icon">
+                            <i class="fas fa-question-circle"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-4">
+    <div class="row">
+        <!-- Sidebar de Filtros -->
+        <div class="col-md-3">
+            <div class="filters-sidebar">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4>Filtros</h4>
+                    <a href="@Url.Action("Search", "Home")" class="btn btn-link text-primary">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                </div>
+
+                <form asp-controller="Home" asp-action="Search" method="get">
+                    <button type="submit" class="btn btn-outline-primary w-100 mb-4">Limpar filtros</button>
+
+                    <!-- Localização -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Localização</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+                            <input type="text" name="localizacao" class="form-control" 
+                                   placeholder="Digite sua cidade ou estado" 
+                                   value="@ViewBag.Localizacao" />
+                        </div>
+                    </div>
+
+                    <!-- Preço -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Preço</label>
+                        <p class="text-muted small">Escolha um intervalo</p>
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <input type="number" name="precoMin" class="form-control" 
+                                       placeholder="Mínimo" value="@ViewBag.PrecoMin" />
+                            </div>
+                            <div class="col-6">
+                                <input type="number" name="precoMax" class="form-control" 
+                                       placeholder="Máximo" value="@ViewBag.PrecoMax" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ano -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Ano</label>
+                        <p class="text-muted small">Escolha um intervalo</p>
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <input type="number" name="anoMin" class="form-control" 
+                                       placeholder="De" value="@ViewBag.AnoMin" />
+                            </div>
+                            <div class="col-6">
+                                <input type="number" name="anoMax" class="form-control" 
+                                       placeholder="Até" value="@ViewBag.AnoMax" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quilometragem -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Quilometragem</label>
+                        <p class="text-muted small">Escolha um intervalo</p>
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <input type="number" name="kmMin" class="form-control" 
+                                       placeholder="Mínimo" value="@ViewBag.KmMin" />
+                            </div>
+                            <div class="col-6">
+                                <input type="number" name="kmMax" class="form-control" 
+                                       placeholder="Máximo" value="@ViewBag.KmMax" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Opcionais -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Opcionais</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="opcionais" value="ar condicionado" id="opcionalAr">
+                            <label class="form-check-label" for="opcionalAr">
+                                Ar condicionado
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="opcionais" value="direção hidráulica" id="opcionalDirecao">
+                            <label class="form-check-label" for="opcionalDirecao">
+                                Direção hidráulica
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="opcionais" value="vidros elétricos" id="opcionalVidros">
+                            <label class="form-check-label" for="opcionalVidros">
+                                Vidros elétricos
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="opcionais" value="airbag" id="opcionalAirbag">
+                            <label class="form-check-label" for="opcionalAirbag">
+                                Airbag
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="opcionais" value="alarme" id="opcionalAlarme">
+                            <label class="form-check-label" for="opcionalAlarme">
+                                Alarme
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="opcionais" value="som" id="opcionalSom">
+                            <label class="form-check-label" for="opcionalSom">
+                                Som
+                            </label>
+                        </div>
+                    </div>
+
+                    <input type="hidden" name="termo" value="@ViewBag.Termo" />
+                    <button type="submit" class="btn btn-primary w-100">Aplicar filtros</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Resultados -->
+        <div class="col-md-9">
+            <div class="results-section">
+                <h2 class="mb-4">Resultados da pesquisa</h2>
+
+                @if (Model != null && Model.Any())
+                {
+                    @foreach (var anuncio in Model)
+                    {
+                        <div class="vehicle-result-card mb-4">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="vehicle-image-large placeholder-image">
+                                        <i class="fas fa-image fa-3x"></i>
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="vehicle-result-info">
+                                        <h3 class="vehicle-result-title">@(anuncio.Veiculo?.NomeMarca ?? "") @(anuncio.Veiculo?.NomeModelo ?? "")</h3>
+                                        <p class="vehicle-result-year">@anuncio.Veiculo?.Ano</p>
+                                        <p class="vehicle-result-price">@anuncio.Veiculo?.Preco.ToString("C")</p>
+                                        <div class="vehicle-result-actions mt-3">
+                                            <a asp-controller="Anuncio" asp-action="Details" asp-route-id="@anuncio.Id" 
+                                               class="btn btn-outline-primary w-100">Ver detalhes</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Nenhum resultado encontrado. Tente ajustar os filtros.
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Marcar checkboxes de opcionais se estiverem na URL
+            @if (ViewBag.Opcionais != null)
+            {
+                @foreach (var opcional in ViewBag.Opcionais)
+                {
+                    <text>
+                    $('input[name="opcionais"][value="@opcional"]').prop('checked', true);
+                    </text>
+                }
+            }
+        });
+    </script>
+}

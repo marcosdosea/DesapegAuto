@@ -787,3 +787,159 @@ body {
 .border-primary-custom {
     border-color: var(--primary-color) !important;
 }
+
+/* Estilos adicionais para resultados da pesquisa */
+.vehicle-result-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+    .vehicle-result-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    }
+
+.vehicle-image-large {
+    height: 180px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--secondary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .vehicle-image-large img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+.vehicle-result-info {
+    padding: 0 1rem;
+}
+
+.vehicle-result-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.vehicle-result-year {
+    color: var(--text-muted);
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+}
+
+.vehicle-result-price {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.vehicle-result-actions {
+    margin-top: 1rem;
+}
+
+/* Galeria de imagens para detalhes */
+.main-vehicle-image {
+    height: 400px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--secondary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+}
+
+    .main-vehicle-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+/* Detalhes do veículo */
+.vehicle-details-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.vehicle-details-subtitle {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    margin-bottom: 0.25rem;
+}
+
+.vehicle-details-dealer {
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.vehicle-section {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    border: 1px solid var(--border-color);
+}
+
+.section-content {
+    color: var(--text-muted);
+    line-height: 1.6;
+}
+
+/* Tabs de veículo */
+.vehicle-tabs {
+    margin-top: 1rem;
+}
+
+    .vehicle-tabs .nav-tabs {
+        border-bottom: none;
+    }
+
+    .vehicle-tabs .nav-link {
+        border: none;
+        color: var(--text-muted);
+        font-weight: 500;
+        padding: 1rem 2rem;
+        border-radius: 0;
+        background: transparent;
+        border-bottom: 3px solid transparent;
+        transition: all 0.3s ease;
+    }
+
+        .vehicle-tabs .nav-link.active {
+            background: transparent;
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+        .vehicle-tabs .nav-link:hover {
+            background: transparent;
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+/* Card de preço */
+.price-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0;
+}
+
+/* Resultados da pesquisa */
+.results-section {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    border: 1px solid var(--border-color);
+}
