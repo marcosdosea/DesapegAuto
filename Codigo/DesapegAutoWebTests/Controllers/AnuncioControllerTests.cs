@@ -19,6 +19,8 @@ namespace DesapegAutoWebTests.Controllers
         private static Mock<IAnuncioService> mockAnuncioService = null!;
         private static Mock<IVeiculoService> mockVeiculoService = null!;
         private static Mock<IVendaService> mockVendaService = null!;
+        private static Mock<IModeloService> mockModeloService = null!;
+        private static Mock<IMarcaService> mockMarcaService = null!;
         private static IMapper mapper = null!;
 
         [TestInitialize]
@@ -27,6 +29,8 @@ namespace DesapegAutoWebTests.Controllers
             mockAnuncioService = new Mock<IAnuncioService>();
             mockVeiculoService = new Mock<IVeiculoService>();
             mockVendaService = new Mock<IVendaService>();
+            mockModeloService = new Mock<IModeloService>();
+            mockMarcaService = new Mock<IMarcaService>();
             mapper = new MapperConfiguration(cfg =>
             {
                 cfg.AddProfile(new AnuncioProfile());
@@ -42,11 +46,16 @@ namespace DesapegAutoWebTests.Controllers
             mockVeiculoService.Setup(s => s.Get(It.IsAny<int>())).Returns(GetTargetVeiculo());
             mockVeiculoService.Setup(s => s.GetAll()).Returns(new List<Veiculo> { GetTargetVeiculo() });
             mockVendaService.Setup(s => s.GetAll()).Returns(new List<Venda>());
+            
+            mockModeloService.Setup(s => s.Get(It.IsAny<int>())).Returns(new Modelo { Id = 1, Nome = "Corolla" });
+            mockMarcaService.Setup(s => s.Get(It.IsAny<int>())).Returns(new Marca { Id = 1, Nome = "Toyota" });
 
             controller = new AnuncioController(
                 mockAnuncioService.Object,
                 mockVeiculoService.Object,
                 mockVendaService.Object,
+                mockModeloService.Object,
+                mockMarcaService.Object,
                 mapper);
         }
 
