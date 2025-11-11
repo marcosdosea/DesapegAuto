@@ -1,4 +1,5 @@
-﻿@{
+﻿@model IEnumerable<DesapegAutoWeb.Models.AnuncioViewModel>
+@{
     ViewData["Title"] = "Página Inicial";
 }
 
@@ -7,7 +8,7 @@
         <div class="row">
             <div class="col-12">
                 <div class="welcome-section">
-                    <h1 class="welcome-text">Olá, Usuário</h1>
+                    <h1 class="welcome-text">Olá, João Silva</h1>
                     <div class="user-actions">
                         <a href="#" class="btn btn-link user-icon">
                             <i class="fas fa-user"></i>
@@ -27,7 +28,7 @@
         <div class="col-12">
             <div class="search-section">
                 <div class="search-card">
-                    <form asp-controller="Pesquisa" asp-action="Index" method="get">
+                    <form asp-controller="Home" asp-action="Search" method="get">
                         <div class="search-input-group">
                             <input type="text" name="termo" class="form-control search-input"
                                    placeholder="Selecione marca ou modelo do veículo" />
@@ -48,58 +49,47 @@
     </div>
 
     <div class="row">
-        <div class="col-md-6 col-lg-4 mb-4">
-            <div class="vehicle-card">
-                <div class="vehicle-image">
-                    <img src="~/images/toyota-corolla.jpg" alt="Toyota Corolla" class="img-fluid" />
+        @if (Model != null && Model.Any())
+        {
+            @foreach (var anuncio in Model)
+            {
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="vehicle-card">
+                        <div class="vehicle-image placeholder-image">
+                            <i class="fas fa-image"></i>
+                        </div>
+                        <div class="vehicle-info">
+                            <h3 class="vehicle-title">@(anuncio.Veiculo?.NomeMarca ?? "") @(anuncio.Veiculo?.NomeModelo ?? "")</h3>
+                            <p class="vehicle-year">@anuncio.Veiculo?.Ano</p>
+                            <p class="vehicle-price">@anuncio.Veiculo?.Preco.ToString("C")</p>
+                            <div class="vehicle-actions">
+                                <a asp-controller="Anuncio" asp-action="Details" asp-route-id="@anuncio.Id" class="btn btn-outline-primary vehicle-details-btn">Ver detalhes</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="vehicle-info">
-                    <h3 class="vehicle-title">Toyota Corolla</h3>
-                    <p class="vehicle-year">2020</p>
-                    <p class="vehicle-price">R$ 95.000</p>
-                    <div class="vehicle-actions">
-                        <a href="#" class="btn btn-outline-primary vehicle-details-btn">Ver detalhes</a>
+            }
+        }
+        else
+        {
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="vehicle-card">
+                    <div class="vehicle-image placeholder-image">
+                        <i class="fas fa-image"></i>
+                    </div>
+                    <div class="vehicle-info">
+                        <h3 class="vehicle-title">Nenhum anúncio disponível</h3>
+                        <p class="vehicle-year">-</p>
+                        <p class="vehicle-price">R$ 0,00</p>
                     </div>
                 </div>
             </div>
-        </div>
-
-        <div class="col-md-6 col-lg-4 mb-4">
-            <div class="vehicle-card">
-                <div class="vehicle-image placeholder-image">
-                    <i class="fas fa-image"></i>
-                </div>
-                <div class="vehicle-info">
-                    <h3 class="vehicle-title">Honda Civic</h3>
-                    <p class="vehicle-year">2019</p>
-                    <p class="vehicle-price">R$ 85.000</p>
-                    <div class="vehicle-actions">
-                        <a href="#" class="btn btn-outline-primary vehicle-details-btn">Ver detalhes</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6 col-lg-4 mb-4">
-            <div class="vehicle-card">
-                <div class="vehicle-image placeholder-image">
-                    <i class="fas fa-image"></i>
-                </div>
-                <div class="vehicle-info">
-                    <h3 class="vehicle-title">Volkswagen Jetta</h3>
-                    <p class="vehicle-year">2021</p>
-                    <p class="vehicle-price">R$ 105.000</p>
-                    <div class="vehicle-actions">
-                        <a href="#" class="btn btn-outline-primary vehicle-details-btn">Ver detalhes</a>
-                    </div>
-                </div>
-            </div>
-        </div>
+        }
     </div>
 
     <div class="row mt-4">
         <div class="col-12 text-center">
-            <a asp-controller="Pesquisa" asp-action="Index" class="btn btn-primary">Ver todos os anúncios</a>
+            <a asp-controller="Home" asp-action="Search" class="btn btn-primary">Ver todos os anúncios</a>
         </div>
     </div>
 </div>
