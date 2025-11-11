@@ -12,17 +12,23 @@ namespace DesapegAutoWeb.Controllers
         private readonly IAnuncioService anuncioService;
         private readonly IVeiculoService veiculoService;
         private readonly IVendaService vendaService;
+        private readonly IModeloService modeloService;
+        private readonly IMarcaService marcaService;
         private readonly IMapper mapper;
 
         public AnuncioController(
             IAnuncioService anuncioService,
             IVeiculoService veiculoService,
             IVendaService vendaService,
+            IModeloService modeloService,
+            IMarcaService marcaService,
             IMapper mapper)
         {
             this.anuncioService = anuncioService;
             this.veiculoService = veiculoService;
             this.vendaService = vendaService;
+            this.modeloService = modeloService;
+            this.marcaService = marcaService;
             this.mapper = mapper;
         }
 
@@ -35,7 +41,18 @@ namespace DesapegAutoWeb.Controllers
             {
                 var veiculo = veiculoService.Get(anuncio.IdVeiculo);
                 if (veiculo != null)
-                    anuncio.Veiculo = mapper.Map<VeiculoViewModel>(veiculo);
+                {
+                    var veiculoViewModel = mapper.Map<VeiculoViewModel>(veiculo);
+                    
+                    // Buscar marca e modelo
+                    var marca = marcaService.Get(veiculo.IdMarca);
+                    var modelo = modeloService.Get(veiculo.IdModelo);
+                    
+                    if (marca != null) veiculoViewModel.NomeMarca = marca.Nome;
+                    if (modelo != null) veiculoViewModel.NomeModelo = modelo.Nome;
+                    
+                    anuncio.Veiculo = veiculoViewModel;
+                }
             }
             return View(model);
         }
@@ -44,7 +61,29 @@ namespace DesapegAutoWeb.Controllers
         {
             var anuncio = anuncioService.Get(id);
             if (anuncio == null) return NotFound();
+            
             var model = mapper.Map<AnuncioViewModel>(anuncio);
+            
+            // Carregar dados do veículo
+            var veiculo = veiculoService.Get(anuncio.IdVeiculo);
+            if (veiculo != null)
+            {
+                var veiculoViewModel = mapper.Map<VeiculoViewModel>(veiculo);
+                
+                // Buscar marca e modelo
+                var marca = marcaService.Get(veiculo.IdMarca);
+                var modelo = modeloService.Get(veiculo.IdModelo);
+                
+                if (marca != null) veiculoViewModel.NomeMarca = marca.Nome;
+                if (modelo != null) veiculoViewModel.NomeModelo = modelo.Nome;
+                
+                model.Veiculo = veiculoViewModel;
+            }
+            
+            // Incrementar visualizações
+            anuncio.Visualizacoes++;
+            anuncioService.Edit(anuncio);
+            
             return View(model);
         }
 
