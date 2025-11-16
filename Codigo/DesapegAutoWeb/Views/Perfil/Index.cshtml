@@ -1,0 +1,116 @@
+@using DesapegAutoWeb.Controllers
+@model PerfilViewModel
+@{
+    ViewData["Title"] = "Meu Perfil";
+}
+
+<div class="container mt-4">
+    <h1>@ViewData["Title"]</h1>
+    <hr />
+
+    <div class="alert alert-info" role="alert">
+        <i class="bi bi-info-circle"></i> Esta página está protegida por autenticação. Apenas usuários logados podem acessá-la.
+    </div>
+
+  <div class="row">
+        <div class="col-md-6">
+        <div class="card">
+             <div class="card-header bg-primary text-white">
+  <h5 class="mb-0">Informações do Usuário</h5>
+       </div>
+       <div class="card-body">
+   <dl class="row">
+            <dt class="col-sm-4">Nome de Usuário:</dt>
+   <dd class="col-sm-8">@Model.UserName</dd>
+
+       <dt class="col-sm-4">Email:</dt>
+     <dd class="col-sm-8">
+   @Model.Email
+            @if (Model.EmailConfirmed)
+          {
+      <span class="badge bg-success">Confirmado</span>
+      }
+   else
+      {
+           <span class="badge bg-warning">Não Confirmado</span>
+   }
+      </dd>
+
+    <dt class="col-sm-4">Telefone:</dt>
+       <dd class="col-sm-8">
+    @if (!string.IsNullOrEmpty(Model.PhoneNumber))
+                {
+       @Model.PhoneNumber
+      if (Model.PhoneNumberConfirmed)
+          {
+     <span class="badge bg-success">Confirmado</span>
+      }
+  }
+ else
+          {
+              <em class="text-muted">Não informado</em>
+          }
+       </dd>
+
+       <dt class="col-sm-4">Autenticação de Dois Fatores:</dt>
+         <dd class="col-sm-8">
+             @if (Model.TwoFactorEnabled)
+   {
+   <span class="badge bg-success">Ativada</span>
+   }
+           else
+                  {
+          <span class="badge bg-secondary">Desativada</span>
+  }
+ </dd>
+         </dl>
+                </div>
+            </div>
+
+     <div class="mt-3">
+           <a asp-area="Identity" asp-page="/Account/Manage/Index" class="btn btn-primary">
+      <i class="bi bi-pencil"></i> Gerenciar Conta
+     </a>
+         <a asp-area="Identity" asp-page="/Account/Manage/ChangePassword" class="btn btn-secondary">
+  <i class="bi bi-key"></i> Alterar Senha
+                </a>
+     </div>
+        </div>
+
+        <div class="col-md-6">
+   <div class="card">
+      <div class="card-header bg-info text-white">
+   <h5 class="mb-0">Informações de Segurança</h5>
+     </div>
+                <div class="card-body">
+       <h6>Dicas de Segurança:</h6>
+      <ul>
+              <li>Use uma senha forte e única</li>
+    <li>Nunca compartilhe sua senha</li>
+    <li>Habilite a autenticação de dois fatores para maior segurança</li>
+          <li>Mantenha seu email atualizado e confirmado</li>
+         </ul>
+
+ <div class="mt-3">
+         <a asp-area="Identity" asp-page="/Account/Manage/TwoFactorAuthentication" class="btn btn-outline-info">
+    Configurar 2FA
+        </a>
+ </div>
+       </div>
+     </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-primary">
+   <i class="bi bi-arrow-left"></i> Voltar para Home
+  </a>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+    // Adicione scripts personalizados aqui, se necessário
+        console.log('Perfil do usuário carregado:', '@Model.UserName');
+    </script>
+}

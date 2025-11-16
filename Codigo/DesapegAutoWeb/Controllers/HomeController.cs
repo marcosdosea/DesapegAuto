@@ -3,6 +3,7 @@ using DesapegAutoWeb.Models;
 using Microsoft.AspNetCore.Mvc;
 using Core.Service;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DesapegAutoWeb.Controllers
 {
@@ -33,6 +34,12 @@ namespace DesapegAutoWeb.Controllers
 
         public IActionResult Index()
         {
+            // Se o usuário não estiver autenticado, redireciona para registro
+            if (!User.Identity?.IsAuthenticated ?? true)
+            {
+                return RedirectToPage("/Account/Register", new { area = "Identity" });
+            }
+
             // Carregar alguns anúncios para exibir na página inicial
             var anuncios = _anuncioService.GetAll().Take(3);
             var model = _mapper.Map<IEnumerable<AnuncioViewModel>>(anuncios).ToList();

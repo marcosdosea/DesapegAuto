@@ -11,7 +11,7 @@ namespace DesapegAutoWeb.Controllers
     public class VersaoController : Controller
     {
         private readonly IVersaoService versaoService;
-        private readonly IModeloService modeloService; // Essencial para o dropdown
+        private readonly IModeloService modeloService;
         private readonly IMapper mapper;
 
         public VersaoController(IVersaoService versaoService, IModeloService modeloService, IMapper mapper)
@@ -65,6 +65,10 @@ namespace DesapegAutoWeb.Controllers
         public ActionResult Edit(int id)
         {
             var versao = versaoService.Get(id);
+            if (versao == null)
+            {
+                return NotFound();
+            }
             var versaoViewModel = mapper.Map<VersaoViewModel>(versao);
 
             // Carrega os modelos para o dropdown, já selecionando o modelo atual da versão
@@ -111,8 +115,12 @@ namespace DesapegAutoWeb.Controllers
                 // Mostra o erro na tela caso o service lance uma exceção
                 ModelState.AddModelError(string.Empty, ex.Message);
                 var versao = versaoService.Get(id);
-                var vvm = mapper.Map<VersaoViewModel>(versao);
-                return View(vvm);
+                if (versao != null)
+                {
+                    var vvm = mapper.Map<VersaoViewModel>(versao);
+                    return View(vvm);
+                }
+                return RedirectToAction(nameof(Index));
             }
         }
     }

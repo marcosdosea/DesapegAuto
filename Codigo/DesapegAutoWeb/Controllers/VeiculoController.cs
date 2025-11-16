@@ -3,6 +3,7 @@ using Core;
 using Core.Service;
 using DesapegAutoWeb.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DesapegAutoWeb.Controllers
 {
@@ -34,6 +35,7 @@ namespace DesapegAutoWeb.Controllers
         }
 
         // GET: Veiculo/Create
+        [Authorize(Roles = "Admin,Funcionario")]
         public ActionResult Create()
         {
             return View();
@@ -42,6 +44,7 @@ namespace DesapegAutoWeb.Controllers
         // POST: Veiculo/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Funcionario")]
         public ActionResult Create(VeiculoViewModel veiculoViewModel)
         {
             if (ModelState.IsValid)
@@ -54,6 +57,7 @@ namespace DesapegAutoWeb.Controllers
         }
 
         // GET: Veiculo/Edit/5
+        [Authorize(Roles = "Admin,Funcionario")]
         public ActionResult Edit(int id)
         {
             var veiculo = veiculoService.Get(id);
@@ -64,6 +68,7 @@ namespace DesapegAutoWeb.Controllers
         // POST: Veiculo/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Funcionario")]
         public ActionResult Edit(int id, VeiculoViewModel veiculoViewModel)
         {
             if (ModelState.IsValid)
@@ -76,6 +81,7 @@ namespace DesapegAutoWeb.Controllers
         }
 
         // GET: Veiculo/Delete/5
+        [Authorize(Roles = "Admin")]
         public ActionResult Delete(int id)
         {
             var veiculo = veiculoService.Get(id);
@@ -86,6 +92,7 @@ namespace DesapegAutoWeb.Controllers
         // POST: Veiculo/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public ActionResult Delete(int id, VeiculoViewModel veiculoViewModel)
         {
             veiculoService.Delete(id);

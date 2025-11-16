@@ -3,6 +3,8 @@ using Core;
 using AutoMapper;
 using Core.Service;
 using DesapegAutoWeb.Models;
+using Microsoft.AspNetCore.Authorization;
+
 namespace DesapegAutoWeb.Controllers
 {
     public class MarcaController : Controller
@@ -36,6 +38,7 @@ namespace DesapegAutoWeb.Controllers
         }
 
         // GET: Marca/Create
+        [Authorize(Roles = "Admin,Funcionario")]
         public ActionResult Create()
         {
             return View();
@@ -45,6 +48,7 @@ namespace DesapegAutoWeb.Controllers
         // POST: Marca/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Funcionario")]
         public ActionResult Create(MarcaViewModel marcaViewModel)
         {
             if (ModelState.IsValid)
@@ -57,6 +61,7 @@ namespace DesapegAutoWeb.Controllers
         }
 
         // GET: Marca/Edit/5
+        [Authorize(Roles = "Admin,Funcionario")]
         public ActionResult Edit(int id)
         {
             var marca = marcaService.Get(id);
@@ -67,6 +72,7 @@ namespace DesapegAutoWeb.Controllers
         // POST: Marca/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Funcionario")]
         public ActionResult Edit(MarcaViewModel marcaViewModel)
         {
             if (ModelState.IsValid)
@@ -79,6 +85,7 @@ namespace DesapegAutoWeb.Controllers
         }
 
         // GET: Marca/Delete/5
+        [Authorize(Roles = "Admin")]
         public ActionResult Delete(int id)
         {
             var marca = marcaService.Get(id);
@@ -89,12 +96,11 @@ namespace DesapegAutoWeb.Controllers
         // POST: Marca/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public ActionResult DeleteConfirmed(int id)
         {
             marcaService.Delete(id);
             return RedirectToAction(nameof(Index));
         }
-
-
     }
 }

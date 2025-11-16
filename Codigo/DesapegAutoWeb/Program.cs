@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using Core;
 using Core.Service;
 using Service;
+using Microsoft.AspNetCore.Identity;
+using DesapegAutoWeb.Areas.Identity.Data;
 
 namespace DesapegAutoWeb
 {
@@ -13,10 +15,34 @@ namespace DesapegAutoWeb
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddRazorPages();
 
             // Register DbContext (in-memory for simple setup)
             builder.Services.AddDbContext<DesapegAutoContext>(options =>
                 options.UseInMemoryDatabase("DesapegAuto"));
+
+            var connectionString = builder.Configuration.GetConnectionString("DesapegAutoConnection");
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                throw new InvalidOperationException("Connection string 'DesapegAutoConnection' not found.");
+            }
+
+            // Configure Identity DbContext with MySQL
+            builder.Services.AddDbContext<ApplicationIdentityDbContext>(options =>
+                options.UseMySQL(connectionString));
+
+            // Configure Identity with Roles
+            builder.Services.AddDefaultIdentity<ApplicationUser>(options => {
+                    options.SignIn.RequireConfirmedAccount = false;
+                    // Configurações opcionais de senha
+                    options.Password.RequireDigit = true;
+                    options.Password.RequiredLength = 6;
+                    options.Password.RequireNonAlphanumeric = false;
+                    options.Password.RequireUppercase = false;
+                    options.Password.RequireLowercase = false;
+                })
+                .AddRoles<IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationIdentityDbContext>();
 
             // Register application services
             builder.Services.AddScoped<IVeiculoService, VeiculoService>();
@@ -34,6 +60,13 @@ namespace DesapegAutoWeb
 
             var app = builder.Build();
 
+            // Seed roles
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                SeedRoles(services).Wait();
+            }
+
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
@@ -47,13 +80,31 @@ namespace DesapegAutoWeb
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
+            app.MapRazorPages();
 
             app.Run();
+        }
+
+        private static async Task SeedRoles(IServiceProvider serviceProvider)
+        {
+            var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            
+            string[] roleNames = { "Admin", "Funcionario", "Cliente" };
+                
+            foreach (var roleName in roleNames)
+            {
+                var roleExist = await roleManager.RoleExistsAsync(roleName);
+                if (!roleExist)
+                {
+                    await roleManager.CreateAsync(new IdentityRole(roleName));
+                }
+            }
         }
     }
 }
