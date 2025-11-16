@@ -4,6 +4,7 @@ using Core.Service;
 using DesapegAutoWeb.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DesapegAutoWeb.Controllers
 {
@@ -88,6 +89,7 @@ namespace DesapegAutoWeb.Controllers
         }
 
         // GET: Anuncio/Create
+        [Authorize(Roles = "Admin,Funcionario")]
         public ActionResult Create()
         {
             var model = new AnuncioViewModel();
@@ -98,6 +100,7 @@ namespace DesapegAutoWeb.Controllers
         // POST: Anuncio/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Funcionario")]
         public ActionResult Create(AnuncioViewModel anuncioViewModel)
         {
             if (ModelState.IsValid)
@@ -112,6 +115,7 @@ namespace DesapegAutoWeb.Controllers
         }
 
         // GET: Anuncio/Delete/5
+        [Authorize(Roles = "Admin")]
         public ActionResult Delete(int id)
         {
             var anuncio = anuncioService.Get(id);
@@ -122,6 +126,7 @@ namespace DesapegAutoWeb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public ActionResult Delete(int id, AnuncioViewModel anuncioViewModel)
         {
             anuncioService.Delete(id);

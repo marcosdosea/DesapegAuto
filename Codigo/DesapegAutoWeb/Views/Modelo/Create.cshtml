@@ -4,7 +4,7 @@
     ViewData["Title"] = "Criar Modelo";
 }
 
-@Html.Partial("AdminHeader")
+<partial name="AdminHeader" />
 
 <div class="admin-card mt-4">
     <h2>Criar Modelo</h2>
@@ -37,5 +37,5 @@
 </div>
 
 @section Scripts {
-    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    <partial name="_ValidationScriptsPartial" />
 }

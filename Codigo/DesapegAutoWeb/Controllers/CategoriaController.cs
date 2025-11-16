@@ -3,6 +3,7 @@ using Core;
 using AutoMapper;
 using Core.Service;
 using DesapegAutoWeb.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DesapegAutoWeb.Controllers
 {
@@ -34,6 +35,7 @@ namespace DesapegAutoWeb.Controllers
         }
 
         // GET: Categoria/Create
+        [Authorize(Roles = "Admin,Funcionario")]
         public ActionResult Create()
         {
             return View();
@@ -42,6 +44,7 @@ namespace DesapegAutoWeb.Controllers
         // POST: Categoria/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Funcionario")]
         public ActionResult Create(CategoriaViewModel categoriaViewModel)
         {
             if (ModelState.IsValid)
@@ -54,6 +57,7 @@ namespace DesapegAutoWeb.Controllers
         }
 
         // GET: Categoria/Edit/5
+        [Authorize(Roles = "Admin,Funcionario")]
         public ActionResult Edit(int id)
         {
             var categoria = categoriaService.Get(id);
@@ -64,6 +68,7 @@ namespace DesapegAutoWeb.Controllers
         // POST: Categoria/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Funcionario")]
         public ActionResult Edit(CategoriaViewModel categoriaViewModel)
         {
             if (ModelState.IsValid)
@@ -76,6 +81,7 @@ namespace DesapegAutoWeb.Controllers
         }
 
         // GET: Categoria/Delete/5
+        [Authorize(Roles = "Admin")]
         public ActionResult Delete(int id)
         {
             var categoria = categoriaService.Get(id);
@@ -86,6 +92,7 @@ namespace DesapegAutoWeb.Controllers
         // POST: Categoria/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public ActionResult DeleteConfirmed(int id)
         {
             categoriaService.Delete(id);

@@ -5,6 +5,7 @@ using DesapegAutoWeb.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DesapegAutoWeb.Controllers
 {
@@ -42,6 +43,7 @@ namespace DesapegAutoWeb.Controllers
         }
 
         // GET: Modelo/Create
+        [Authorize(Roles = "Admin,Funcionario")]
         public ActionResult Create()
         {
             var vm = new ModeloViewModel();
@@ -52,6 +54,7 @@ namespace DesapegAutoWeb.Controllers
         // POST: Modelo/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Funcionario")]
         public ActionResult Create(ModeloViewModel modeloViewModel)
         {
             if (ModelState.IsValid)
@@ -64,6 +67,7 @@ namespace DesapegAutoWeb.Controllers
         }
 
         // GET: Modelo/Edit/5
+        [Authorize(Roles = "Admin,Funcionario")]
         public ActionResult Edit(int id)
         {
             var modelo = modeloService.Get(id);
@@ -78,6 +82,7 @@ namespace DesapegAutoWeb.Controllers
         // POST: Modelo/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Funcionario")]
         public ActionResult Edit(int id, ModeloViewModel modeloViewModel)
         {
             if (id != modeloViewModel.Id)
@@ -95,6 +100,7 @@ namespace DesapegAutoWeb.Controllers
         }
 
         // GET: Modelo/Delete/5
+        [Authorize(Roles = "Admin")]
         public ActionResult Delete(int id)
         {
             var modelo = modeloService.Get(id);
@@ -109,6 +115,7 @@ namespace DesapegAutoWeb.Controllers
         // POST: Modelo/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public ActionResult DeleteConfirmed(int id)
         {
             modeloService.Delete(id);
