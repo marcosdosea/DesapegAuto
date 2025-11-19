@@ -52,10 +52,10 @@ namespace Service.Tests
             vendaService = new VendaService(context);
         }
 
+
         [TestMethod()]
         public void CreateTest()
         {
-            // Act
             vendaService.Create(new Venda()
             {
                 Id = 3,
@@ -66,7 +66,6 @@ namespace Service.Tests
                 IdPessoa = 2
             });
 
-            // Assert
             Assert.AreEqual(3, vendaService.GetAll().Count());
             var venda = vendaService.Get(3);
             Assert.IsNotNull(venda);
@@ -77,10 +76,7 @@ namespace Service.Tests
         [TestMethod()]
         public void DeleteTest()
         {
-            // Act
             vendaService.Delete(2);
-
-            // Assert
             Assert.AreEqual(1, vendaService.GetAll().Count());
             var venda = vendaService.Get(2);
             Assert.IsNull(venda);
@@ -89,7 +85,6 @@ namespace Service.Tests
         [TestMethod()]
         public void Delete_WhenIdDoesNotExist_ShouldThrowException()
         {
-            // Act & Assert
             var exception = Assert.ThrowsException<ServiceException>(() => vendaService.Delete(99));
             Assert.IsTrue(exception.Message.Contains("Venda não encontrada"));
         }
@@ -97,14 +92,12 @@ namespace Service.Tests
         [TestMethod()]
         public void EditTest()
         {
-            //Act 
             var venda = vendaService.Get(1);
             Assert.IsNotNull(venda);
             venda.ValorFinal = 52500.00m;
             venda.FormaPagamento = "Cartão de Crédito";
             vendaService.Edit(venda);
 
-            //Assert
             var vendaEditada = vendaService.Get(1);
             Assert.IsNotNull(vendaEditada);
             Assert.AreEqual(52500.00m, vendaEditada.ValorFinal);
@@ -114,10 +107,7 @@ namespace Service.Tests
         [TestMethod()]
         public void GetTest()
         {
-            // Act
             var venda = vendaService.Get(1);
-
-            // Assert
             Assert.IsNotNull(venda);
             Assert.AreEqual(50000.00m, venda.ValorFinal);
         }
@@ -125,10 +115,7 @@ namespace Service.Tests
         [TestMethod()]
         public void GetAllTest()
         {
-            // Act
             var listaVendas = vendaService.GetAll();
-
-            // Assert
             Assert.IsInstanceOfType(listaVendas, typeof(IEnumerable<Venda>));
             Assert.IsNotNull(listaVendas);
             Assert.AreEqual(2, listaVendas.Count());
@@ -137,15 +124,52 @@ namespace Service.Tests
         [TestMethod()]
         public void GetAllDTOTest()
         {
-            // Act
             var listaVendasDTO = vendaService.GetAllDTO();
             var primeiraVenda = listaVendasDTO.First();
-
-            // Assert
             Assert.IsNotNull(listaVendasDTO);
             Assert.AreEqual(2, listaVendasDTO.Count());
             Assert.AreEqual("AutoFácil", primeiraVenda.NomeConcessionaria);
             Assert.AreEqual("João Silva", primeiraVenda.NomePessoa);
+        }
+
+
+        [TestMethod()]
+        public void Get_QuandoIdNaoExiste_RetornaNull()
+        {
+
+            var venda = vendaService.Get(999);
+
+           
+            Assert.IsNull(venda);
+        }
+
+        [TestMethod()]
+        public void GetAllDTO_VerificaIntegridadeDosDadosRelacionados()
+        {
+          
+            var listaVendasDTO = vendaService.GetAllDTO().ToList();
+            var vendaJoao = listaVendasDTO.FirstOrDefault(v => v.NomePessoa == "João Silva");
+
+            
+            Assert.IsNotNull(vendaJoao, "A venda de João Silva deveria existir.");
+            Assert.AreEqual("AutoFácil", vendaJoao.NomeConcessionaria, "O nome da concessionária deve corresponder ao ID 1.");
+            Assert.AreEqual(50000.00m, vendaJoao.ValorFinal);
+        }
+
+        [TestMethod()]
+        public void GetAll_QuandoBancoVazio_RetornaListaVazia()
+        {
+            context.Database.EnsureDeleted();
+            context.Database.EnsureCreated();
+           
+            vendaService = new VendaService(context);
+
+
+            var lista = vendaService.GetAll();
+
+            
+            Assert.IsNotNull(lista);
+            Assert.AreEqual(0, lista.Count());
         }
     }
 }
