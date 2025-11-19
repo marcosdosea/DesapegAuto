@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Core;
 using Core.DTO;
+using Core.Exceptions;
 using Core.Service;
 using DesapegAutoWeb.Controllers;
 using DesapegAutoWeb.Mappers;
@@ -10,6 +11,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DesapegAutoWebTests.Controllers
 {
@@ -23,7 +25,7 @@ namespace DesapegAutoWebTests.Controllers
         {
             var mockVendaService = new Mock<IVendaService>();
             var mockConcessionariaService = new Mock<IConcessionariaService>();
-            var mockPessoaService = new Mock<IPessoaService>(); // Usando Pessoa em vez de Usuario
+            var mockPessoaService = new Mock<IPessoaService>();
 
             IMapper mapper = new MapperConfiguration(cfg =>
                 cfg.AddProfile(new VendaProfile())).CreateMapper();
@@ -39,7 +41,10 @@ namespace DesapegAutoWebTests.Controllers
             mockVendaService.Setup(service => service.Delete(It.IsAny<int>()))
                 .Verifiable();
 
-            // Mock dos serviços de dependência para os dropdowns
+            // Configuração para simular erro no Delete (para o novo teste)
+            mockVendaService.Setup(service => service.Delete(99))
+                .Throws(new ServiceException("Erro ao deletar venda"));
+
             mockConcessionariaService.Setup(service => service.GetAll()).Returns(new List<Concessionaria>());
             mockPessoaService.Setup(service => service.GetAll()).Returns(new List<Pessoa>());
 
@@ -53,10 +58,7 @@ namespace DesapegAutoWebTests.Controllers
         [TestMethod()]
         public void IndexTest_Valido()
         {
-            // Act
             var result = controller.Index();
-
-            // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             ViewResult viewResult = (ViewResult)result;
             Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(IEnumerable<VendaDTO>));
@@ -67,10 +69,7 @@ namespace DesapegAutoWebTests.Controllers
         [TestMethod()]
         public void DetailsTest_Valido()
         {
-            // Act
             var result = controller.Details(1);
-
-            // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             ViewResult viewResult = (ViewResult)result;
             Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(VendaViewModel));
@@ -81,10 +80,7 @@ namespace DesapegAutoWebTests.Controllers
         [TestMethod()]
         public void CreateTest_Post_Valido()
         {
-            // Act
             var result = controller.Create(GetNewVendaViewModel());
-
-            // Assert
             Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
             RedirectToActionResult redirectToActionResult = (RedirectToActionResult)result;
             Assert.AreEqual("Index", redirectToActionResult.ActionName);
@@ -93,10 +89,7 @@ namespace DesapegAutoWebTests.Controllers
         [TestMethod()]
         public void EditTest_Post_Valido()
         {
-            // Act
             var result = controller.Edit(1, GetTargetVendaViewModel());
-
-            // Assert
             Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
             RedirectToActionResult redirectToActionResult = (RedirectToActionResult)result;
             Assert.AreEqual("Index", redirectToActionResult.ActionName);
@@ -105,13 +98,55 @@ namespace DesapegAutoWebTests.Controllers
         [TestMethod()]
         public void DeleteTest_Post_Valido()
         {
-            // Act
             var result = controller.Delete(1, GetTargetVendaViewModel());
-
-            // Assert
             Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
             RedirectToActionResult redirectToActionResult = (RedirectToActionResult)result;
             Assert.AreEqual("Index", redirectToActionResult.ActionName);
+        }
+
+
+        [TestMethod()]
+        public void Create_Post_ModelStateInvalida_RetornaViewComModel()
+        {
+  
+            controller.ModelState.AddModelError("ValorFinal", "O valor é obrigatório");
+            var novoVendaVM = GetNewVendaViewModel();
+
+           
+            var result = controller.Create(novoVendaVM);
+
+            
+            Assert.IsInstanceOfType(result, typeof(ViewResult));
+            var viewResult = (ViewResult)result;
+            Assert.AreEqual(novoVendaVM, viewResult.Model);
+        }
+
+        [TestMethod()]
+        public void Delete_Post_QuandoServicoLancaExcecao_RetornaViewComErro()
+        {
+
+            var vendaVM = GetTargetVendaViewModel();
+
+  
+            var result = controller.Delete(99, vendaVM);
+
+
+            Assert.IsInstanceOfType(result, typeof(ViewResult));
+            Assert.IsFalse(controller.ModelState.IsValid);
+            Assert.IsTrue(controller.ModelState.ContainsKey(string.Empty));
+        }
+
+        [TestMethod()]
+        public void Create_Get_PopulaViewBagsCorretamente()
+        {
+            
+            var result = controller.Create();
+
+            
+            Assert.IsInstanceOfType(result, typeof(ViewResult));
+            var viewResult = (ViewResult)result;
+            Assert.IsNotNull(viewResult.ViewData["IdConcessionaria"]);
+            Assert.IsNotNull(viewResult.ViewData["IdPessoa"]);
         }
 
 
@@ -124,7 +159,7 @@ namespace DesapegAutoWebTests.Controllers
                 ValorFinal = 90000.00m,
                 FormaPagamento = "Consórcio",
                 IdConcessionaria = 1,
-                IdPessoa = 2 
+                IdPessoa = 2
             };
         }
 
