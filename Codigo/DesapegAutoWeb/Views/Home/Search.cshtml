@@ -1,205 +1,174 @@
 @model IEnumerable<DesapegAutoWeb.Models.AnuncioViewModel>
 @{
-    ViewData["Title"] = "Resultados da pesquisa";
+    ViewData["Title"] = "Busca de Ve√≠culos";
 }
 
-<div class="home-header">
+<!-- Hero Section for Search -->
+<div class="hero mb-5" style="padding: 60px 0 40px;">
     <div class="container">
-        <div class="row">
-            <div class="col-12">
-                <div class="welcome-section">
-                    <h1 class="welcome-text">Ol·, Jo„o Silva</h1>
-                    <div class="user-actions">
-                        <a href="#" class="btn btn-link user-icon">
-                            <i class="fas fa-user"></i>
-                        </a>
-                        <a href="#" class="btn btn-link help-icon">
-                            <i class="fas fa-question-circle"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
+        <div class="hero-content text-center">
+            <h1 class="display-1" style="font-size: 3rem; margin-bottom: 16px;">Encontre seu pr√≥ximo carro</h1>
+            <p class="text-secondary" style="font-size: 1.1rem;">Explore nossa sele√ß√£o variada de ve√≠culos verificados.</p>
         </div>
     </div>
 </div>
 
-<div class="container mt-4">
-    <div class="row">
+<div class="container mb-5">
+    <div class="search-grid">
         <!-- Sidebar de Filtros -->
-        <div class="col-md-3">
-            <div class="filters-sidebar">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4>Filtros</h4>
-                    <a href="@Url.Action("Search", "Home")" class="btn btn-link text-primary">
-                        <i class="fas fa-arrow-left"></i>
-                    </a>
+        <div>
+            <div class="glass-card" style="padding: 24px;">
+                <div class="mb-4">
+                    <h3 class="h5" style="margin:0;">Filtros</h3>
                 </div>
 
                 <form asp-controller="Home" asp-action="Search" method="get">
-                    <button type="submit" class="btn btn-outline-primary w-100 mb-4">Limpar filtros</button>
 
-                    <!-- LocalizaÁ„o -->
+                    <!-- Termo -->
                     <div class="mb-4">
-                        <label class="form-label fw-bold">LocalizaÁ„o</label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="fas fa-search"></i></span>
-                            <input type="text" name="localizacao" class="form-control" 
-                                   placeholder="Digite sua cidade ou estado" 
-                                   value="@ViewBag.Localizacao" />
+                        <label class="form-label">Busca</label>
+                        <div class="search-bar-container w-100">
+                            <i class="fas fa-search text-muted" style="padding-left: 12px; align-self: center;"></i>
+                            <input type="text" name="termo" class="search-input" placeholder="Ex: BMW X5"
+                                value="@ViewBag.Termo" />
                         </div>
                     </div>
 
-                    <!-- PreÁo -->
+                    <!-- Localiza√ß√£o -->
                     <div class="mb-4">
-                        <label class="form-label fw-bold">PreÁo</label>
-                        <p class="text-muted small">Escolha um intervalo</p>
-                        <div class="row g-2">
-                            <div class="col-6">
-                                <input type="number" name="precoMin" class="form-control" 
-                                       placeholder="MÌnimo" value="@ViewBag.PrecoMin" />
-                            </div>
-                            <div class="col-6">
-                                <input type="number" name="precoMax" class="form-control" 
-                                       placeholder="M·ximo" value="@ViewBag.PrecoMax" />
-                            </div>
+                        <label class="form-label">Localiza√ß√£o</label>
+                        <input type="text" name="localizacao" class="form-control" placeholder="Cidade ou Estado"
+                            value="@ViewBag.Localizacao" />
+                    </div>
+
+                    <!-- Pre√ßo -->
+                    <div class="mb-4">
+                        <label class="form-label">Pre√ßo</label>
+                        <div class="d-flex gap-2">
+                            <input type="number" name="precoMin" class="form-control" placeholder="M√≠n"
+                                value="@ViewBag.PrecoMin" />
+                            <input type="number" name="precoMax" class="form-control" placeholder="M√°x"
+                                value="@ViewBag.PrecoMax" />
                         </div>
                     </div>
 
                     <!-- Ano -->
                     <div class="mb-4">
-                        <label class="form-label fw-bold">Ano</label>
-                        <p class="text-muted small">Escolha um intervalo</p>
-                        <div class="row g-2">
-                            <div class="col-6">
-                                <input type="number" name="anoMin" class="form-control" 
-                                       placeholder="De" value="@ViewBag.AnoMin" />
-                            </div>
-                            <div class="col-6">
-                                <input type="number" name="anoMax" class="form-control" 
-                                       placeholder="AtÈ" value="@ViewBag.AnoMax" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Quilometragem -->
-                    <div class="mb-4">
-                        <label class="form-label fw-bold">Quilometragem</label>
-                        <p class="text-muted small">Escolha um intervalo</p>
-                        <div class="row g-2">
-                            <div class="col-6">
-                                <input type="number" name="kmMin" class="form-control" 
-                                       placeholder="MÌnimo" value="@ViewBag.KmMin" />
-                            </div>
-                            <div class="col-6">
-                                <input type="number" name="kmMax" class="form-control" 
-                                       placeholder="M·ximo" value="@ViewBag.KmMax" />
-                            </div>
+                        <label class="form-label">Ano</label>
+                        <div class="d-flex gap-2">
+                            <input type="number" name="anoMin" class="form-control" placeholder="De"
+                                value="@ViewBag.AnoMin" />
+                            <input type="number" name="anoMax" class="form-control" placeholder="At√©"
+                                value="@ViewBag.AnoMax" />
                         </div>
                     </div>
 
                     <!-- Opcionais -->
                     <div class="mb-4">
-                        <label class="form-label fw-bold">Opcionais</label>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="opcionais" value="ar condicionado" id="opcionalAr">
-                            <label class="form-check-label" for="opcionalAr">
-                                Ar condicionado
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="opcionais" value="direÁ„o hidr·ulica" id="opcionalDirecao">
-                            <label class="form-check-label" for="opcionalDirecao">
-                                DireÁ„o hidr·ulica
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="opcionais" value="vidros elÈtricos" id="opcionalVidros">
-                            <label class="form-check-label" for="opcionalVidros">
-                                Vidros elÈtricos
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="opcionais" value="airbag" id="opcionalAirbag">
-                            <label class="form-check-label" for="opcionalAirbag">
-                                Airbag
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="opcionais" value="alarme" id="opcionalAlarme">
-                            <label class="form-check-label" for="opcionalAlarme">
-                                Alarme
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="opcionais" value="som" id="opcionalSom">
-                            <label class="form-check-label" for="opcionalSom">
-                                Som
-                            </label>
+                        <label class="form-label">Opcionais</label>
+                        <div class="d-flex flex-column gap-2">
+                            @foreach (var opcional in new[] { "Teto Solar", "Couro", "Autom√°tico", "4x4", "H√≠brido", "Sport" })
+                            {
+                                <div class="d-flex align-center gap-2">
+                                    <input type="checkbox" name="opcionais" value="@opcional.ToLower()" 
+                                           id="opt_@opcional.Replace(" ", "")" 
+                                           style="width: 16px; height: 16px; accent-color: var(--text-primary);">
+                                    <label for="opt_@opcional.Replace(" ", "")" style="font-size: 0.9rem; color: var(--text-secondary); cursor: pointer;">
+                                        @opcional
+                                    </label>
+                                </div>
+                            }
                         </div>
                     </div>
 
-                    <input type="hidden" name="termo" value="@ViewBag.Termo" />
-                    <button type="submit" class="btn btn-primary w-100">Aplicar filtros</button>
+                    <div class="d-flex gap-2 mt-4">
+                        <a href="@Url.Action("Search", "Home")" class="btn btn-outline w-100">Limpar</a>
+                        <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+                    </div>
                 </form>
             </div>
         </div>
 
-        <!-- Resultados -->
-        <div class="col-md-9">
-            <div class="results-section">
-                <h2 class="mb-4">Resultados da pesquisa</h2>
+        <!-- Lista de Resultados -->
+        <div>
+            <div class="d-flex justify-between align-center mb-4">
+                <h2 class="h3">Ve√≠culos Dispon√≠veis</h2>
+                <span class="text-secondary">@(Model?.Count() ?? 0) resultados</span>
+            </div>
 
-                @if (Model != null && Model.Any())
-                {
+            @if (Model != null && Model.Any())
+            {
+                <div class="d-flex flex-column gap-3">
                     @foreach (var anuncio in Model)
                     {
-                        <div class="vehicle-result-card mb-4">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="vehicle-image-large placeholder-image">
-                                        <i class="fas fa-image fa-3x"></i>
-                                    </div>
-                                </div>
-                                <div class="col-md-8">
-                                    <div class="vehicle-result-info">
-                                        <h3 class="vehicle-result-title">@(anuncio.Veiculo?.NomeMarca ?? "") @(anuncio.Veiculo?.NomeModelo ?? "")</h3>
-                                        <p class="vehicle-result-year">@anuncio.Veiculo?.Ano</p>
-                                        <p class="vehicle-result-price">@anuncio.Veiculo?.Preco.ToString("C")</p>
-                                        <div class="vehicle-result-actions mt-3">
-                                            <a asp-controller="Anuncio" asp-action="Details" asp-route-id="@anuncio.Id" 
-                                               class="btn btn-outline-primary w-100">Ver detalhes</a>
+                        <div class="vehicle-card-horizontal">
+                            <div class="vehicle-image-large">
+                                @if (!string.IsNullOrEmpty(anuncio.Veiculo?.ImagemPrincipal))
+                                {
+                                    <img src="@anuncio.Veiculo.ImagemPrincipal" alt="@anuncio.Veiculo.NomeModelo" />
+                                }
+                                else
+                                {
+                                    <i class="fas fa-car fa-3x text-muted"></i>
+                                }
+                            </div>
+                            <div class="vehicle-result-info">
+                                <div class="d-flex justify-between align-center mb-2">
+                                    <div>
+                                        <div class="d-flex align-center gap-2 mb-1">
+                                            <span class="badge" style="background: rgba(255, 255, 255, 0.1); color: var(--text-primary);">Destaque</span>
+                                            <h3 class="h4" style="margin: 0;">@(anuncio.Veiculo?.NomeMarca ?? "Marca") @(anuncio.Veiculo?.NomeModelo ?? "Modelo")</h3>
                                         </div>
+                                        <p class="text-secondary" style="font-size: 0.9rem;">
+                                            @anuncio.Veiculo?.Ano ‚Ä¢ @(anuncio.Veiculo?.Quilometragem.ToString("N0") ?? "0") km
+                                        </p>
                                     </div>
+                                    <div style="font-size: 1.5rem; font-weight: 600;">@anuncio.Veiculo?.Preco.ToString("C")</div>
+                                </div>
+
+                                <p class="text-secondary" style="font-size: 0.9rem; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: auto;">
+                                    @(anuncio.Descricao ?? "Ve√≠culo em excelente estado, revisado e com garantia. Entre em contato para mais detalhes.")
+                                </p>
+
+                                <div class="d-flex gap-2 mt-3">
+                                    <a asp-controller="Anuncio" asp-action="Details" asp-route-id="@anuncio.Id"
+                                        class="btn btn-primary">Ver Detalhes</a>
+                                    <button class="btn btn-outline btn-icon" title="Salvar Favorito">
+                                        <i class="far fa-heart"></i>
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     }
-                }
-                else
-                {
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle me-2"></i>
-                        Nenhum resultado encontrado. Tente ajustar os filtros.
+                </div>
+            }
+            else
+            {
+                <div class="glass-card d-flex flex-column align-center" style="padding: 80px 0; text-align: center;">
+                    <div style="width: 80px; height: 80px; background: rgba(255,255,255,0.05); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px;">
+                        <i class="fas fa-search fa-2x text-muted"></i>
                     </div>
-                }
-            </div>
+                    <h3 class="h5 mb-2">Nenhum ve√≠culo encontrado</h3>
+                    <p class="text-secondary" style="max-width: 300px; margin: 0 auto;">Tente ajustar seus filtros ou busque por outros termos.</p>
+                    <a href="@Url.Action("Search", "Home")" class="btn btn-outline mt-4">Limpar Filtros</a>
+                </div>
+            }
         </div>
     </div>
 </div>
 
 @section Scripts {
-    <script>
-        $(document).ready(function() {
-            // Marcar checkboxes de opcionais se estiverem na URL
-            @if (ViewBag.Opcionais != null)
+        <script>
+            $(document).ready(function () {
+        @if (ViewBag.Opcionais != null)
+        {
+            @foreach (var opcional in ViewBag.Opcionais)
             {
-                @foreach (var opcional in ViewBag.Opcionais)
-                {
-                    <text>
-                    $('input[name="opcionais"][value="@opcional"]').prop('checked', true);
-                    </text>
-                }
+                <text>
+                                $('input[name="opcionais"][value="@opcional"]').prop('checked', true);
+                </text>
             }
-        });
-    </script>
+        }
+            });
+        </script>
 }

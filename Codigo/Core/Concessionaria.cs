@@ -18,6 +18,4 @@ public partial class Concessionaria
     public string Telefone { get; set; } = null!;
 
     public string Senha { get; set; } = null!;
-
-    public int IdEndereco { get; set; }
 }

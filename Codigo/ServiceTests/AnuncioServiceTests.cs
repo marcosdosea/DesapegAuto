@@ -51,6 +51,7 @@ namespace ServiceTests
             anuncio.Descricao = "editado";
             _anuncioService.Edit(anuncio);
             var edited = _anuncioService.Get(1);
+            Assert.IsNotNull(edited);
             Assert.AreEqual("editado", edited.Descricao);
         }
 

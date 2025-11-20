@@ -1,88 +1,157 @@
 ﻿@model DesapegAutoWeb.Models.VeiculoViewModel
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Vender meu Carro";
 }
 
-<h1>Create</h1>
-
-<h4>VeiculoViewModel</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Id" class="control-label"></label>
-                <input asp-for="Id" class="form-control" />
-                <span asp-validation-for="Id" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="IdConcessionaria" class="control-label"></label>
-                <input asp-for="IdConcessionaria" class="form-control" />
-                <span asp-validation-for="IdConcessionaria" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="IdModelo" class="control-label"></label>
-                <input asp-for="IdModelo" class="form-control" />
-                <span asp-validation-for="IdModelo" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="IdMarca" class="control-label"></label>
-                <input asp-for="IdMarca" class="form-control" />
-                <span asp-validation-for="IdMarca" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Ano" class="control-label"></label>
-                <input asp-for="Ano" class="form-control" />
-                <span asp-validation-for="Ano" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Cor" class="control-label"></label>
-                <input asp-for="Cor" class="form-control" />
-                <span asp-validation-for="Cor" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Quilometragem" class="control-label"></label>
-                <input asp-for="Quilometragem" class="form-control" />
-                <span asp-validation-for="Quilometragem" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Preco" class="control-label"></label>
-                <input asp-for="Preco" class="form-control" />
-                <span asp-validation-for="Preco" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Placa" class="control-label"></label>
-                <input asp-for="Placa" class="form-control" />
-                <span asp-validation-for="Placa" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Status" class="control-label"></label>
-                <input asp-for="Status" class="form-control" />
-                <span asp-validation-for="Status" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="NomeMarca" class="control-label"></label>
-                <input asp-for="NomeMarca" class="form-control" />
-                <span asp-validation-for="NomeMarca" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="NomeModelo" class="control-label"></label>
-                <input asp-for="NomeModelo" class="form-control" />
-                <span asp-validation-for="NomeModelo" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+<!-- Hero Section -->
+<div class="hero">
+    <div class="container text-center">
+        <h1 class="display-1" style="font-size: 56px; margin-bottom: 24px;">Venda seu carro com segurança</h1>
+        <p class="hero-subtitle" style="font-size: 24px; max-width: 600px; margin: 0 auto 48px;">
+            A maneira mais rápida e fácil de encontrar um novo dono para o seu veículo.
+        </p>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
+<div class="container mb-5">
+    <div class="row">
+        <!-- Benefits Sidebar -->
+        <div class="col-md-4">
+            <div style="position: sticky; top: 100px;">
+                <h3 class="h4 mb-4">Por que anunciar conosco?</h3>
+
+                <div class="d-flex gap-3 mb-4">
+                    <div
+                        style="width: 48px; height: 48px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        <i class="fas fa-shield-alt" style="color: #fff; font-size: 20px;"></i>
+                    </div>
+                    <div>
+                        <h4 style="font-size: 18px; margin-bottom: 4px;">Segurança Garantida</h4>
+                        <p class="text-secondary" style="font-size: 14px;">Todos os compradores são verificados para sua
+                            tranquilidade.</p>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-3 mb-4">
+                    <div
+                        style="width: 48px; height: 48px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        <i class="fas fa-bolt" style="color: #fff; font-size: 20px;"></i>
+                    </div>
+                    <div>
+                        <h4 style="font-size: 18px; margin-bottom: 4px;">Venda Rápida</h4>
+                        <p class="text-secondary" style="font-size: 14px;">Nossa plataforma conecta você a milhares de
+                            interessados diariamente.</p>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-3 mb-4">
+                    <div
+                        style="width: 48px; height: 48px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        <i class="fas fa-percentage" style="color: #fff; font-size: 20px;"></i>
+                    </div>
+                    <div>
+                        <h4 style="font-size: 18px; margin-bottom: 4px;">Melhores Taxas</h4>
+                        <p class="text-secondary" style="font-size: 14px;">Anuncie grátis ou escolha planos premium com
+                            destaque.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Card -->
+        <div class="col-md-8"> <!-- Changed from col-md-9 to col-md-8 for better proportion -->
+            <div class="glass-card" style="padding: 40px;">
+                <h2 class="h3 mb-4" style="border-bottom: 1px solid var(--border); padding-bottom: 16px;">Detalhes do
+                    Veículo</h2>
+
+                <form asp-action="Create">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-4"></div>
+
+                    <div class="row g-2 mb-4">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label asp-for="NomeMarca" class="form-label">Marca</label>
+                                <input asp-for="NomeMarca" class="form-control" placeholder="Ex: Toyota" />
+                                <span asp-validation-for="NomeMarca" class="text-danger"
+                                    style="font-size: 12px;"></span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label asp-for="NomeModelo" class="form-label">Modelo</label>
+                                <input asp-for="NomeModelo" class="form-control" placeholder="Ex: Corolla XEi" />
+                                <span asp-validation-for="NomeModelo" class="text-danger"
+                                    style="font-size: 12px;"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-2 mb-4">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label asp-for="Ano" class="form-label">Ano</label>
+                                <input asp-for="Ano" class="form-control" placeholder="2023" />
+                                <span asp-validation-for="Ano" class="text-danger" style="font-size: 12px;"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label asp-for="Cor" class="form-label">Cor</label>
+                                <input asp-for="Cor" class="form-control" placeholder="Prata" />
+                                <span asp-validation-for="Cor" class="text-danger" style="font-size: 12px;"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Placa" class="form-label">Placa</label>
+                                <input asp-for="Placa" class="form-control" placeholder="ABC-1234"
+                                    style="text-transform: uppercase;" />
+                                <span asp-validation-for="Placa" class="text-danger" style="font-size: 12px;"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-2 mb-4">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label asp-for="Quilometragem" class="form-label">Quilometragem (km)</label>
+                                <input asp-for="Quilometragem" class="form-control" placeholder="0" />
+                                <span asp-validation-for="Quilometragem" class="text-danger"
+                                    style="font-size: 12px;"></span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label asp-for="Preco" class="form-label">Preço (R$)</label>
+                                <input asp-for="Preco" class="form-control" placeholder="0,00" />
+                                <span asp-validation-for="Preco" class="text-danger" style="font-size: 12px;"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hidden fields for IDs if needed, or keep them if they are manually entered (unlikely for IDs but keeping structure) -->
+                    <!-- Assuming IDs are handled by backend or dropdowns in a real app, but keeping inputs as per original scaffold for now -->
+                    <div class="row g-2 mb-4" style="display:none;">
+                        <div class="col-4"><input asp-for="IdConcessionaria" class="form-control" value="1" /></div>
+                        <div class="col-4"><input asp-for="IdModelo" class="form-control" value="1" /></div>
+                        <div class="col-4"><input asp-for="IdMarca" class="form-control" value="1" /></div>
+                        <div class="col-4"><input asp-for="Status" class="form-control" value="Disponível" /></div>
+                    </div>
+
+                    <div class="d-flex justify-between align-center mt-5">
+                        <a asp-action="Index" class="btn btn-outline">Cancelar</a>
+                        <input type="submit" value="Anunciar Veículo" class="btn btn-primary"
+                            style="padding: 10px 32px;" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

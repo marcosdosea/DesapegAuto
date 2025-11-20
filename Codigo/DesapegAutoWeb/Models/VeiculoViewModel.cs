@@ -56,6 +56,8 @@ namespace DesapegAutoWeb.Models
         // Para mostrar o nome da Marca e do Modelo na tela de listagem
         public string? NomeMarca { get; set; }
         public string? NomeModelo { get; set; }
+        public string? Versao { get; set; }
+        public string? ImagemPrincipal { get; set; }
 
         // Para popular os dropdowns (<select>) no formulário de edição
         public IEnumerable<SelectListItem>? Marcas { get; set; }

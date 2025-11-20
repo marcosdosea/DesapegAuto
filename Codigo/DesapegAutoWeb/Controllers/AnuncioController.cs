@@ -37,22 +37,26 @@ namespace DesapegAutoWeb.Controllers
         public ActionResult Index()
         {
             var anuncios = anuncioService.GetAll();
-            var model = mapper.Map<IEnumerable<AnuncioViewModel>>(anuncios).ToList();
+            var model = mapper.Map<List<AnuncioViewModel>>(anuncios);
+
             foreach (var anuncio in model)
             {
-                var veiculo = veiculoService.Get(anuncio.IdVeiculo);
-                if (veiculo != null)
+                if (anuncio.IdVeiculo > 0)
                 {
-                    var veiculoViewModel = mapper.Map<VeiculoViewModel>(veiculo);
-                    
-                    // Buscar marca e modelo
-                    var marca = marcaService.Get(veiculo.IdMarca);
-                    var modelo = modeloService.Get(veiculo.IdModelo);
-                    
-                    if (marca != null) veiculoViewModel.NomeMarca = marca.Nome;
-                    if (modelo != null) veiculoViewModel.NomeModelo = modelo.Nome;
-                    
-                    anuncio.Veiculo = veiculoViewModel;
+                    var veiculo = veiculoService.Get(anuncio.IdVeiculo);
+                    if (veiculo != null)
+                    {
+                        var veiculoViewModel = mapper.Map<VeiculoViewModel>(veiculo);
+                        
+                        // Buscar marca e modelo
+                        var marca = marcaService.Get(veiculo.IdMarca);
+                        var modelo = modeloService.Get(veiculo.IdModelo);
+                        
+                        veiculoViewModel.NomeMarca = marca?.Nome ?? "Marca Indefinida";
+                        veiculoViewModel.NomeModelo = modelo?.Nome ?? "Modelo Indefinido";
+                        
+                        anuncio.Veiculo = veiculoViewModel;
+                    }
                 }
             }
             return View(model);
@@ -65,7 +69,7 @@ namespace DesapegAutoWeb.Controllers
             
             var model = mapper.Map<AnuncioViewModel>(anuncio);
             
-            // Carregar dados do veículo
+            // Carregar dados do veï¿½culo
             var veiculo = veiculoService.Get(anuncio.IdVeiculo);
             if (veiculo != null)
             {
@@ -81,7 +85,7 @@ namespace DesapegAutoWeb.Controllers
                 model.Veiculo = veiculoViewModel;
             }
             
-            // Incrementar visualizações
+            // Incrementar visualizaï¿½ï¿½es
             anuncio.Visualizacoes++;
             anuncioService.Edit(anuncio);
             

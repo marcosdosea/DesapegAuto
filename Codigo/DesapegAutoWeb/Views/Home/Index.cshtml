@@ -1,70 +1,50 @@
 ﻿@model IEnumerable<DesapegAutoWeb.Models.AnuncioViewModel>
+
 @{
-    ViewData["Title"] = "Página Inicial";
+    ViewData["Title"] = "Home";
 }
 
-<div class="home-header">
+<div class="hero" style="padding: 120px 0; text-align: center;">
     <div class="container">
-        <div class="row">
-            <div class="col-12">
-                <div class="welcome-section">
-                    <h1 class="welcome-text">Olá, João Silva</h1>
-                    <div class="user-actions">
-                        <a href="#" class="btn btn-link user-icon">
-                            <i class="fas fa-user"></i>
-                        </a>
-                        <a href="#" class="btn btn-link help-icon">
-                            <i class="fas fa-question-circle"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
+        <div class="hero-content">
+            <h1 class="display-1">Encontre seu próximo<br>carro dos sonhos</h1>
+            <p class="hero-subtitle"
+                style="font-size: 1.25rem; color: var(--text-secondary); max-width: 600px; margin: 0 auto 48px;">
+                A plataforma mais segura e elegante para comprar e vender veículos.
+            </p>
+
+            <form class="search-bar-container" action="/Home/Search" method="get">
+                <input type="text" class="search-input" placeholder="Buscar por marca, modelo..." name="q">
+                <button type="submit" class="btn btn-primary btn-icon" style="width: 32px; height: 32px; margin: 4px;">
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </form>
         </div>
     </div>
 </div>
 
-<div class="container mt-4">
-    <div class="row">
-        <div class="col-12">
-            <div class="search-section">
-                <div class="search-card">
-                    <form asp-controller="Home" asp-action="Search" method="get">
-                        <div class="search-input-group">
-                            <input type="text" name="termo" class="form-control search-input"
-                                   placeholder="Selecione marca ou modelo do veículo" />
-                        </div>
-                        <div class="search-button-group mt-3">
-                            <button type="submit" class="btn btn-primary search-btn">Ver anúncios</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+<div class="container mb-5">
+    <div class="d-flex justify-between align-center mb-4">
+        <h2 class="section-title">Destaques</h2>
+        <a asp-controller="Veiculo" asp-action="Index" class="btn btn-outline btn-sm">Ver todos</a>
     </div>
 
-    <div class="row mt-5">
-        <div class="col-12">
-            <h2 class="section-title">Alguns anúncios</h2>
-        </div>
-    </div>
-
-    <div class="row">
-        @if (Model != null && Model.Any())
+    <div class="grid grid-cols-3">
+        @if (Model?.Any() ?? false)
         {
-            @foreach (var anuncio in Model)
+            @foreach (var item in Model)
             {
-                <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="vehicle-card">
-                        <div class="vehicle-image placeholder-image">
-                            <i class="fas fa-image"></i>
-                        </div>
-                        <div class="vehicle-info">
-                            <h3 class="vehicle-title">@(anuncio.Veiculo?.NomeMarca ?? "") @(anuncio.Veiculo?.NomeModelo ?? "")</h3>
-                            <p class="vehicle-year">@anuncio.Veiculo?.Ano</p>
-                            <p class="vehicle-price">@anuncio.Veiculo?.Preco.ToString("C")</p>
-                            <div class="vehicle-actions">
-                                <a asp-controller="Anuncio" asp-action="Details" asp-route-id="@anuncio.Id" class="btn btn-outline-primary vehicle-details-btn">Ver detalhes</a>
-                            </div>
+                <div class="card">
+                    <div class="card-image">
+                        <img src="https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&q=80&w=800"
+                            alt="@(item.Veiculo?.NomeModelo ?? "Veículo")">
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">@(item.Veiculo?.NomeMarca ?? "") @(item.Veiculo?.NomeModelo ?? "")</h3>
+                        <div class="card-price">@(item.Veiculo?.Preco.ToString("C") ?? "R$ 0,00")</div>
+                        <div class="card-meta">
+                            <span><i class="fas fa-calendar"></i> @(item.Veiculo?.Ano ?? 0)</span>
+                            <span><i class="fas fa-tachometer-alt"></i> @(item.Veiculo?.Quilometragem.ToString("N0") ?? "0") km</span>
                         </div>
                     </div>
                 </div>
@@ -72,39 +52,9 @@
         }
         else
         {
-            <div class="col-md-6 col-lg-4 mb-4">
-                <div class="vehicle-card">
-                    <div class="vehicle-image placeholder-image">
-                        <i class="fas fa-image"></i>
-                    </div>
-                    <div class="vehicle-info">
-                        <h3 class="vehicle-title">Nenhum anúncio disponível</h3>
-                        <p class="vehicle-year">-</p>
-                        <p class="vehicle-price">R$ 0,00</p>
-                    </div>
-                </div>
+            <div class="col-span-3 text-center">
+                <p class="text-muted">Nenhum veículo em destaque no momento.</p>
             </div>
         }
     </div>
-
-    <div class="row mt-4">
-        <div class="col-12 text-center">
-            <a asp-controller="Home" asp-action="Search" class="btn btn-primary">Ver todos os anúncios</a>
-        </div>
-    </div>
 </div>
-
-@section Scripts {
-    <script>
-        // Adicionar funcionalidade de busca dinâmica se necessário
-        $(document).ready(function() {
-            $('.search-input').on('focus', function() {
-                $(this).parent().addClass('focused');
-            });
-
-            $('.search-input').on('blur', function() {
-                $(this).parent().removeClass('focused');
-            });
-        });
-    </script>
-}
