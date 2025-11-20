@@ -51,6 +51,7 @@ namespace ServiceTests
             modelo.Nome = "Editado";
             _modeloService.Edit(modelo);
             var edited = _modeloService.Get(1);
+            Assert.IsNotNull(edited);
             Assert.AreEqual("Editado", edited.Nome);
         }
 

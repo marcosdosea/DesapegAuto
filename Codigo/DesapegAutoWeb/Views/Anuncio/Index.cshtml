@@ -1,53 +1,87 @@
-@model IEnumerable<DesapegAutoWeb.Models.AnuncioViewModel>
+ï»¿@model IEnumerable<DesapegAutoWeb.Models.AnuncioViewModel>
 
 @{
-    ViewData["Title"] = "Anúncios";
+    ViewData["Title"] = "Meus AnÃºncios";
 }
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="admin-title mb-0">Anúncios</h1>
-        <a asp-action="Create" class="btn btn-primary admin-btn-card">
-            <i class="fa-solid fa-plus me-2"></i> Novo Anúncio
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h1 class="h2 mb-1">Gerenciar AnÃºncios</h1>
+            <p class="text-muted">Visualize e gerencie seus veÃ­culos anunciados</p>
+        </div>
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i> Novo AnÃºncio
         </a>
     </div>
 
     @if (Model != null && Model.Any())
     {
-        <div class="list-group">
-            @foreach (var item in Model)
-            {
-                <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-start p-3 mb-3 admin-card">
-                    <div class="d-flex align-items-center">
-                        <i class="fa-solid fa-car-side fa-2x me-4 text-primary"></i>
-                        <div>
-                            <h5 class="mb-1 fw-bold">
-                                Veículo:
-                                @(item.Veiculo != null ?
-                                    ($"{item.Veiculo.NomeModelo ?? ""} - {item.Veiculo.NomeMarca ?? ""}") :
-                                    $"ID {item.IdVeiculo}")
-                            </h5>
-                            <p class="mb-1 text-muted"><small>Data de Publicação: @item.DataPublicacao.ToShortDateString()</small></p>
-                            <span class="badge bg-secondary">@item.StatusAnuncio</span>
-                            <span class="badge bg-info text-dark ms-2">Visualizações: @item.Visualizacoes</span>
+        <div class="card border-0 bg-transparent">
+            <div class="list-group gap-3">
+                @foreach (var item in Model)
+                {
+                    <div class="list-group-item border rounded-3 p-4 d-flex flex-column flex-md-row align-items-center gap-4 bg-dark-subtle">
+                        <div class="d-flex align-items-center justify-content-center bg-black rounded-3" style="width: 100px; height: 100px; min-width: 100px;">
+                            @if (!string.IsNullOrEmpty(item.Veiculo?.ImagemPrincipal))
+                            {
+                                <img src="@item.Veiculo.ImagemPrincipal" class="w-100 h-100 object-fit-cover rounded-3" alt="VeÃ­culo" />
+                            }
+                            else
+                            {
+                                <i class="fas fa-car fa-2x text-muted"></i>
+                            }
+                        </div>
+                        
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="mb-0 fw-bold">
+                                    @(item.Veiculo != null ? $"{item.Veiculo.NomeMarca} {item.Veiculo.NomeModelo}" : $"AnÃºncio #{item.Id}")
+                                </h5>
+                                <span class="badge @(item.StatusAnuncio == "Ativo" ? "bg-success" : "bg-secondary") rounded-pill">
+                                    @item.StatusAnuncio
+                                </span>
+                            </div>
+                            
+                            <div class="d-flex gap-4 text-muted small mb-3">
+                                <span><i class="far fa-calendar me-1"></i> @item.DataPublicacao.ToShortDateString()</span>
+                                <span><i class="far fa-eye me-1"></i> @item.Visualizacoes visualizaÃ§Ãµes</span>
+                                <span><i class="fas fa-tag me-1"></i> @(item.Veiculo?.Preco.ToString("C") ?? "R$ 0,00")</span>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2 w-100 w-md-auto justify-content-end">
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline">
+                                <i class="fas fa-external-link-alt me-1"></i> Ver
+                            </a>
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline">
+                                <i class="fas fa-edit me-1"></i> Editar
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">
+                                <i class="fas fa-trash-alt"></i>
+                            </a>
                         </div>
                     </div>
-                    <div class="text-end">
-                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary me-2">Detalhes</a>
-                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">Excluir</a>
-                    </div>
-                </div>
-            }
+                }
+            </div>
         </div>
     }
     else
     {
-        <div class="empty-state">
-            <i class="fa-solid fa-car-side empty-state-icon"></i>
-            <p>Nenhum anúncio cadastrado.</p>
-            <a asp-action="Create" class="btn btn-primary mt-3">
-                <i class="fa-solid fa-plus me-2"></i> Criar meu primeiro anúncio
-            </a>
+        <div class="text-center py-5 card border-dashed">
+            <div class="py-5">
+                <div class="mb-4">
+                    <span class="fa-stack fa-2x text-muted opacity-50">
+                        <i class="fas fa-circle fa-stack-2x"></i>
+                        <i class="fas fa-car fa-stack-1x fa-inverse"></i>
+                    </span>
+                </div>
+                <h3 class="h4 text-muted">Nenhum anÃºncio encontrado</h3>
+                <p class="text-muted mb-4">Comece a vender seus veÃ­culos agora mesmo.</p>
+                <a asp-action="Create" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i> Criar primeiro anÃºncio
+                </a>
+            </div>
         </div>
     }
 </div>

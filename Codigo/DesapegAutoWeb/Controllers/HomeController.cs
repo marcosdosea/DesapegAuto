@@ -34,83 +34,83 @@ namespace DesapegAutoWeb.Controllers
 
         public IActionResult Index()
         {
-            // Se o usu·rio n„o estiver autenticado, redireciona para registro
-            if (!User.Identity?.IsAuthenticated ?? true)
-            {
-                return RedirectToPage("/Account/Register", new { area = "Identity" });
-            }
+            // Se o usu√°rio n√£o estiver autenticado, n√£o redireciona mais
+            // if (!User.Identity?.IsAuthenticated ?? true)
+            // {
+            //     return RedirectToPage("/Account/Register", new { area = "Identity" });
+            // }
 
-            // Carregar alguns an˙ncios para exibir na p·gina inicial
+            // Carregar alguns an√∫ncios para exibir na p√°gina inicial
             var anuncios = _anuncioService.GetAll().Take(3);
             var model = _mapper.Map<IEnumerable<AnuncioViewModel>>(anuncios).ToList();
-            
+
             foreach (var anuncio in model)
             {
                 var veiculo = _veiculoService.Get(anuncio.IdVeiculo);
                 if (veiculo != null)
                 {
                     var veiculoViewModel = _mapper.Map<VeiculoViewModel>(veiculo);
-                    
+
                     // Buscar marca e modelo
                     var marca = _marcaService.Get(veiculo.IdMarca);
                     var modelo = _modeloService.Get(veiculo.IdModelo);
-                    
+
                     if (marca != null) veiculoViewModel.NomeMarca = marca.Nome;
                     if (modelo != null) veiculoViewModel.NomeModelo = modelo.Nome;
-                    
+
                     anuncio.Veiculo = veiculoViewModel;
                 }
             }
-            
+
             return View(model);
         }
 
-        public IActionResult Search(string? termo, decimal? precoMin, decimal? precoMax, 
-            int? anoMin, int? anoMax, int? kmMin, int? kmMax, string? localizacao, 
+        public IActionResult Search(string? termo, decimal? precoMin, decimal? precoMax,
+            int? anoMin, int? anoMax, int? kmMin, int? kmMax, string? localizacao,
             List<string>? opcionais)
         {
             var anuncios = _anuncioService.GetAll();
             var model = _mapper.Map<IEnumerable<AnuncioViewModel>>(anuncios).ToList();
-            
+
             // Aplicar filtros
             if (!string.IsNullOrWhiteSpace(termo))
             {
-                termo = termo.ToLower();
-                model = model.Where(a => 
+                var termoLower = termo.ToLower();
+                model = model.Where(a =>
                 {
-                    if (a.Veiculo == null) return false;
+                    // Removed premature check: if (a.Veiculo == null) return false;
                     var veiculo = _veiculoService.Get(a.IdVeiculo);
                     if (veiculo != null)
                     {
                         var marca = _marcaService.Get(veiculo.IdMarca);
                         var modelo = _modeloService.Get(veiculo.IdModelo);
-                        return (marca?.Nome?.ToLower().Contains(termo) ?? false) ||
-                               (modelo?.Nome?.ToLower().Contains(termo) ?? false);
+                        return (marca?.Nome?.ToLower().Contains(termoLower) ?? false) ||
+                               (modelo?.Nome?.ToLower().Contains(termoLower) ?? false);
                     }
                     return false;
                 }).ToList();
             }
-            
-            // Carregar dados do veÌculo para cada an˙ncio
+
+            // Carregar dados do ve√≠culo para cada an√∫ncio
             foreach (var anuncio in model)
             {
                 var veiculo = _veiculoService.Get(anuncio.IdVeiculo);
                 if (veiculo != null)
                 {
                     var veiculoViewModel = _mapper.Map<VeiculoViewModel>(veiculo);
-                    
+
                     // Buscar marca e modelo
                     var marca = _marcaService.Get(veiculo.IdMarca);
                     var modelo = _modeloService.Get(veiculo.IdModelo);
-                    
+
                     if (marca != null) veiculoViewModel.NomeMarca = marca.Nome;
                     if (modelo != null) veiculoViewModel.NomeModelo = modelo.Nome;
-                    
+
                     anuncio.Veiculo = veiculoViewModel;
                 }
             }
-            
-            // Aplicar filtros de preÁo
+
+            // Aplicar filtros de pre√ßo
             if (precoMin.HasValue)
             {
                 model = model.Where(a => a.Veiculo?.Preco >= precoMin.Value).ToList();
@@ -119,7 +119,7 @@ namespace DesapegAutoWeb.Controllers
             {
                 model = model.Where(a => a.Veiculo?.Preco <= precoMax.Value).ToList();
             }
-            
+
             // Aplicar filtros de ano
             if (anoMin.HasValue)
             {
@@ -129,7 +129,7 @@ namespace DesapegAutoWeb.Controllers
             {
                 model = model.Where(a => a.Veiculo?.Ano <= anoMax.Value).ToList();
             }
-            
+
             // Aplicar filtros de quilometragem
             if (kmMin.HasValue)
             {
@@ -139,17 +139,17 @@ namespace DesapegAutoWeb.Controllers
             {
                 model = model.Where(a => a.Veiculo?.Quilometragem <= kmMax.Value).ToList();
             }
-            
+
             // Aplicar filtros de opcionais
             if (opcionais != null && opcionais.Any())
             {
-                model = model.Where(a => 
+                model = model.Where(a =>
                 {
                     if (string.IsNullOrWhiteSpace(a.Opcionais)) return false;
                     return opcionais.All(o => a.Opcionais.ToLower().Contains(o.ToLower()));
                 }).ToList();
             }
-            
+
             ViewBag.Termo = termo;
             ViewBag.PrecoMin = precoMin;
             ViewBag.PrecoMax = precoMax;
@@ -159,7 +159,7 @@ namespace DesapegAutoWeb.Controllers
             ViewBag.KmMax = kmMax;
             ViewBag.Localizacao = localizacao;
             ViewBag.Opcionais = opcionais;
-            
+
             return View(model);
         }
 

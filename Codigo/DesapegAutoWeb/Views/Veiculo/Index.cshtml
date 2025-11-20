@@ -1,102 +1,60 @@
 ﻿@model IEnumerable<DesapegAutoWeb.Models.VeiculoViewModel>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Anúncios";
 }
 
-<h1>Index</h1>
+<div class="container" style="padding-top: 40px; padding-bottom: 40px;">
+    <div class="d-flex justify-between align-center mb-4">
+        <div>
+            <h1 class="display-1" style="font-size: 2.5rem; margin-bottom: 8px;">Veículos Disponíveis</h1>
+            <p class="text-secondary">Encontre o carro perfeito para você</p>
+        </div>
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="fas fa-plus" style="margin-right: 8px;"></i> Vender Veículo
+        </a>
+    </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IdConcessionaria)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IdModelo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IdMarca)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Ano)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Cor)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Quilometragem)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Preco)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Placa)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Status)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NomeMarca)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NomeModelo)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IdConcessionaria)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IdModelo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IdMarca)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Ano)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Cor)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Quilometragem)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Preco)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Placa)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NomeMarca)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NomeModelo)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new {id=item.Id }) |
-                @Html.ActionLink("Details", "Details", new { id=item.Id}) |
-                @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+    <div class="grid grid-cols-3">
+        @foreach (var item in Model)
+        {
+            <div class="card">
+                <div class="card-image">
+                    <!-- Placeholder image logic - ideally this would come from the model -->
+                    <img src="https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&q=80&w=800"
+                        alt="@item.NomeModelo">
+                </div>
+                <div class="card-content">
+                    <div class="d-flex justify-between align-center mb-2">
+                        <span class="text-muted"
+                            style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em;">@item.NomeMarca</span>
+                        <span class="badge"
+                            style="background: rgba(255, 255, 255, 0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2);">@item.Status</span>
+                    </div>
+                    <h3 class="card-title">@item.NomeModelo</h3>
+                    <div class="card-price">@item.Preco.ToString("C")</div>
 
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+                    <div class="card-meta mb-4">
+                        <span><i class="fas fa-calendar"></i> @item.Ano</span>
+                        <span><i class="fas fa-tachometer-alt"></i> @item.Quilometragem km</span>
+                        <span><i class="fas fa-palette"></i> @item.Cor</span>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline w-100"
+                            style="justify-content: center;">Detalhes</a>
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline btn-icon">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-icon">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

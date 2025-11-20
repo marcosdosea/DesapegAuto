@@ -139,6 +139,12 @@ public partial class DesapegAutoContext : DbContext
             entity.Property(e => e.Versoes)
                 .HasMaxLength(100)
                 .HasColumnName("versoes");
+
+            entity.HasOne(d => d.IdMarcaNavigation)
+                .WithMany()
+                .HasForeignKey(d => d.IdMarca)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_modelo_marca1");
         });
 
         modelBuilder.Entity<Pessoa>(entity =>
