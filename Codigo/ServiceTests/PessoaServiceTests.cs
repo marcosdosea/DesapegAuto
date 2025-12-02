@@ -1,4 +1,5 @@
 ﻿using Core;
+using Core.Exceptions;
 using Core.Service;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -95,6 +96,50 @@ namespace Service.Tests
             Assert.IsNotNull(resultado);
             Assert.AreEqual(1, resultado.Count());
             Assert.AreEqual("Maria Oliveira", resultado.First().Nome);
+        }
+
+        [TestMethod()]
+        public void CreateTest_CpfDuplicado_ThrowsServiceException()
+        {
+            // Arrange - Tentando criar pessoa com CPF já existente
+            var pessoaCpfDuplicado = new Pessoa
+            {
+                Id = 4,
+                Nome = "Novo Usuario",
+                Cpf = "11122233344", // CPF já existe (João Silva)
+                Email = "novo@email.com",
+                Telefone = "11900001111"
+            };
+
+            // Act & Assert
+            var exception = Assert.ThrowsException<ServiceException>(() => _pessoaService!.Create(pessoaCpfDuplicado));
+            Assert.IsTrue(exception.Message.Contains("CPF já cadastrado"));
+        }
+
+        [TestMethod()]
+        public void EditTest_PessoaNaoEncontrada_ThrowsServiceException()
+        {
+            // Arrange - Pessoa com ID inexistente
+            var pessoaInexistente = new Pessoa
+            {
+                Id = 99,
+                Nome = "Pessoa Inexistente",
+                Cpf = "00000000000",
+                Email = "inexistente@email.com",
+                Telefone = "11900000000"
+            };
+
+            // Act & Assert
+            var exception = Assert.ThrowsException<ServiceException>(() => _pessoaService!.Edit(pessoaInexistente));
+            Assert.IsTrue(exception.Message.Contains("Pessoa não encontrada"));
+        }
+
+        [TestMethod()]
+        public void DeleteTest_PessoaNaoEncontrada_ThrowsServiceException()
+        {
+            // Act & Assert
+            var exception = Assert.ThrowsException<ServiceException>(() => _pessoaService!.Delete(99));
+            Assert.IsTrue(exception.Message.Contains("Pessoa não encontrada"));
         }
     }
 }

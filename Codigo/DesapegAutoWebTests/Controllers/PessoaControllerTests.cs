@@ -91,6 +91,44 @@ namespace DesapegAutoWebTests.Controllers
             Assert.AreEqual("Index", redirect.ActionName);
         }
 
+        [TestMethod()]
+        public void CreateTest_Get_Valido()
+        {
+            // Act
+            var result = controller.Create();
+
+            // Assert
+            Assert.IsInstanceOfType(result, typeof(ViewResult));
+        }
+
+        [TestMethod()]
+        public void EditTest_Get_Valido()
+        {
+            // Act
+            var result = controller.Edit(1);
+
+            // Assert
+            Assert.IsInstanceOfType(result, typeof(ViewResult));
+            ViewResult viewResult = (ViewResult)result;
+            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(PessoaViewModel));
+            PessoaViewModel pessoaModel = (PessoaViewModel)viewResult.ViewData.Model;
+            Assert.AreEqual("João Silva", pessoaModel.Nome);
+        }
+
+        [TestMethod()]
+        public void DeleteTest_Get_Valido()
+        {
+            // Act
+            var result = controller.Delete(1);
+
+            // Assert
+            Assert.IsInstanceOfType(result, typeof(ViewResult));
+            ViewResult viewResult = (ViewResult)result;
+            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(PessoaViewModel));
+            PessoaViewModel pessoaModel = (PessoaViewModel)viewResult.ViewData.Model;
+            Assert.AreEqual("João Silva", pessoaModel.Nome);
+        }
+
         private static IEnumerable<Pessoa> GetTestPessoas()
         {
             return new List<Pessoa>
