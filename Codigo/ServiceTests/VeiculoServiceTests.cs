@@ -1,4 +1,5 @@
 ﻿using Core;
+using Core.Exceptions;
 using Core.Service;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -168,6 +169,58 @@ namespace Service.Tests
 
             // Assert
             Assert.IsNotNull(veiculo);
+        }
+
+        [TestMethod()]
+        public void CreateTest_PlacaDuplicada_ThrowsServiceException()
+        {
+            // Arrange - Tentando criar veículo com placa já existente
+            var veiculoPlacaDuplicada = new Veiculo
+            {
+                Id = 4,
+                Placa = "ABC-1234", // Placa já existe (Veículo 1)
+                Ano = 2023,
+                Quilometragem = 5000,
+                Preco = 60000.00m,
+                IdConcessionaria = 1,
+                IdModelo = 0,
+                IdMarca = 0,
+                Cor = "Verde"
+            };
+
+            // Act & Assert
+            var exception = Assert.ThrowsException<ServiceException>(() => _veiculoService!.Create(veiculoPlacaDuplicada));
+            Assert.IsTrue(exception.Message.Contains("Já existe um veículo cadastrado com esta placa"));
+        }
+
+        [TestMethod()]
+        public void EditTest_VeiculoNaoEncontrado_ThrowsServiceException()
+        {
+            // Arrange - Veículo com ID inexistente
+            var veiculoInexistente = new Veiculo
+            {
+                Id = 99,
+                Placa = "XYZ-9999",
+                Ano = 2023,
+                Quilometragem = 15000,
+                Preco = 50000.00m,
+                IdConcessionaria = 1,
+                IdModelo = 0,
+                IdMarca = 0,
+                Cor = "Amarelo"
+            };
+
+            // Act & Assert
+            var exception = Assert.ThrowsException<ServiceException>(() => _veiculoService!.Edit(veiculoInexistente));
+            Assert.IsTrue(exception.Message.Contains("Veículo não encontrado"));
+        }
+
+        [TestMethod()]
+        public void DeleteTest_VeiculoNaoEncontrado_ThrowsServiceException()
+        {
+            // Act & Assert
+            var exception = Assert.ThrowsException<ServiceException>(() => _veiculoService!.Delete(99));
+            Assert.IsTrue(exception.Message.Contains("Veículo não encontrado"));
         }
     }
 }
