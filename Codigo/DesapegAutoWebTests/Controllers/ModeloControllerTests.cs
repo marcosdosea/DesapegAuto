@@ -1,5 +1,6 @@
 using AutoMapper;
 using Core;
+using Core.Exceptions;
 using Core.Service;
 using DesapegAutoWeb.Controllers;
 using DesapegAutoWeb.Mappers;
@@ -35,6 +36,10 @@ namespace DesapegAutoWebTests.Controllers
             mockModeloService.Setup(s => s.Create(It.IsAny<Modelo>())).Returns(3);
             mockModeloService.Setup(s => s.Edit(It.IsAny<Modelo>())).Verifiable();
             mockModeloService.Setup(s => s.Delete(It.IsAny<int>())).Verifiable();
+
+            // Configuração para simular erro no Delete
+            mockModeloService.Setup(service => service.Delete(99))
+                .Throws(new ServiceException("Modelo não encontrado"));
 
             controller = new ModeloController(
                 mockModeloService.Object,
@@ -100,6 +105,53 @@ namespace DesapegAutoWebTests.Controllers
             Assert.AreEqual("Index", redirect.ActionName);
         }
 
+        [TestMethod]
+        public void EditTest_Post_Valido()
+        {
+            // Arrange
+            var modeloVm = new ModeloViewModel { Id = 1, Nome = "Corolla Modificado" };
+
+            // Act
+            var result = controller.Edit(1, modeloVm);
+
+            // Assert
+            Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
+            RedirectToActionResult redirectToActionResult = (RedirectToActionResult)result;
+            Assert.AreEqual("Index", redirectToActionResult.ActionName);
+            mockModeloService.Verify(s => s.Edit(It.IsAny<Modelo>()), Times.Once);
+        }
+
+        [TestMethod]
+        public void Create_Post_ModelStateInvalida_RetornaViewComModel()
+        {
+            // Arrange
+            controller.ModelState.AddModelError("Nome", "O nome do modelo é obrigatório");
+            var novoModeloVM = new ModeloViewModel { Id = 3, Nome = string.Empty };
+
+            // Act
+            var result = controller.Create(novoModeloVM);
+
+            // Assert
+            Assert.IsInstanceOfType(result, typeof(ViewResult));
+            var viewResult = (ViewResult)result;
+            Assert.AreEqual(novoModeloVM, viewResult.Model);
+            Assert.IsFalse(controller.ModelState.IsValid);
+        }
+
+        [TestMethod]
+        public void Delete_Post_QuandoServicoLancaExcecao_RetornaViewComErro()
+        {
+            // Arrange
+            var modeloVM = new ModeloViewModel { Id = 99, Nome = "Modelo Inexistente" };
+
+            // Act
+            var result = controller.DeleteConfirmed(99);
+
+            // Assert - Método DeleteConfirmed lança exceção, verificamos o comportamento
+            Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
+            mockModeloService.Verify(s => s.Delete(99), Times.Once);
+        }
+
         private static IEnumerable<Modelo> GetTestModelos()
         {
             return new List<Modelo>
@@ -108,6 +160,7 @@ namespace DesapegAutoWebTests.Controllers
                 new Modelo { Id = 2, Nome = "Civic" }
             };
         }
+
         private static Modelo GetTargetModelo()
         {
             return new Modelo { Id = 1, Nome = "Corolla" };
