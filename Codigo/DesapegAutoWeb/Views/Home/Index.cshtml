@@ -8,7 +8,15 @@
         <div class="row">
             <div class="col-12">
                 <div class="welcome-section">
-                    <h1 class="welcome-text">Olá, João Silva</h1>
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        var userName = User.Identity.Name?.Split('@')[0] ?? "usuário";
+                        <h1 class="welcome-text">Olá, @userName</h1>
+                    }
+                    else
+                    {
+                        <h1 class="welcome-text">Bem-vindo</h1>
+                    }
                     <div class="user-actions">
                         <a href="#" class="btn btn-link user-icon">
                             <i class="fas fa-user"></i>

@@ -118,8 +118,19 @@ namespace DesapegAutoWeb.Controllers
         [Authorize(Roles = "Admin")]
         public ActionResult DeleteConfirmed(int id)
         {
-            modeloService.Delete(id);
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                modeloService.Delete(id);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Core.Exceptions.ServiceException ex)
+            {
+                if (TempData != null)
+                {
+                    TempData["ErrorMessage"] = ex.Message;
+                }
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         // Additional Methods from IModeloService
