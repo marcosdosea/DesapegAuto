@@ -144,11 +144,13 @@ namespace DesapegAutoWebTests.Controllers
             // Arrange
             var modeloVM = new ModeloViewModel { Id = 99, Nome = "Modelo Inexistente" };
 
-            // Act
+            // Act - O controller agora trata a exceção e redireciona para Index
             var result = controller.DeleteConfirmed(99);
 
-            // Assert - Método DeleteConfirmed lança exceção, verificamos o comportamento
+            // Assert - Verifica que retorna RedirectToAction e que o serviço foi chamado
             Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
+            var redirect = (RedirectToActionResult)result;
+            Assert.AreEqual("Index", redirect.ActionName);
             mockModeloService.Verify(s => s.Delete(99), Times.Once);
         }
 

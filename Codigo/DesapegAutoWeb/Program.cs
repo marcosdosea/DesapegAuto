@@ -7,7 +7,7 @@ using DesapegAutoWeb.Areas.Identity.Data;
 
 namespace DesapegAutoWeb
 {
-    public class Program
+    public partial class Program
     {
         public static void Main(string[] args)
         {
@@ -60,11 +60,28 @@ namespace DesapegAutoWeb
 
             var app = builder.Build();
 
-            // Seed roles
+            // Inicializar banco de dados e criar roles
             using (var scope = app.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
-                SeedRoles(services).Wait();
+                var logger = services.GetRequiredService<ILogger<Program>>();
+                
+                try
+                {
+                    // Garante que o banco de dados existe e aplica migrations pendentes
+                    var dbContext = services.GetRequiredService<ApplicationIdentityDbContext>();
+                    dbContext.Database.EnsureCreated();
+                    logger.LogInformation("Banco de dados verificado/criado com sucesso.");
+                    
+                    // Cria as roles padrão
+                    SeedRoles(services).Wait();
+                    logger.LogInformation("Roles foram criadas com sucesso.");
+                }
+                catch (Exception ex)
+                {
+                    logger.LogWarning(ex, "Não foi possível inicializar o banco de dados ou criar as roles. " +
+                        "Verifique a conexão com o MySQL e a string de conexão no arquivo appsettings.json.");
+                }
             }
 
             // Configure the HTTP request pipeline.

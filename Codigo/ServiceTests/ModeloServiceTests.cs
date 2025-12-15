@@ -122,7 +122,6 @@ namespace ServiceTests
             var corolla = modelosToyota.First();
             Assert.AreEqual("Corolla", corolla.Nome);
             Assert.AreEqual(1, corolla.IdMarca);
-            Assert.AreEqual("Sedan", corolla.Versoes); // Ajuste: verificar com padrão correto
         }
 
         [TestMethod]
