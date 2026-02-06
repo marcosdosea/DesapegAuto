@@ -1,4 +1,4 @@
-using AutoMapper;
+ï»¿using AutoMapper;
 using Core;
 using Core.Service;
 using DesapegAutoWeb.Models;
@@ -33,7 +33,6 @@ namespace DesapegAutoWeb.Controllers
             this.mapper = mapper;
         }
 
-        // GET: Anuncio
         public ActionResult Index()
         {
             var anuncios = anuncioService.GetAll();
@@ -44,14 +43,13 @@ namespace DesapegAutoWeb.Controllers
                 if (veiculo != null)
                 {
                     var veiculoViewModel = mapper.Map<VeiculoViewModel>(veiculo);
-                    
-                    // Buscar marca e modelo
+
                     var marca = marcaService.Get(veiculo.IdMarca);
                     var modelo = modeloService.Get(veiculo.IdModelo);
-                    
+
                     if (marca != null) veiculoViewModel.NomeMarca = marca.Nome;
                     if (modelo != null) veiculoViewModel.NomeModelo = modelo.Nome;
-                    
+
                     anuncio.Veiculo = veiculoViewModel;
                 }
             }
@@ -62,33 +60,29 @@ namespace DesapegAutoWeb.Controllers
         {
             var anuncio = anuncioService.Get(id);
             if (anuncio == null) return NotFound();
-            
+
             var model = mapper.Map<AnuncioViewModel>(anuncio);
-            
-            // Carregar dados do veículo
+
             var veiculo = veiculoService.Get(anuncio.IdVeiculo);
             if (veiculo != null)
             {
                 var veiculoViewModel = mapper.Map<VeiculoViewModel>(veiculo);
-                
-                // Buscar marca e modelo
+
                 var marca = marcaService.Get(veiculo.IdMarca);
                 var modelo = modeloService.Get(veiculo.IdModelo);
-                
+
                 if (marca != null) veiculoViewModel.NomeMarca = marca.Nome;
                 if (modelo != null) veiculoViewModel.NomeModelo = modelo.Nome;
-                
+
                 model.Veiculo = veiculoViewModel;
             }
-            
-            // Incrementar visualizações
+
             anuncio.Visualizacoes++;
             anuncioService.Edit(anuncio);
-            
+
             return View(model);
         }
 
-        // GET: Anuncio/Create
         [Authorize(Roles = "Admin,Funcionario")]
         public ActionResult Create()
         {
@@ -97,7 +91,6 @@ namespace DesapegAutoWeb.Controllers
             return View(model);
         }
 
-        // POST: Anuncio/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Funcionario")]
@@ -105,6 +98,8 @@ namespace DesapegAutoWeb.Controllers
         {
             if (ModelState.IsValid)
             {
+                anuncioViewModel.Descricao ??= string.Empty;
+                anuncioViewModel.Opcionais ??= string.Empty;
                 var anuncio = mapper.Map<Anuncio>(anuncioViewModel);
                 anuncioService.Create(anuncio);
                 return RedirectToAction(nameof(Index));
@@ -114,7 +109,6 @@ namespace DesapegAutoWeb.Controllers
             return View(anuncioViewModel);
         }
 
-        // GET: Anuncio/Delete/5
         [Authorize(Roles = "Admin")]
         public ActionResult Delete(int id)
         {

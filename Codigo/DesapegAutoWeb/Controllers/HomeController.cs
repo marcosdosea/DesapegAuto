@@ -1,4 +1,4 @@
-using System.Diagnostics;
+ï»¿using System.Diagnostics;
 using DesapegAutoWeb.Models;
 using Microsoft.AspNetCore.Mvc;
 using Core.Service;
@@ -34,13 +34,19 @@ namespace DesapegAutoWeb.Controllers
 
         public IActionResult Index()
         {
-            // Se o usuário não estiver autenticado, redireciona para registro
+            // Redirect unauthenticated users to register/login flow.
             if (!User.Identity?.IsAuthenticated ?? true)
             {
                 return RedirectToPage("/Account/Register", new { area = "Identity" });
             }
 
-            // Carregar alguns anúncios para exibir na página inicial
+            // Dealership users start from the ads dashboard.
+            if (User.IsInRole("Funcionario"))
+            {
+                return RedirectToAction("Index", "Anuncio");
+            }
+
+            // Load a few ads for home preview.
             var anuncios = _anuncioService.GetAll().Take(3);
             var model = _mapper.Map<IEnumerable<AnuncioViewModel>>(anuncios).ToList();
             
@@ -51,7 +57,6 @@ namespace DesapegAutoWeb.Controllers
                 {
                     var veiculoViewModel = _mapper.Map<VeiculoViewModel>(veiculo);
                     
-                    // Buscar marca e modelo
                     var marca = _marcaService.Get(veiculo.IdMarca);
                     var modelo = _modeloService.Get(veiculo.IdModelo);
                     
@@ -72,7 +77,6 @@ namespace DesapegAutoWeb.Controllers
             var anuncios = _anuncioService.GetAll();
             var model = _mapper.Map<IEnumerable<AnuncioViewModel>>(anuncios).ToList();
             
-            // Aplicar filtros
             if (!string.IsNullOrWhiteSpace(termo))
             {
                 termo = termo.ToLower();
@@ -91,7 +95,6 @@ namespace DesapegAutoWeb.Controllers
                 }).ToList();
             }
             
-            // Carregar dados do veículo para cada anúncio
             foreach (var anuncio in model)
             {
                 var veiculo = _veiculoService.Get(anuncio.IdVeiculo);
@@ -99,7 +102,6 @@ namespace DesapegAutoWeb.Controllers
                 {
                     var veiculoViewModel = _mapper.Map<VeiculoViewModel>(veiculo);
                     
-                    // Buscar marca e modelo
                     var marca = _marcaService.Get(veiculo.IdMarca);
                     var modelo = _modeloService.Get(veiculo.IdModelo);
                     
@@ -110,7 +112,6 @@ namespace DesapegAutoWeb.Controllers
                 }
             }
             
-            // Aplicar filtros de preço
             if (precoMin.HasValue)
             {
                 model = model.Where(a => a.Veiculo?.Preco >= precoMin.Value).ToList();
@@ -120,7 +121,6 @@ namespace DesapegAutoWeb.Controllers
                 model = model.Where(a => a.Veiculo?.Preco <= precoMax.Value).ToList();
             }
             
-            // Aplicar filtros de ano
             if (anoMin.HasValue)
             {
                 model = model.Where(a => a.Veiculo?.Ano >= anoMin.Value).ToList();
@@ -130,7 +130,6 @@ namespace DesapegAutoWeb.Controllers
                 model = model.Where(a => a.Veiculo?.Ano <= anoMax.Value).ToList();
             }
             
-            // Aplicar filtros de quilometragem
             if (kmMin.HasValue)
             {
                 model = model.Where(a => a.Veiculo?.Quilometragem >= kmMin.Value).ToList();
@@ -140,7 +139,6 @@ namespace DesapegAutoWeb.Controllers
                 model = model.Where(a => a.Veiculo?.Quilometragem <= kmMax.Value).ToList();
             }
             
-            // Aplicar filtros de opcionais
             if (opcionais != null && opcionais.Any())
             {
                 model = model.Where(a => 

@@ -1,11 +1,13 @@
-using AutoMapper;
+ï»¿using AutoMapper;
 using Core;
 using Core.Exceptions;
 using Core.Service;
 using DesapegAutoWeb.Controllers;
 using DesapegAutoWeb.Mappers;
 using DesapegAutoWeb.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System.Collections.Generic;
@@ -19,6 +21,7 @@ namespace DesapegAutoWebTests.Controllers
         private static ModeloController controller = null!;
         private static Mock<IModeloService> mockModeloService = null!;
         private static Mock<IMarcaService> mockMarcaService = null!;
+        private static Mock<ICategoriaService> mockCategoriaService = null!;
         private static IMapper mapper = null!;
 
         [TestInitialize]
@@ -26,6 +29,8 @@ namespace DesapegAutoWebTests.Controllers
         {
             mockModeloService = new Mock<IModeloService>();
             mockMarcaService = new Mock<IMarcaService>();
+            mockCategoriaService = new Mock<ICategoriaService>();
+
             mapper = new MapperConfiguration(cfg =>
             {
                 cfg.AddProfile(new ModeloProfile());
@@ -36,21 +41,36 @@ namespace DesapegAutoWebTests.Controllers
             mockModeloService.Setup(s => s.Create(It.IsAny<Modelo>())).Returns(3);
             mockModeloService.Setup(s => s.Edit(It.IsAny<Modelo>())).Verifiable();
             mockModeloService.Setup(s => s.Delete(It.IsAny<int>())).Verifiable();
+            mockModeloService.Setup(service => service.Delete(99)).Throws(new ServiceException("Modelo nao encontrado"));
 
-            // Configuração para simular erro no Delete
-            mockModeloService.Setup(service => service.Delete(99))
-                .Throws(new ServiceException("Modelo não encontrado"));
+            mockMarcaService.Setup(s => s.GetAll()).Returns(new List<Marca>
+            {
+                new Marca { Id = 1, Nome = "Toyota" },
+                new Marca { Id = 2, Nome = "Honda" }
+            });
+
+            mockCategoriaService.Setup(s => s.GetAll()).Returns(new List<Categoria>
+            {
+                new Categoria { Id = 1, Nome = "Sedan" },
+                new Categoria { Id = 2, Nome = "SUV" }
+            });
 
             controller = new ModeloController(
                 mockModeloService.Object,
                 mockMarcaService.Object,
+                mockCategoriaService.Object,
                 mapper);
+
+            controller.TempData = new TempDataDictionary(
+                new DefaultHttpContext(),
+                Mock.Of<ITempDataProvider>());
         }
 
         [TestMethod]
         public void IndexTest_Valido()
         {
             var result = controller.Index();
+
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             var viewResult = (ViewResult)result;
             Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(IEnumerable<ModeloViewModel>));
@@ -62,6 +82,7 @@ namespace DesapegAutoWebTests.Controllers
         public void DetailsTest_Valido()
         {
             var result = controller.Details(1);
+
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             var viewResult = (ViewResult)result;
             Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(ModeloViewModel));
@@ -70,26 +91,32 @@ namespace DesapegAutoWebTests.Controllers
         }
 
         [TestMethod]
-        public void CreateTest_Get()
+        public void CreateTest_Get_RedirecionaParaIndex()
         {
             var result = controller.Create();
-            Assert.IsInstanceOfType(result, typeof(ViewResult));
-        }
 
-        [TestMethod]
-        public void CreateTest_Post_Valido()
-        {
-            var modeloVm = new ModeloViewModel { Id = 3, Nome = "Novo Modelo" };
-            var result = controller.Create(modeloVm);
             Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
             var redirect = (RedirectToActionResult)result;
             Assert.AreEqual("Index", redirect.ActionName);
         }
 
         [TestMethod]
+        public void CreateTest_Post_Valido()
+        {
+            var modeloVm = new ModeloViewModel { Id = 3, Nome = "Novo Modelo", IdMarca = 1, IdCategoria = 1, Versoes = "X" };
+            var result = controller.Create(modeloVm);
+
+            Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
+            var redirect = (RedirectToActionResult)result;
+            Assert.AreEqual("Index", redirect.ActionName);
+            mockModeloService.Verify(s => s.Create(It.IsAny<Modelo>()), Times.Once);
+        }
+
+        [TestMethod]
         public void DeleteTest_Get()
         {
             var result = controller.Delete(1);
+
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             var viewResult = (ViewResult)result;
             Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(ModeloViewModel));
@@ -98,23 +125,21 @@ namespace DesapegAutoWebTests.Controllers
         [TestMethod]
         public void DeleteTest_Post()
         {
-            var modelo = new Modelo { Id = 1 };
             var result = controller.DeleteConfirmed(1);
+
             Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
             var redirect = (RedirectToActionResult)result;
             Assert.AreEqual("Index", redirect.ActionName);
+            mockModeloService.Verify(s => s.Delete(1), Times.Once);
         }
 
         [TestMethod]
         public void EditTest_Post_Valido()
         {
-            // Arrange
-            var modeloVm = new ModeloViewModel { Id = 1, Nome = "Corolla Modificado" };
+            var modeloVm = new ModeloViewModel { Id = 1, Nome = "Corolla Modificado", IdMarca = 1, IdCategoria = 1 };
 
-            // Act
             var result = controller.Edit(1, modeloVm);
 
-            // Assert
             Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
             RedirectToActionResult redirectToActionResult = (RedirectToActionResult)result;
             Assert.AreEqual("Index", redirectToActionResult.ActionName);
@@ -122,32 +147,24 @@ namespace DesapegAutoWebTests.Controllers
         }
 
         [TestMethod]
-        public void Create_Post_ModelStateInvalida_RetornaViewComModel()
+        public void Create_Post_ModelStateInvalida_RedirecionaParaIndex()
         {
-            // Arrange
-            controller.ModelState.AddModelError("Nome", "O nome do modelo é obrigatório");
-            var novoModeloVM = new ModeloViewModel { Id = 3, Nome = string.Empty };
+            controller.ModelState.AddModelError("Nome", "O nome do modelo e obrigatorio");
+            var novoModeloVM = new ModeloViewModel { Id = 3, Nome = string.Empty, IdMarca = 1, IdCategoria = 1 };
 
-            // Act
             var result = controller.Create(novoModeloVM);
 
-            // Assert
-            Assert.IsInstanceOfType(result, typeof(ViewResult));
-            var viewResult = (ViewResult)result;
-            Assert.AreEqual(novoModeloVM, viewResult.Model);
+            Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
+            var redirect = (RedirectToActionResult)result;
+            Assert.AreEqual("Index", redirect.ActionName);
             Assert.IsFalse(controller.ModelState.IsValid);
         }
 
         [TestMethod]
-        public void Delete_Post_QuandoServicoLancaExcecao_RetornaViewComErro()
+        public void Delete_Post_QuandoServicoLancaExcecao_RedirecionaParaIndex()
         {
-            // Arrange
-            var modeloVM = new ModeloViewModel { Id = 99, Nome = "Modelo Inexistente" };
-
-            // Act - O controller agora trata a exceção e redireciona para Index
             var result = controller.DeleteConfirmed(99);
 
-            // Assert - Verifica que retorna RedirectToAction e que o serviço foi chamado
             Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
             var redirect = (RedirectToActionResult)result;
             Assert.AreEqual("Index", redirect.ActionName);
@@ -158,14 +175,14 @@ namespace DesapegAutoWebTests.Controllers
         {
             return new List<Modelo>
             {
-                new Modelo { Id = 1, Nome = "Corolla" },
-                new Modelo { Id = 2, Nome = "Civic" }
+                new Modelo { Id = 1, Nome = "Corolla", IdMarca = 1, IdCategoria = 1, Categoria = "Sedan" },
+                new Modelo { Id = 2, Nome = "Civic", IdMarca = 2, IdCategoria = 1, Categoria = "Sedan" }
             };
         }
 
         private static Modelo GetTargetModelo()
         {
-            return new Modelo { Id = 1, Nome = "Corolla" };
+            return new Modelo { Id = 1, Nome = "Corolla", IdMarca = 1, IdCategoria = 1, Categoria = "Sedan" };
         }
     }
 }

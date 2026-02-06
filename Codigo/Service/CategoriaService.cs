@@ -1,8 +1,7 @@
 ﻿using Core;
+using Core.Exceptions;
 using Core.Service;
 using Microsoft.EntityFrameworkCore;
-using Core.Exceptions;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -17,89 +16,75 @@ namespace Service
             this.context = context;
         }
 
-        /// <summary>
-        /// Cadastrar uma nova categoria na base de dados
-        /// </summary>
-        /// <param name="categoria">Dados da categoria</param>
-        /// <returns>ID da nova categoria cadastrada</returns>
         public int Create(Categoria categoria)
         {
+            if (string.IsNullOrWhiteSpace(categoria.Nome))
+            {
+                throw new ServiceException("Erro: Nome da categoria e obrigatorio.");
+            }
+
+            categoria.Nome = categoria.Nome.Trim();
+
             Categoria? categoriaExistente = context.Categoria
                 .FirstOrDefault(c => c.Nome.ToLower() == categoria.Nome.ToLower());
 
             if (categoriaExistente != null)
             {
-                throw new ServiceException("Erro: Categoria já existente na base de dados.");
+                throw new ServiceException("Erro: Categoria ja existente na base de dados.");
             }
 
-            context.Add(categoria);
+            context.Categoria.Add(categoria);
             context.SaveChanges();
             return categoria.Id;
         }
 
-        /// <summary>
-        /// Editar os dados de uma categoria existente
-        /// </summary>
-        /// <param name="categoria">Dados da categoria a serem atualizados</param>
         public void Edit(Categoria categoria)
         {
             var categoriaExistente = context.Categoria.Find(categoria.Id);
             if (categoriaExistente == null)
             {
-                throw new ServiceException("Erro: Categoria não encontrada. A operação foi cancelada.");
+                throw new ServiceException("Erro: Categoria nao encontrada. A operacao foi cancelada.");
             }
 
+            if (string.IsNullOrWhiteSpace(categoria.Nome))
+            {
+                throw new ServiceException("Erro: Nome da categoria e obrigatorio.");
+            }
+
+            var nomeCategoria = categoria.Nome.Trim();
             var categoriaMesmoNome = context.Categoria
-                .FirstOrDefault(c => c.Id != categoria.Id && c.Nome.ToLower() == categoria.Nome.ToLower());
+                .FirstOrDefault(c => c.Id != categoria.Id && c.Nome.ToLower() == nomeCategoria.ToLower());
             if (categoriaMesmoNome != null)
             {
-                throw new ServiceException("Erro: Já existe outra categoria com este nome.");
+                throw new ServiceException("Erro: Ja existe outra categoria com este nome.");
             }
 
-            context.Update(categoria);
+            categoriaExistente.Nome = nomeCategoria;
             context.SaveChanges();
         }
 
-        /// <summary>
-        /// Apagar uma categoria da base de dados
-        /// </summary>
-        /// <param name="id">ID da categoria a ser apagada</param>
         public void Delete(int id)
         {
             var categoria = context.Categoria.Find(id);
             if (categoria == null)
             {
-                throw new ServiceException("Erro: Categoria não encontrada. A operação foi cancelada.");
+                throw new ServiceException("Erro: Categoria nao encontrada. A operacao foi cancelada.");
             }
 
             context.Remove(categoria);
             context.SaveChanges();
         }
 
-        /// <summary>
-        /// Obter os dados de uma categoria específica pelo ID
-        /// </summary>
-        /// <param name="id">ID da categoria</param>
-        /// <returns>Dados da categoria encontrada ou null</returns>
         public Categoria? Get(int id)
         {
             return context.Categoria.Find(id);
         }
 
-        /// <summary>
-        /// Obter todas as categorias cadastradas
-        /// </summary>
-        /// <returns>Lista de todas as categorias</returns>
         public IEnumerable<Categoria> GetAll()
         {
             return context.Categoria.AsNoTracking();
         }
 
-        /// <summary>
-        /// Buscar categorias que contenham o nome pesquisado (case insensitive)
-        /// </summary>
-        /// <param name="nome">Nome a ser pesquisado</param>
-        /// <returns>Lista de categorias encontradas</returns>
         public IEnumerable<Categoria> GetByNome(string nome)
         {
             return context.Categoria

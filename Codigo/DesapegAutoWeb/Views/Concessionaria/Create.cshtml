@@ -1,10 +1,10 @@
-@model DesapegAutoWeb.Models.ConcessionariaViewModel
+ï»¿@model DesapegAutoWeb.Models.ConcessionariaViewModel
 
 @{
-    ViewData["Title"] = "Nova Concessionária";
+    ViewData["Title"] = "Nova Concessionaria";
 }
 
-<h1>Nova Concessionária</h1>
+<h1>Nova Concessionaria</h1>
 
 <hr />
 <div class="row">
@@ -18,7 +18,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="Cnpj" class="control-label"></label>
-                <input asp-for="Cnpj" class="form-control" />
+                <input asp-for="Cnpj" class="form-control cnpj-mask" inputmode="numeric" maxlength="18" />
                 <span asp-validation-for="Cnpj" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -50,4 +50,22 @@
 </div>
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        (function () {
+            function maskCnpj(value) {
+                const digits = value.replace(/\D/g, "").slice(0, 14);
+                if (digits.length <= 2) return digits;
+                if (digits.length <= 5) return digits.slice(0, 2) + "." + digits.slice(2);
+                if (digits.length <= 8) return digits.slice(0, 2) + "." + digits.slice(2, 5) + "." + digits.slice(5);
+                if (digits.length <= 12) return digits.slice(0, 2) + "." + digits.slice(2, 5) + "." + digits.slice(5, 8) + "/" + digits.slice(8);
+                return digits.slice(0, 2) + "." + digits.slice(2, 5) + "." + digits.slice(5, 8) + "/" + digits.slice(8, 12) + "-" + digits.slice(12);
+            }
+
+            document.querySelectorAll(".cnpj-mask").forEach(function (input) {
+                input.addEventListener("input", function () {
+                    this.value = maskCnpj(this.value);
+                });
+            });
+        })();
+    </script>
 }

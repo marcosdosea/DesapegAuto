@@ -1,118 +1,91 @@
 ﻿@model IEnumerable<DesapegAutoWeb.Models.AnuncioViewModel>
+@using System.Globalization
 @{
-    ViewData["Title"] = "Página Inicial";
+    ViewData["Title"] = "Início";
+    var anuncios = Model?.ToList() ?? new List<DesapegAutoWeb.Models.AnuncioViewModel>();
+    var isAdmin = User.IsInRole("Admin");
 }
 
-<div class="home-header">
-    <div class="container">
-        <div class="row">
-            <div class="col-12">
-                <div class="welcome-section">
-                    @if (User.Identity?.IsAuthenticated == true)
-                    {
-                        var userName = User.Identity.Name?.Split('@')[0] ?? "usuário";
-                        <h1 class="welcome-text">Olá, @userName</h1>
-                    }
-                    else
-                    {
-                        <h1 class="welcome-text">Bem-vindo</h1>
-                    }
-                    <div class="user-actions">
-                        <a href="#" class="btn btn-link user-icon">
-                            <i class="fas fa-user"></i>
-                        </a>
-                        <a href="#" class="btn btn-link help-icon">
-                            <i class="fas fa-question-circle"></i>
-                        </a>
-                    </div>
+<div class="da-page">
+    @if (isAdmin)
+    {
+        <h1 class="da-title">Painel Administrativo</h1>
+
+        <section class="da-admin-panel-grid">
+            <article class="da-admin-card">
+                <div>
+                    <h3>Marcas</h3>
+                    <p>Gerencie as marcas de veículos disponíveis no sistema.</p>
                 </div>
-            </div>
-        </div>
-    </div>
-</div>
+                <a class="da-btn da-btn-primary da-btn-wide" asp-controller="Marca" asp-action="Index">Gerenciar Marcas</a>
+            </article>
 
-<div class="container mt-4">
-    <div class="row">
-        <div class="col-12">
-            <div class="search-section">
-                <div class="search-card">
-                    <form asp-controller="Home" asp-action="Search" method="get">
-                        <div class="search-input-group">
-                            <input type="text" name="termo" class="form-control search-input"
-                                   placeholder="Selecione marca ou modelo do veículo" />
-                        </div>
-                        <div class="search-button-group mt-3">
-                            <button type="submit" class="btn btn-primary search-btn">Ver anúncios</button>
-                        </div>
-                    </form>
+            <article class="da-admin-card">
+                <div>
+                    <h3>Categorias</h3>
+                    <p>Gerencie as categorias de veículos do sistema.</p>
                 </div>
-            </div>
-        </div>
-    </div>
+                <a class="da-btn da-btn-primary da-btn-wide" asp-controller="Categoria" asp-action="Index">Gerenciar Categorias</a>
+            </article>
 
-    <div class="row mt-5">
-        <div class="col-12">
-            <h2 class="section-title">Alguns anúncios</h2>
-        </div>
-    </div>
+            <article class="da-admin-card">
+                <div>
+                    <h3>Modelos</h3>
+                    <p>Gerencie os modelos e versões de veículos disponíveis.</p>
+                </div>
+                <a class="da-btn da-btn-primary da-btn-wide" asp-controller="Modelo" asp-action="Index">Gerenciar Modelos</a>
+            </article>
 
-    <div class="row">
-        @if (Model != null && Model.Any())
-        {
-            @foreach (var anuncio in Model)
+            <article class="da-admin-card">
+                <div>
+                    <h3>Concessionárias</h3>
+                    <p>Gerencie as concessionárias cadastradas no sistema.</p>
+                </div>
+                <a class="da-btn da-btn-primary da-btn-wide" asp-controller="Concessionaria" asp-action="Index">Gerenciar Concessionárias</a>
+            </article>
+        </section>
+    }
+    else
+    {
+        <section class="da-card da-card-pad da-home-search">
+            <form asp-controller="Home" asp-action="Search" method="get">
+                <div class="da-field">
+                    <input type="text" name="termo" class="da-input" placeholder="Selecione marca ou modelo do veículo" />
+                </div>
+                <button type="submit" class="da-btn da-btn-primary da-btn-wide">Ver anúncios</button>
+            </form>
+        </section>
+
+        <h2 class="da-subtitle">Alguns anúncios</h2>
+
+        <section class="da-home-results">
+            @if (anuncios.Any())
             {
-                <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="vehicle-card">
-                        <div class="vehicle-image placeholder-image">
-                            <i class="fas fa-image"></i>
+                foreach (var anuncio in anuncios)
+                {
+                    var nomeVeiculo = $"{anuncio.Veiculo?.NomeMarca} {anuncio.Veiculo?.NomeModelo}".Trim();
+                    if (string.IsNullOrWhiteSpace(nomeVeiculo))
+                    {
+                        nomeVeiculo = "Veículo";
+                    }
+
+                    <article class="da-vehicle-card">
+                        <div class="da-vehicle-image">
+                            <div class="da-vehicle-placeholder">Imagem do veículo</div>
                         </div>
-                        <div class="vehicle-info">
-                            <h3 class="vehicle-title">@(anuncio.Veiculo?.NomeMarca ?? "") @(anuncio.Veiculo?.NomeModelo ?? "")</h3>
-                            <p class="vehicle-year">@anuncio.Veiculo?.Ano</p>
-                            <p class="vehicle-price">@anuncio.Veiculo?.Preco.ToString("C")</p>
-                            <div class="vehicle-actions">
-                                <a asp-controller="Anuncio" asp-action="Details" asp-route-id="@anuncio.Id" class="btn btn-outline-primary vehicle-details-btn">Ver detalhes</a>
-                            </div>
+                        <div class="da-vehicle-body">
+                            <h3 class="da-vehicle-name">@nomeVeiculo</h3>
+                            <p class="da-vehicle-year">@anuncio.Veiculo?.Ano</p>
+                            <p class="da-vehicle-price">@((anuncio.Veiculo?.Preco ?? 0m).ToString("C0", new CultureInfo("pt-BR")))</p>
+                            <a asp-controller="Anuncio" asp-action="Details" asp-route-id="@anuncio.Id" class="da-btn da-btn-outline da-btn-wide">Ver detalhes</a>
                         </div>
-                    </div>
-                </div>
+                    </article>
+                }
             }
-        }
-        else
-        {
-            <div class="col-md-6 col-lg-4 mb-4">
-                <div class="vehicle-card">
-                    <div class="vehicle-image placeholder-image">
-                        <i class="fas fa-image"></i>
-                    </div>
-                    <div class="vehicle-info">
-                        <h3 class="vehicle-title">Nenhum anúncio disponível</h3>
-                        <p class="vehicle-year">-</p>
-                        <p class="vehicle-price">R$ 0,00</p>
-                    </div>
-                </div>
-            </div>
-        }
-    </div>
-
-    <div class="row mt-4">
-        <div class="col-12 text-center">
-            <a asp-controller="Home" asp-action="Search" class="btn btn-primary">Ver todos os anúncios</a>
-        </div>
-    </div>
+            else
+            {
+                <div class="da-empty">Nenhum anúncio disponível no momento.</div>
+            }
+        </section>
+    }
 </div>
-
-@section Scripts {
-    <script>
-        // Adicionar funcionalidade de busca dinâmica se necessário
-        $(document).ready(function() {
-            $('.search-input').on('focus', function() {
-                $(this).parent().addClass('focused');
-            });
-
-            $('.search-input').on('blur', function() {
-                $(this).parent().removeClass('focused');
-            });
-        });
-    </script>
-}

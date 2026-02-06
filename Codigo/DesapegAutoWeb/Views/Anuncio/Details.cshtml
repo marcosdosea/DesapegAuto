@@ -1,9 +1,140 @@
-@model DesapegAutoWeb.Models.AnuncioViewModel
+﻿@model DesapegAutoWeb.Models.AnuncioViewModel
+@using System.Globalization
 @{
-    ViewData["Title"] = "Detalhes do An�ncio";
+    ViewData["Title"] = "Detalhes do Veículo";
+
+    var veiculo = Model.Veiculo;
+    var nomeVeiculo = $"{veiculo?.NomeMarca} {veiculo?.NomeModelo}".Trim();
+    if (string.IsNullOrWhiteSpace(nomeVeiculo))
+    {
+        nomeVeiculo = "Veículo";
+    }
+
+    var opcionais = (Model.Opcionais ?? string.Empty)
+        .Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries)
+        .Select(item => item.Trim())
+        .Where(item => !string.IsNullOrWhiteSpace(item))
+        .ToList();
 }
 
-<div class="home-header">
-    <div class="container">
-        <div class="row">
-            <div class="col-12">
+<div class="da-page">
+    <div class="da-gallery-grid">
+        <div class="da-gallery-item"><div class="da-vehicle-placeholder">Foto principal</div></div>
+        <div class="da-gallery-item"><div class="da-vehicle-placeholder">Foto</div></div>
+        <div class="da-gallery-item"><div class="da-vehicle-placeholder">Foto</div></div>
+        <div class="da-gallery-item"><div class="da-vehicle-placeholder">Foto</div></div>
+    </div>
+
+    <section class="da-detail-summary">
+        <article class="da-detail-main">
+            <h1 class="da-detail-name">@nomeVeiculo</h1>
+            <p class="da-detail-sub">@veiculo?.Ano</p>
+            <p class="da-detail-sub da-muted">Anunciado por: Concessionária</p>
+        </article>
+
+        <aside class="da-price-box">
+            <p class="da-price-value">@((veiculo?.Preco ?? 0m).ToString("C0", new CultureInfo("pt-BR")))</p>
+            <a class="da-btn da-btn-primary da-btn-wide" asp-controller="Venda" asp-action="Create" asp-route-idVeiculo="@Model.IdVeiculo">Falar com concessionária</a>
+        </aside>
+    </section>
+
+    <section class="da-description-box">
+        <h2 class="da-subtitle">Descrição</h2>
+        <p class="da-muted">@(string.IsNullOrWhiteSpace(Model.Descricao) ? "Sem descrição informada." : Model.Descricao)</p>
+    </section>
+
+    <section>
+        <div class="da-tab-head" role="tablist" aria-label="Detalhes do veículo">
+            <button type="button" class="da-tab-btn is-active" data-tab="detalhes">Detalhes</button>
+            <button type="button" class="da-tab-btn" data-tab="opcionais">Opcionais</button>
+            <button type="button" class="da-tab-btn" data-tab="caracteristicas">Características</button>
+        </div>
+
+        <div id="tab-detalhes" class="da-tab-panel is-active">
+            <div class="da-detail-grid">
+                <div class="da-detail-cell">
+                    <p class="da-detail-key">Marca</p>
+                    <p class="da-detail-val">@veiculo?.NomeMarca</p>
+                </div>
+                <div class="da-detail-cell">
+                    <p class="da-detail-key">Modelo</p>
+                    <p class="da-detail-val">@veiculo?.NomeModelo</p>
+                </div>
+                <div class="da-detail-cell">
+                    <p class="da-detail-key">Ano</p>
+                    <p class="da-detail-val">@veiculo?.Ano</p>
+                </div>
+                <div class="da-detail-cell">
+                    <p class="da-detail-key">Cor</p>
+                    <p class="da-detail-val">@veiculo?.Cor</p>
+                </div>
+                <div class="da-detail-cell">
+                    <p class="da-detail-key">Quilometragem</p>
+                    <p class="da-detail-val">@veiculo?.Quilometragem km</p>
+                </div>
+                <div class="da-detail-cell">
+                    <p class="da-detail-key">Placa</p>
+                    <p class="da-detail-val">@veiculo?.Placa</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-opcionais" class="da-tab-panel">
+            @if (opcionais.Any())
+            {
+                <div class="da-chips">
+                    @foreach (var opcional in opcionais)
+                    {
+                        <span class="da-chip">@opcional</span>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="da-empty">Nenhum opcional informado.</div>
+            }
+        </div>
+
+        <div id="tab-caracteristicas" class="da-tab-panel">
+            <div class="da-detail-grid">
+                <div class="da-detail-cell">
+                    <p class="da-detail-key">Status</p>
+                    <p class="da-detail-val">@Model.StatusAnuncio</p>
+                </div>
+                <div class="da-detail-cell">
+                    <p class="da-detail-key">Visualizações</p>
+                    <p class="da-detail-val">@Model.Visualizacoes</p>
+                </div>
+                <div class="da-detail-cell">
+                    <p class="da-detail-key">Interações</p>
+                    <p class="da-detail-val">@(Model.Interacoes ?? 0)</p>
+                </div>
+                <div class="da-detail-cell">
+                    <p class="da-detail-key">Data de publicação</p>
+                    <p class="da-detail-val">@Model.DataPublicacao.ToString("dd/MM/yyyy")</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('.da-tab-btn').forEach(function (button) {
+            button.addEventListener('click', function () {
+                document.querySelectorAll('.da-tab-btn').forEach(function (btn) {
+                    btn.classList.remove('is-active');
+                });
+                document.querySelectorAll('.da-tab-panel').forEach(function (panel) {
+                    panel.classList.remove('is-active');
+                });
+
+                button.classList.add('is-active');
+                var panel = document.getElementById('tab-' + button.dataset.tab);
+                if (panel) {
+                    panel.classList.add('is-active');
+                }
+            });
+        });
+    </script>
+}

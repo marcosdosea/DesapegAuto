@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
 using Core;
-using AutoMapper;
+using Core.Exceptions;
 using Core.Service;
 using DesapegAutoWeb.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace DesapegAutoWeb.Controllers
 {
@@ -18,7 +20,6 @@ namespace DesapegAutoWeb.Controllers
             this.mapper = mapper;
         }
 
-        // GET: Categoria
         public ActionResult Index()
         {
             var listaCategorias = categoriaService.GetAll();
@@ -26,7 +27,6 @@ namespace DesapegAutoWeb.Controllers
             return View(listaCategoriasViewModel);
         }
 
-        // GET: Categoria/Details/5
         public ActionResult Details(int id)
         {
             var categoria = categoriaService.Get(id);
@@ -34,29 +34,41 @@ namespace DesapegAutoWeb.Controllers
             return View(categoriaViewModel);
         }
 
-        // GET: Categoria/Create
         [Authorize(Roles = "Admin,Funcionario")]
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: Categoria/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Funcionario")]
         public ActionResult Create(CategoriaViewModel categoriaViewModel)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+            {
+                TempData["ErrorMessage"] = "Preencha os campos obrigatorios para cadastrar a categoria.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            try
             {
                 var categoria = mapper.Map<Categoria>(categoriaViewModel);
                 categoriaService.Create(categoria);
-                return RedirectToAction(nameof(Index));
+                TempData["SuccessMessage"] = "Categoria cadastrada com sucesso.";
             }
-            return View(categoriaViewModel);
+            catch (ServiceException ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+            }
+            catch (DbUpdateException)
+            {
+                TempData["ErrorMessage"] = "Nao foi possivel salvar a categoria devido a uma inconsistencia no banco de dados.";
+            }
+
+            return RedirectToAction(nameof(Index));
         }
 
-        // GET: Categoria/Edit/5
         [Authorize(Roles = "Admin,Funcionario")]
         public ActionResult Edit(int id)
         {
@@ -65,22 +77,30 @@ namespace DesapegAutoWeb.Controllers
             return View(categoriaViewModel);
         }
 
-        // POST: Categoria/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Funcionario")]
         public ActionResult Edit(CategoriaViewModel categoriaViewModel)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+            {
+                return View(categoriaViewModel);
+            }
+
+            try
             {
                 var categoria = mapper.Map<Categoria>(categoriaViewModel);
                 categoriaService.Edit(categoria);
+                TempData["SuccessMessage"] = "Categoria atualizada com sucesso.";
                 return RedirectToAction(nameof(Index));
             }
-            return View(categoriaViewModel);
+            catch (ServiceException ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return View(categoriaViewModel);
+            }
         }
 
-        // GET: Categoria/Delete/5
         [Authorize(Roles = "Admin")]
         public ActionResult Delete(int id)
         {
@@ -89,15 +109,26 @@ namespace DesapegAutoWeb.Controllers
             return View(categoriaViewModel);
         }
 
-        // POST: Categoria/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
         public ActionResult DeleteConfirmed(int id)
         {
-            categoriaService.Delete(id);
+            try
+            {
+                categoriaService.Delete(id);
+                TempData["SuccessMessage"] = "Categoria removida com sucesso.";
+            }
+            catch (ServiceException ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+            }
+            catch (DbUpdateException)
+            {
+                TempData["ErrorMessage"] = "Nao foi possivel remover a categoria porque ela esta em uso.";
+            }
+
             return RedirectToAction(nameof(Index));
         }
     }
 }
-

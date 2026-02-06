@@ -1,37 +1,125 @@
-@model IEnumerable<DesapegAutoWeb.Models.ConcessionariaViewModel>
-
+ï»¿@model IEnumerable<DesapegAutoWeb.Models.ConcessionariaViewModel>
 @{
-    ViewData["Title"] = "Concessionárias";
+    ViewData["Title"] = "Administracao de Concessionarias";
+    var concessionarias = Model?.ToList() ?? new List<DesapegAutoWeb.Models.ConcessionariaViewModel>();
 }
 
-<h1>Concessionárias</h1>
-<p>
-    <a asp-action="Create" class="btn btn-primary">Nova Concessionária</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>@Html.DisplayNameFor(m => m.First().Nome)</th>
-            <th>@Html.DisplayNameFor(m => m.First().Cnpj)</th>
-            <th>@Html.DisplayNameFor(m => m.First().Email)</th>
-            <th>@Html.DisplayNameFor(m => m.First().Telefone)</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-    @foreach (var item in Model)
+<div class="da-page">
+    <h1 class="da-title">Administracao</h1>
+
+    @if (TempData["SuccessMessage"] is string successMessage)
     {
-        <tr>
-            <td>@item.Nome</td>
-            <td>@item.Cnpj</td>
-            <td>@item.Email</td>
-            <td>@item.Telefone</td>
-            <td>
-                <a asp-action="Details" asp-route-id="@item.Id">Detalhes</a> |
-                <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Excluir</a>
-            </td>
-        </tr>
+        <div class="alert alert-success" role="alert">@successMessage</div>
     }
-    </tbody>
-</table>
+
+    @if (TempData["ErrorMessage"] is string errorMessage)
+    {
+        <div class="alert alert-danger" role="alert">@errorMessage</div>
+    }
+
+    <div class="da-split-layout">
+        <section class="da-card da-card-pad">
+            <h2 class="da-subtitle">Cadastrar Concessionaria</h2>
+
+            <form asp-action="Create" method="post" class="da-stack">
+                <div class="da-field">
+                    <label class="da-label" for="Nome">Nome da Concessionaria</label>
+                    <input class="da-input" id="Nome" name="Nome" required />
+                </div>
+
+                <div class="da-field">
+                    <label class="da-label" for="Cnpj">CNPJ</label>
+                    <input class="da-input cnpj-mask" id="Cnpj" name="Cnpj" placeholder="00.000.000/0000-00" inputmode="numeric" maxlength="18" required />
+                </div>
+
+                <div class="da-field">
+                    <label class="da-label" for="Email">E-mail</label>
+                    <input type="email" class="da-input" id="Email" name="Email" required />
+                </div>
+
+                <div class="da-field">
+                    <label class="da-label" for="Telefone">Telefone</label>
+                    <input class="da-input" id="Telefone" name="Telefone" placeholder="(00) 0000-0000" required />
+                </div>
+
+                <div class="da-field">
+                    <label class="da-label" for="Endereco">Endereco</label>
+                    <textarea class="da-textarea" id="Endereco" name="Endereco" required></textarea>
+                </div>
+
+                <div class="da-field">
+                    <label class="da-label" for="Senha">Senha</label>
+                    <input type="password" class="da-input" id="Senha" name="Senha" required />
+                </div>
+
+                <div class="da-field">
+                    <label class="da-label" for="ConfirmarSenha">Confirmar senha</label>
+                    <input type="password" class="da-input" id="ConfirmarSenha" name="ConfirmarSenha" />
+                </div>
+
+                <button type="submit" class="da-btn da-btn-primary da-btn-wide">Cadastrar Concessionaria</button>
+            </form>
+        </section>
+
+        <section class="da-card da-card-pad">
+            <h2 class="da-subtitle">Concessionarias Cadastradas</h2>
+
+            @if (concessionarias.Any())
+            {
+                <div class="da-list-rows">
+                    @foreach (var item in concessionarias)
+                    {
+                        <div class="da-list-row" style="display:block;">
+                            <div style="display:flex;justify-content:space-between;gap:.5rem;">
+                                <div>
+                                    <p class="da-list-name">@item.Nome</p>
+                                    <p class="da-list-meta">CNPJ: @item.Cnpj</p>
+                                    <p class="da-list-meta">Endereco: @item.Endereco</p>
+                                    <p class="da-list-meta">Telefone: @item.Telefone</p>
+                                    <p class="da-list-meta">E-mail: @item.Email</p>
+                                </div>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="da-link-danger">Remover</a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="da-empty">Nenhuma concessionaria cadastrada.</div>
+            }
+
+            <div class="da-nav-row">
+                <a asp-controller="Marca" asp-action="Index" class="da-btn da-btn-outline">Ir para Marcas</a>
+                <a asp-controller="Modelo" asp-action="Index" class="da-btn da-btn-outline">Ir para Modelos</a>
+            </div>
+        </section>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            function maskCnpj(value) {
+                const digits = value.replace(/\D/g, "").slice(0, 14);
+                if (digits.length <= 2) return digits;
+                if (digits.length <= 5) return digits.slice(0, 2) + "." + digits.slice(2);
+                if (digits.length <= 8) return digits.slice(0, 2) + "." + digits.slice(2, 5) + "." + digits.slice(5);
+                if (digits.length <= 12) return digits.slice(0, 2) + "." + digits.slice(2, 5) + "." + digits.slice(5, 8) + "/" + digits.slice(8);
+                return digits.slice(0, 2) + "." + digits.slice(2, 5) + "." + digits.slice(5, 8) + "/" + digits.slice(8, 12) + "-" + digits.slice(12);
+            }
+
+            document.querySelectorAll(".cnpj-mask").forEach(function (input) {
+                input.addEventListener("input", function () {
+                    this.value = maskCnpj(this.value);
+                });
+
+                input.addEventListener("paste", function (event) {
+                    event.preventDefault();
+                    const text = (event.clipboardData || window.clipboardData).getData("text");
+                    this.value = maskCnpj(text);
+                });
+            });
+        })();
+    </script>
+}

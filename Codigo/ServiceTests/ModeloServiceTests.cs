@@ -1,4 +1,4 @@
-using Core;
+ï»¿using Core;
 using Core.Exceptions;
 using Core.Service;
 using Microsoft.EntityFrameworkCore;
@@ -22,25 +22,31 @@ namespace ServiceTests
             var options = new DbContextOptionsBuilder<DesapegAutoContext>()
                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
                 .Options;
+
             _context = new DesapegAutoContext(options);
             _context.Database.EnsureDeleted();
             _context.Database.EnsureCreated();
 
-            // Inserir marcas para relacionamento
-            var marcas = new List<Marca>
+            _context.Marcas.AddRange(new List<Marca>
             {
                 new Marca { Id = 1, Nome = "Toyota" },
                 new Marca { Id = 2, Nome = "Honda" },
                 new Marca { Id = 3, Nome = "Volkswagen" }
-            };
-            _context.Marcas.AddRange(marcas);
+            });
+
+            _context.Categoria.AddRange(new List<Categoria>
+            {
+                new Categoria { Id = 1, Nome = "Sedan" },
+                new Categoria { Id = 2, Nome = "Hatch" }
+            });
 
             _context.Modelos.AddRange(new List<Modelo>
             {
-                new Modelo { Id = 1, Nome = "Corolla", IdMarca = 1, Categoria = "Sedan", Versoes = "GLi,XLi" },
-                new Modelo { Id = 2, Nome = "Civic", IdMarca = 2, Categoria = "Sedan", Versoes = "LX,EX" },
-                new Modelo { Id = 3, Nome = "Jetta", IdMarca = 3, Categoria = "Sedan", Versoes = "Trendline,Comfortline" }
+                new Modelo { Id = 1, Nome = "Corolla", IdMarca = 1, IdCategoria = 1, Categoria = "Sedan", Versoes = "GLi,XLi" },
+                new Modelo { Id = 2, Nome = "Civic", IdMarca = 2, IdCategoria = 1, Categoria = "Sedan", Versoes = "LX,EX" },
+                new Modelo { Id = 3, Nome = "Jetta", IdMarca = 3, IdCategoria = 1, Categoria = "Sedan", Versoes = "Trendline,Comfortline" }
             });
+
             _context.SaveChanges();
             _modeloService = new ModeloService(_context);
         }
@@ -48,11 +54,15 @@ namespace ServiceTests
         [TestMethod]
         public void CreateTest()
         {
-            var modelo = new Modelo { Id = 4, Nome = "Onix", IdMarca = 1 };
+            var modelo = new Modelo { Id = 4, Nome = "Onix", IdMarca = 1, IdCategoria = 2 };
+
             _modeloService!.Create(modelo);
+
             var created = _modeloService.Get(4);
             Assert.IsNotNull(created);
             Assert.AreEqual("Onix", created.Nome);
+            Assert.AreEqual(2, created.IdCategoria);
+            Assert.AreEqual("Hatch", created.Categoria);
         }
 
         [TestMethod]
@@ -60,10 +70,16 @@ namespace ServiceTests
         {
             var modelo = _modeloService!.Get(1);
             Assert.IsNotNull(modelo);
-            modelo.Nome = "Editado";
+
+            modelo.Nome = "Corolla Cross";
+            modelo.IdCategoria = 2;
             _modeloService.Edit(modelo);
+
             var edited = _modeloService.Get(1);
-            Assert.AreEqual("Editado", edited.Nome);
+            Assert.IsNotNull(edited);
+            Assert.AreEqual("Corolla Cross", edited.Nome);
+            Assert.AreEqual(2, edited.IdCategoria);
+            Assert.AreEqual("Hatch", edited.Categoria);
         }
 
         [TestMethod]
@@ -93,77 +109,81 @@ namespace ServiceTests
         [TestMethod]
         public void CreateTest_ModeloDuplicadoPorMarca_ThrowsServiceException()
         {
-            // Arrange - Tentando criar modelo com mesmo nome e marca já existentes
             var modeloDuplicado = new Modelo
             {
                 Id = 5,
-                Nome = "Corolla", // Mesmo nome do modelo ID 1
-                IdMarca = 1, // Mesma marca do modelo ID 1
-                Categoria = "Sedan",
+                Nome = "Corolla",
+                IdMarca = 1,
+                IdCategoria = 1,
                 Versoes = "GLi,XLi"
             };
 
-            // Act & Assert
             var exception = Assert.ThrowsException<ServiceException>(() => _modeloService!.Create(modeloDuplicado));
-            Assert.IsTrue(exception.Message.Contains("Modelo já existente"));
+            Assert.IsTrue(exception.Message.Contains("Modelo ja existente"));
         }
 
         [TestMethod]
         public void GetByMarca_VerificaIntegridadeDosDadosRelacionados()
         {
-            // Arrange - Buscar todos os modelos da marca Toyota (ID = 1)
-            
-            // Act
             var modelosToyota = _modeloService!.GetByMarca(1).ToList();
 
-            // Assert
             Assert.IsNotNull(modelosToyota);
-            Assert.AreEqual(1, modelosToyota.Count());
+            Assert.AreEqual(1, modelosToyota.Count);
             var corolla = modelosToyota.First();
             Assert.AreEqual("Corolla", corolla.Nome);
             Assert.AreEqual(1, corolla.IdMarca);
+            Assert.AreEqual(1, corolla.IdCategoria);
         }
 
         [TestMethod]
-        public void GetByNome_BuscaComSucessoePorPadrãoCorreto()
+        public void GetByNome_BuscaComSucessoPorPadraoCorreto()
         {
-            // Arrange - Buscar modelo por nome parcial
-            
-            // Act
             var modelos = _modeloService!.GetByNome("Civ").ToList();
 
-            // Assert
             Assert.IsNotNull(modelos);
-            Assert.IsTrue(modelos.Count() > 0);
+            Assert.IsTrue(modelos.Count > 0);
             var civic = modelos.FirstOrDefault(m => m.Nome == "Civic");
             Assert.IsNotNull(civic);
             Assert.AreEqual(2, civic.Id);
             Assert.AreEqual(2, civic.IdMarca);
+            Assert.AreEqual(1, civic.IdCategoria);
         }
 
         [TestMethod]
         public void EditTest_ModeloNaoEncontrado_ThrowsServiceException()
         {
-            // Arrange - Modelo com ID inexistente
             var modeloInexistente = new Modelo
             {
                 Id = 99,
                 Nome = "ModeloFantasma",
                 IdMarca = 1,
-                Categoria = "SUV"
+                IdCategoria = 1
             };
 
-            // Act & Assert
             var exception = Assert.ThrowsException<ServiceException>(() => _modeloService!.Edit(modeloInexistente));
-            Assert.IsTrue(exception.Message.Contains("Modelo não encontrado"));
+            Assert.IsTrue(exception.Message.Contains("Modelo nao encontrado"));
         }
 
         [TestMethod]
         public void DeleteTest_ModeloNaoEncontrado_ThrowsServiceException()
         {
-            // Act & Assert
             var exception = Assert.ThrowsException<ServiceException>(() => _modeloService!.Delete(99));
-            Assert.IsTrue(exception.Message.Contains("Modelo não encontrado"));
+            Assert.IsTrue(exception.Message.Contains("Modelo nao encontrado"));
+        }
+
+        [TestMethod]
+        public void CreateTest_CategoriaInvalida_ThrowsServiceException()
+        {
+            var modeloSemCategoriaValida = new Modelo
+            {
+                Id = 10,
+                Nome = "ModeloX",
+                IdMarca = 1,
+                IdCategoria = 99
+            };
+
+            var exception = Assert.ThrowsException<ServiceException>(() => _modeloService!.Create(modeloSemCategoriaValida));
+            Assert.IsTrue(exception.Message.Contains("Categoria invalida"));
         }
     }
 }

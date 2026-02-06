@@ -6,6 +6,7 @@ using DesapegAutoWeb.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Authorization;
+using System.Globalization;
 
 namespace DesapegAutoWeb.Controllers
 {
@@ -14,17 +15,26 @@ namespace DesapegAutoWeb.Controllers
         private readonly IVendaService vendaService;
  private readonly IConcessionariaService concessionariaService;
       private readonly IPessoaService pessoaService; 
+      private readonly IVeiculoService? veiculoService;
+      private readonly IModeloService? modeloService;
+      private readonly IMarcaService? marcaService;
  private readonly IMapper mapper;
 
         public VendaController(
  IVendaService vendaService,
        IConcessionariaService concessionariaService,
    IPessoaService pessoaService,
-IMapper mapper)
+IMapper mapper,
+   IVeiculoService? veiculoService = null,
+   IModeloService? modeloService = null,
+   IMarcaService? marcaService = null)
      {
     this.vendaService = vendaService;
 this.concessionariaService = concessionariaService;
        this.pessoaService = pessoaService;
+       this.veiculoService = veiculoService;
+       this.modeloService = modeloService;
+       this.marcaService = marcaService;
      this.mapper = mapper;
      }
 
@@ -53,9 +63,30 @@ this.concessionariaService = concessionariaService;
         }
 
  [Authorize(Roles = "Admin,Funcionario")]
-public ActionResult Create()
+ public ActionResult Create(int? idVeiculo = null)
         {
             PopulateViewBags();
+
+            if (idVeiculo.HasValue && veiculoService != null)
+            {
+                var veiculo = veiculoService.Get(idVeiculo.Value);
+                if (veiculo != null)
+                {
+                    var modelo = modeloService?.Get(veiculo.IdModelo);
+                    var marca = marcaService?.Get(veiculo.IdMarca);
+
+                    ViewBag.VeiculoPreview = new
+                    {
+                        Id = veiculo.Id,
+                        Nome = $"{marca?.Nome} {modelo?.Nome}".Trim(),
+                        Ano = veiculo.Ano,
+                        Preco = veiculo.Preco.ToString("C0", new CultureInfo("pt-BR")),
+                        Cor = veiculo.Cor,
+                        Quilometragem = veiculo.Quilometragem
+                    };
+                }
+            }
+
     return View();
 }
 

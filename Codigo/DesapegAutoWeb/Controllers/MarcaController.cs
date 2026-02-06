@@ -1,24 +1,24 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
 using Core;
-using AutoMapper;
+using Core.Exceptions;
 using Core.Service;
 using DesapegAutoWeb.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace DesapegAutoWeb.Controllers
 {
     public class MarcaController : Controller
     {
         private readonly IMarcaService marcaService;
-        private readonly IMapper mapper;    
+        private readonly IMapper mapper;
 
         public MarcaController(IMarcaService marcaService, IMapper mapper)
         {
             this.marcaService = marcaService;
             this.mapper = mapper;
         }
-
-        // GET: Marca
 
         public ActionResult Index()
         {
@@ -27,9 +27,6 @@ namespace DesapegAutoWeb.Controllers
             return View(listaMarcasViewModel);
         }
 
-
-        // GET: Marca/Details/5 
-
         public ActionResult Details(int id)
         {
             var marca = marcaService.Get(id);
@@ -37,30 +34,41 @@ namespace DesapegAutoWeb.Controllers
             return View(marcaViewModel);
         }
 
-        // GET: Marca/Create
         [Authorize(Roles = "Admin,Funcionario")]
         public ActionResult Create()
         {
             return View();
         }
 
-
-        // POST: Marca/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Funcionario")]
         public ActionResult Create(MarcaViewModel marcaViewModel)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+            {
+                TempData["ErrorMessage"] = "Preencha os campos obrigatorios para cadastrar a marca.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            try
             {
                 var marca = mapper.Map<Marca>(marcaViewModel);
                 marcaService.Create(marca);
-                return RedirectToAction(nameof(Index));
+                TempData["SuccessMessage"] = "Marca cadastrada com sucesso.";
             }
-            return View(marcaViewModel);
+            catch (ServiceException ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+            }
+            catch (DbUpdateException)
+            {
+                TempData["ErrorMessage"] = "Nao foi possivel salvar a marca devido a uma inconsistencia no banco de dados.";
+            }
+
+            return RedirectToAction(nameof(Index));
         }
 
-        // GET: Marca/Edit/5
         [Authorize(Roles = "Admin,Funcionario")]
         public ActionResult Edit(int id)
         {
@@ -69,22 +77,30 @@ namespace DesapegAutoWeb.Controllers
             return View(marcaViewModel);
         }
 
-        // POST: Marca/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Funcionario")]
         public ActionResult Edit(MarcaViewModel marcaViewModel)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+            {
+                return View(marcaViewModel);
+            }
+
+            try
             {
                 var marca = mapper.Map<Marca>(marcaViewModel);
                 marcaService.Edit(marca);
+                TempData["SuccessMessage"] = "Marca atualizada com sucesso.";
                 return RedirectToAction(nameof(Index));
             }
-            return View(marcaViewModel);
+            catch (ServiceException ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return View(marcaViewModel);
+            }
         }
 
-        // GET: Marca/Delete/5
         [Authorize(Roles = "Admin")]
         public ActionResult Delete(int id)
         {
@@ -93,13 +109,25 @@ namespace DesapegAutoWeb.Controllers
             return View(marcaViewModel);
         }
 
-        // POST: Marca/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
         public ActionResult DeleteConfirmed(int id)
         {
-            marcaService.Delete(id);
+            try
+            {
+                marcaService.Delete(id);
+                TempData["SuccessMessage"] = "Marca removida com sucesso.";
+            }
+            catch (ServiceException ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+            }
+            catch (DbUpdateException)
+            {
+                TempData["ErrorMessage"] = "Nao foi possivel remover a marca porque ela esta em uso.";
+            }
+
             return RedirectToAction(nameof(Index));
         }
     }

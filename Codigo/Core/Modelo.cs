@@ -9,10 +9,12 @@ public partial class Modelo
 
     public string Nome { get; set; } = null!;
 
-    // Provide default values so tests can create Modelo with only Id and Nome
+    // Keep denormalized category name for legacy screens.
     public string Categoria { get; set; } = string.Empty;
 
     public string Versoes { get; set; } = string.Empty;
+
+    public int IdCategoria { get; set; }
 
     public int IdMarca { get; set; }
 

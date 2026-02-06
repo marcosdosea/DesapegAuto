@@ -1,59 +1,47 @@
-@model IEnumerable<DesapegAutoWeb.Models.AnuncioViewModel>
-
+ï»¿@model IEnumerable<DesapegAutoWeb.Models.AnuncioViewModel>
+@using System.Globalization
 @{
-    ViewData["Title"] = "Anúncios";
+    ViewData["Title"] = "Meus AnÃºncios";
+    var anuncios = Model?.ToList() ?? new List<DesapegAutoWeb.Models.AnuncioViewModel>();
 }
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="admin-title mb-0">Anúncios</h1>
-        <a asp-action="Create" class="btn btn-primary admin-btn-card">
-            <i class="fa-solid fa-plus me-2"></i> Novo Anúncio
-        </a>
+<div class="da-page">
+    <div class="da-top-actions">
+        <h1 class="da-title">Meus AnÃºncios</h1>
+        <a asp-action="Create" class="da-btn da-btn-primary">Anunciar VeÃ­culo</a>
     </div>
 
-    @if (Model != null && Model.Any())
+    @if (anuncios.Any())
     {
-        <div class="list-group">
-            @foreach (var item in Model)
+        foreach (var anuncio in anuncios)
+        {
+            var nomeVeiculo = $"{anuncio.Veiculo?.NomeMarca} {anuncio.Veiculo?.NomeModelo}".Trim();
+            if (string.IsNullOrWhiteSpace(nomeVeiculo))
             {
-                <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-start p-3 mb-3 admin-card">
-                    <div class="d-flex align-items-center">
-                        <i class="fa-solid fa-car-side fa-2x me-4 text-primary"></i>
-                        <div>
-                            <h5 class="mb-1 fw-bold">
-                                Veículo:
-                                @(item.Veiculo != null ?
-                                    ($"{item.Veiculo.NomeModelo ?? ""} - {item.Veiculo.NomeMarca ?? ""}") :
-                                    $"ID {item.IdVeiculo}")
-                            </h5>
-                            <p class="mb-1 text-muted"><small>Data de Publicação: @item.DataPublicacao.ToShortDateString()</small></p>
-                            <span class="badge bg-secondary">@item.StatusAnuncio</span>
-                            <span class="badge bg-info text-dark ms-2">Visualizações: @item.Visualizacoes</span>
-                        </div>
+                nomeVeiculo = "VeÃ­culo";
+            }
+
+            <article class="da-anuncio-row">
+                <div class="da-anuncio-main">
+                    <div class="da-anuncio-photo">
+                        <div class="da-vehicle-placeholder">Imagem</div>
                     </div>
-                    <div class="text-end">
-                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary me-2">Detalhes</a>
-                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">Excluir</a>
+                    <div>
+                        <h2 class="da-subtitle">@nomeVeiculo</h2>
+                        <p class="da-vehicle-year">@anuncio.Veiculo?.Ano</p>
+                        <p class="da-vehicle-price">@((anuncio.Veiculo?.Preco ?? 0m).ToString("C0", new CultureInfo("pt-BR")))</p>
                     </div>
                 </div>
-            }
-        </div>
+
+                <div class="da-anuncio-actions">
+                    <a asp-controller="Veiculo" asp-action="Edit" asp-route-id="@anuncio.IdVeiculo" class="da-btn da-btn-outline">Editar anÃºncio</a>
+                    <a asp-controller="Venda" asp-action="Create" asp-route-idVeiculo="@anuncio.IdVeiculo" class="da-btn da-btn-primary">Vender</a>
+                </div>
+            </article>
+        }
     }
     else
     {
-        <div class="empty-state">
-            <i class="fa-solid fa-car-side empty-state-icon"></i>
-            <p>Nenhum anúncio cadastrado.</p>
-            <a asp-action="Create" class="btn btn-primary mt-3">
-                <i class="fa-solid fa-plus me-2"></i> Criar meu primeiro anúncio
-            </a>
-        </div>
+        <div class="da-empty">VocÃª ainda nÃ£o possui anÃºncios cadastrados.</div>
     }
 </div>
-
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-}
