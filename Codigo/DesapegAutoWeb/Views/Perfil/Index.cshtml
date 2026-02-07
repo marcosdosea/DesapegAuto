@@ -2,6 +2,20 @@
 @model PerfilViewModel
 @{
     ViewData["Title"] = "Meu Perfil";
+
+    var tituloDados = User.IsInRole("Concessionaria")
+        ? "Dados da Concessionária"
+        : User.IsInRole("Funcionario")
+            ? "Dados do Funcionário"
+            : "Dados da Conta";
+
+    var labelNome = User.IsInRole("Concessionaria")
+        ? "Nome da Concessionária"
+        : "Nome de usuário";
+
+    var statusEmail = Model.EmailConfirmed ? "Confirmado" : "Pendente";
+    var statusTelefone = Model.PhoneNumberConfirmed ? "Confirmado" : "Pendente";
+    var status2Fa = Model.TwoFactorEnabled ? "Ativado" : "Desativado";
 }
 
 <div class="da-page">
@@ -13,35 +27,37 @@
     </div>
 
     <section id="switch-infos" class="da-switch-panel is-active da-card da-card-pad">
-        <h2 class="da-subtitle">Dados da Concessionária</h2>
+        <h2 class="da-subtitle">@tituloDados</h2>
 
-        <form class="da-stack" method="get" asp-area="Identity" asp-page="/Account/Manage/Index">
+        <div class="da-stack">
             <div class="da-field">
-                <label class="da-label">Nome da Concessionária</label>
+                <label class="da-label">@labelNome</label>
                 <input class="da-input" value="@Model.UserName" readonly />
             </div>
             <div class="da-field">
-                <label class="da-label">CNPJ</label>
-                <input class="da-input" value="12.345.678/0001-90" readonly />
-            </div>
-            <div class="da-field">
-                <label class="da-label">E-mail</label>
+                <label class="da-label">E-mail (@statusEmail)</label>
                 <input class="da-input" value="@Model.Email" readonly />
             </div>
             <div class="da-field">
-                <label class="da-label">Telefone</label>
+                <label class="da-label">Telefone (@statusTelefone)</label>
                 <input class="da-input" value="@(string.IsNullOrWhiteSpace(Model.PhoneNumber) ? "(00) 0000-0000" : Model.PhoneNumber)" readonly />
             </div>
             <div class="da-field">
-                <label class="da-label">Endereço</label>
-                <textarea class="da-textarea" readonly>Av. Brasil, 150, São Paulo - SP</textarea>
+                <label class="da-label">Autenticação de dois fatores</label>
+                <input class="da-input" value="@status2Fa" readonly />
             </div>
+        </div>
 
-            <div class="da-top-actions" style="margin-bottom:0;">
-                <a class="da-btn da-btn-outline" asp-controller="Home" asp-action="Index">Cancelar</a>
-                <button type="submit" class="da-btn da-btn-primary">Salvar alterações</button>
-            </div>
-        </form>
+        <div class="da-top-actions" style="margin-top:1.25rem; margin-bottom:0; justify-content:flex-end;">
+            <a class="da-btn da-btn-outline" asp-area="Identity" asp-page="/Account/Manage/Index">Gerenciar conta</a>
+            <form asp-area="Identity"
+                  asp-page="/Account/Logout"
+                  asp-route-returnUrl="@Url.Content("~/Identity/Account/Login")"
+                  method="post"
+                  style="margin:0;">
+                <button type="submit" class="da-btn da-btn-danger">Sair</button>
+            </form>
+        </div>
     </section>
 
     <section id="switch-senha" class="da-switch-panel da-card da-card-pad">
