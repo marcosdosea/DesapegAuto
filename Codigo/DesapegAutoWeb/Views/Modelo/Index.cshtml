@@ -1,85 +1,121 @@
-@model IEnumerable<DesapegAutoWeb.Models.ModeloViewModel>
-
+ï»¿@model IEnumerable<DesapegAutoWeb.Models.ModeloViewModel>
+@using Microsoft.AspNetCore.Mvc.Rendering
 @{
-    ViewData["Title"] = "Modelos";
+    ViewData["Title"] = "Administracao de Modelos";
+    var modelos = Model?.ToList() ?? new List<DesapegAutoWeb.Models.ModeloViewModel>();
+    var marcas = ViewBag.Marcas as List<SelectListItem> ?? new List<SelectListItem>();
+    var categorias = ViewBag.Categorias as List<SelectListItem> ?? new List<SelectListItem>();
 }
 
-<div class="dashboard-header-container">
-    <div class="dashboard-header-left">
-        <h1 class="dashboard-title">Administração</h1>
-    </div>
-    <div class="dashboard-header-right">
-        <span class="welcome-text-dashboard">Olá, Administrador</span>
-        <i class="fa-solid fa-user-circle dashboard-icon"></i>
-        <i class="fa-solid fa-circle-question dashboard-icon"></i>
-    </div>
-</div>
+<div class="da-page">
+    <h1 class="da-title">Administracao</h1>
 
-<div class="row">
-    <div class="col-md-6 mb-4">
-        <div class="admin-card h-100">
-            <h2 class="section-title">Cadastrar Modelo</h2>
-            <form asp-action="Create" method="post" class="mt-3">
-                <div class="form-group mb-3">
-                    <label for="nomeModelo" class="form-label">Nome do Modelo</label>
-                    <input type="text" class="form-control" id="nomeModelo" name="Nome" required placeholder="Ex: Corolla">
-                </div>
-                <div class="form-group mb-3">
-                    <label for="categoria" class="form-label">Categoria</label>
-                    <input type="text" class="form-control" id="categoria" name="Categoria" required placeholder="Ex: Sedan">
-                </div>
-                <div class="form-group mb-3">
-                    <label for="versoes" class="form-label">Versões (opcional)</label>
-                    <input type="text" class="form-control" id="versoes" name="Versoes" placeholder="Ex: GLI, Comfortline">
-                </div>
-                <div class="form-group mb-3">
-                    <label for="idMarca" class="form-label">Id da Marca</label>
-                    <input type="number" class="form-control" id="idMarca" name="IdMarca" required />
-                </div>
-                <button type="submit" class="admin-btn">Inserir Modelo</button>
-            </form>
+    @if (TempData["SuccessMessage"] is string successMessage)
+    {
+        <div class="alert alert-success" role="alert">@successMessage</div>
+    }
+
+    @if (TempData["ErrorMessage"] is string errorMessage)
+    {
+        <div class="alert alert-danger" role="alert">@errorMessage</div>
+    }
+
+    @if (!marcas.Any() || !categorias.Any())
+    {
+        <div class="alert alert-warning" role="alert">
+            Para cadastrar modelos, cadastre ao menos uma marca e uma categoria antes.
         </div>
-    </div>
+    }
 
-    <div class="col-md-6 mb-4">
-        <div class="admin-card h-100">
-            <h2 class="section-title">Modelos Existentes</h2>
-            @if (Model != null && Model.Any())
+    <div class="da-split-layout">
+        <section class="da-card da-card-pad">
+            <h2 class="da-subtitle">Cadastrar Modelo</h2>
+
+            <form asp-action="Create" method="post" class="da-stack">
+                <div class="da-field">
+                    <label class="da-label" for="Nome">Nome do Modelo</label>
+                    <input class="da-input" id="Nome" name="Nome" placeholder="Digite o nome do modelo" required />
+                </div>
+
+                <div class="da-field">
+                    <label class="da-label" for="IdMarca">Marca</label>
+                    <select class="da-input" id="IdMarca" name="IdMarca" required>
+                        <option value="">Selecione a marca</option>
+                        @foreach (var marca in marcas)
+                        {
+                            <option value="@marca.Value">@marca.Text</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="da-field">
+                    <label class="da-label" for="IdCategoria">Categoria</label>
+                    <select class="da-input" id="IdCategoria" name="IdCategoria" required>
+                        <option value="">Selecione a categoria</option>
+                        @foreach (var categoria in categorias)
+                        {
+                            <option value="@categoria.Value">@categoria.Text</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="da-field">
+                    <label class="da-label" for="Versoes">Versoes</label>
+                    <input class="da-input" id="Versoes" name="Versoes" placeholder="Separe por virgula. Ex.: GLI, XEi, Altis" />
+                </div>
+
+                <button type="submit" class="da-btn da-btn-primary da-btn-wide">Adicionar Modelo</button>
+            </form>
+        </section>
+
+        <section class="da-card da-card-pad">
+            <h2 class="da-subtitle">Modelos Existentes</h2>
+
+            @if (modelos.Any())
             {
-                <ul class="list-unstyled mt-3">
-                    @foreach (var item in Model)
+                <div class="da-list-rows">
+                    @foreach (var item in modelos)
                     {
-                        <li class="d-flex justify-content-between align-items-center py-2 border-bottom">
-                            <div>
-                                <strong>@item.Nome</strong>
-                                <div class="text-muted">Categoria: @item.Categoria</div>
-                                <div class="text-muted">Marca Id: @item.IdMarca</div>
+                        var versoes = (item.Versoes ?? string.Empty)
+                            .Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries)
+                            .Select(valor => valor.Trim())
+                            .Where(valor => !string.IsNullOrWhiteSpace(valor))
+                            .ToList();
+                        var nomeMarca = string.IsNullOrWhiteSpace(item.NomeMarca) ? $"Marca #{item.IdMarca}" : item.NomeMarca;
+                        var nomeCategoria = string.IsNullOrWhiteSpace(item.NomeCategoria)
+                            ? (!string.IsNullOrWhiteSpace(item.Categoria) ? item.Categoria : $"Categoria #{item.IdCategoria}")
+                            : item.NomeCategoria;
+
+                        <div class="da-list-row" style="display:block;">
+                            <div style="display:flex;justify-content:space-between;gap:.5rem;">
+                                <div>
+                                    <p class="da-list-name">@item.Nome</p>
+                                    <p class="da-list-note">@nomeMarca â€¢ @nomeCategoria</p>
+                                    @if (versoes.Any())
+                                    {
+                                        <div class="da-chips" style="margin-top:.35rem;">
+                                            @foreach (var versao in versoes)
+                                            {
+                                                <span class="da-chip">@versao</span>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="da-link-danger">Remover</a>
                             </div>
-                            <div>
-                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary me-2">Detalhes</a>
-                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary me-2">Editar</a>
-                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">Remover</a>
-                            </div>
-                        </li>
+                        </div>
                     }
-                </ul>
+                </div>
             }
             else
             {
-                <div class="empty-state">
-                    <i class="fa-solid fa-car-side empty-state-icon"></i>
-                    <p>Nenhum modelo cadastrado.</p>
-                </div>
+                <div class="da-empty">Nenhum modelo cadastrado.</div>
             }
 
-            <div class="mt-4 text-end">
-                <a asp-action="Index" asp-controller="Marca" class="btn btn-secondary me-2">Ir para Marcas</a>
-                <a asp-action="Index" asp-controller="Categoria" class="btn btn-secondary">Ir para Categorias</a>
+            <div class="da-nav-row">
+                <a asp-controller="Marca" asp-action="Index" class="da-btn da-btn-outline">Ir para Marcas</a>
+                <a asp-controller="Categoria" asp-action="Index" class="da-btn da-btn-outline">Ir para Categorias</a>
             </div>
-        </div>
+        </section>
     </div>
 </div>
-
-@section Scripts {
-    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
-}

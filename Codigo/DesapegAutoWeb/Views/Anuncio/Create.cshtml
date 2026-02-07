@@ -1,174 +1,122 @@
-@model DesapegAutoWeb.Models.AnuncioViewModel
-
+Ôªø@model DesapegAutoWeb.Models.AnuncioViewModel
 @{
-    ViewData["Title"] = "Anunciar VeÌculo";
+    ViewData["Title"] = "Anunciar Ve√≠culo";
 }
 
-<div class="dashboard-header-container">
-    <div class="dashboard-header-left">
-        <h1 class="dashboard-title">Anunciar VeÌculo</h1>
-    </div>
-    <div class="dashboard-header-right">
-        <span class="welcome-text-dashboard">Ol·, Concession·ria</span>
-        <i class="fa-solid fa-user-circle dashboard-icon"></i>
-        <i class="fa-solid fa-circle-question dashboard-icon"></i>
-    </div>
-</div>
+<div class="da-page">
+    <h1 class="da-title">Anunciar Ve√≠culo</h1>
 
-<div class="container mt-4">
-    <div class="card p-4">
-        <form asp-action="Create" method="post" enctype="multipart/form-data">
+    <section class="da-card da-card-pad">
+        <form asp-action="Create" method="post" class="da-stack">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-            <div class="row g-4">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="marca" class="form-label">Marca</label>
-                        <select id="marca" name="MarcaId" class="form-control" required>
-                            <option value="">Selecione a marca</option>
-                        </select>
-                    </div>
+            <div class="da-grid-2">
+                <div class="da-field">
+                    <label asp-for="IdVeiculo" class="da-label">Marca</label>
+                    <select asp-for="IdVeiculo" asp-items="ViewBag.Veiculos" class="da-select">
+                        <option value="">Selecione a marca</option>
+                    </select>
+                    <span asp-validation-for="IdVeiculo" class="text-danger"></span>
                 </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="modelo" class="form-label">Modelo</label>
-                        <input type="text" class="form-control" id="modelo" name="Modelo" required />
-                    </div>
+
+                <div class="da-field">
+                    <label class="da-label">Modelo</label>
+                    <input class="da-input" name="visual_modelo" placeholder="Modelo" />
                 </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="cor" class="form-label">Cor</label>
-                        <select id="cor" name="Cor" class="form-control" required>
-                            <option value="">Selecione a cor</option>
-                        </select>
-                    </div>
+
+                <div class="da-field">
+                    <label class="da-label">Cor</label>
+                    <select class="da-select" name="visual_cor">
+                        <option value="">Selecione a cor</option>
+                        <option>Branco</option>
+                        <option>Preto</option>
+                        <option>Prata</option>
+                        <option>Cinza</option>
+                        <option>Vermelho</option>
+                        <option>Azul</option>
+                    </select>
                 </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="ano" class="form-label">Ano</label>
-                        <input type="number" class="form-control" id="ano" name="Ano" required />
-                    </div>
+
+                <div class="da-field">
+                    <label class="da-label">Ano</label>
+                    <input type="number" class="da-input" name="visual_ano" placeholder="Ano" />
                 </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="quilometragem" class="form-label">Quilometragem</label>
-                        <input type="number" class="form-control" id="quilometragem" name="Quilometragem" required />
-                    </div>
+
+                <div class="da-field">
+                    <label class="da-label">Quilometragem</label>
+                    <input type="number" class="da-input" name="visual_quilometragem" placeholder="Quilometragem" />
                 </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="preco" class="form-label">PreÁo</label>
-                        <input type="number" class="form-control" id="preco" name="Preco" required />
-                    </div>
+
+                <div class="da-field">
+                    <label class="da-label">Pre√ßo</label>
+                    <input type="number" class="da-input" name="visual_preco" placeholder="Pre√ßo" />
                 </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="placa" class="form-label">Placa</label>
-                        <input type="text" class="form-control" id="placa" name="Placa" required />
-                    </div>
+
+                <div class="da-field">
+                    <label class="da-label">Placa</label>
+                    <input class="da-input" name="visual_placa" placeholder="Placa" />
                 </div>
             </div>
 
-            <hr class="my-4" />
-
-            <div class="form-group mb-4">
-                <label for="descricao" class="form-label">DescriÁ„o</label>
-                <textarea class="form-control" id="descricao" name="Descricao" rows="6" required></textarea>
+            <div class="da-field">
+                <label asp-for="Descricao" class="da-label">Descri√ß√£o</label>
+                <textarea asp-for="Descricao" class="da-textarea" placeholder="Descreva o ve√≠culo"></textarea>
+                <span asp-validation-for="Descricao" class="text-danger"></span>
             </div>
 
-            <div class="row g-3 mb-4">
-                <h4 class="mb-3">Opcionais</h4>
-                <div class="col-md-6">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="Opcionais" value="Ar condicionado" id="ar-condicionado">
-                        <label class="form-check-label" for="ar-condicionado">Ar condicionado</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="Opcionais" value="Vidros elÈtricos" id="vidros-eletricos">
-                        <label class="form-check-label" for="vidros-eletricos">Vidros elÈtricos</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="Opcionais" value="Airbag" id="airbag">
-                        <label class="form-check-label" for="airbag">Airbag</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="Opcionais" value="Controle de traÁ„o" id="controle-tracao">
-                        <label class="form-check-label" for="controle-tracao">Controle de traÁ„o</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="Opcionais" value="Central multimÌdia" id="central-multimidia">
-                        <label class="form-check-label" for="central-multimidia">Central multimÌdia</label>
-                    </div>
+            <div class="da-field">
+                <p class="da-label">Opcionais</p>
+                <div class="da-checkbox-grid">
+                    <label class="da-check-item"><input type="checkbox" name="opcionalItem" value="Ar condicionado" />Ar condicionado</label>
+                    <label class="da-check-item"><input type="checkbox" name="opcionalItem" value="Dire√ß√£o hidr√°ulica" />Dire√ß√£o hidr√°ulica</label>
+                    <label class="da-check-item"><input type="checkbox" name="opcionalItem" value="Vidros el√©tricos" />Vidros el√©tricos</label>
+                    <label class="da-check-item"><input type="checkbox" name="opcionalItem" value="Travas el√©tricas" />Travas el√©tricas</label>
+                    <label class="da-check-item"><input type="checkbox" name="opcionalItem" value="Airbag" />Airbag</label>
+                    <label class="da-check-item"><input type="checkbox" name="opcionalItem" value="Freios ABS" />Freios ABS</label>
+                    <label class="da-check-item"><input type="checkbox" name="opcionalItem" value="Central multim√≠dia" />Central multim√≠dia</label>
+                    <label class="da-check-item"><input type="checkbox" name="opcionalItem" value="C√¢mera de r√©" />C√¢mera de r√©</label>
                 </div>
-                <div class="col-md-6">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="Opcionais" value="DireÁ„o hidr·ulica" id="direcao-hidraulica">
-                        <label class="form-check-label" for="direcao-hidraulica">DireÁ„o hidr·ulica</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="Opcionais" value="Travas elÈtricas" id="travas-eletricas">
-                        <label class="form-check-label" for="travas-eletricas">Travas elÈtricas</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="Opcionais" value="Freios ABS" id="freios-abs">
-                        <label class="form-check-label" for="freios-abs">Freios ABS</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="Opcionais" value="Bancos em couro" id="bancos-couro">
-                        <label class="form-check-label" for="bancos-couro">Bancos em couro</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="Opcionais" value="C‚mera de rÈ" id="camera-re">
-                        <label class="form-check-label" for="camera-re">C‚mera de rÈ</label>
-                    </div>
-                </div>
+                <input type="hidden" asp-for="Opcionais" id="opcionaisHidden" />
             </div>
 
-            <div class="form-group">
-                <h4 class="mb-3">Fotos</h4>
-                <div class="drag-drop-area text-center">
-                    <input type="file" id="fotos" name="fotos" multiple hidden />
-                    <label for="fotos" class="drag-drop-label">
-                        <i class="fas fa-plus-circle"></i> Adicionar fotos
-                    </label>
-                </div>
+            <div class="da-field">
+                <label asp-for="IdVenda" class="da-label">Venda vinculada (opcional)</label>
+                <select asp-for="IdVenda" asp-items="ViewBag.Vendas" class="da-select">
+                    <option value="0">Nenhuma venda vinculada</option>
+                </select>
             </div>
 
-            <div class="d-flex justify-content-end mt-4">
-                <a asp-action="Index" class="btn btn-light me-2">Cancelar</a>
-                <button type="submit" class="btn btn-primary">Anunciar</button>
+            <input type="hidden" asp-for="StatusAnuncio" value="D" />
+
+            <div class="da-top-actions" style="margin-bottom:0;">
+                <a asp-action="Index" class="da-btn da-btn-outline">Cancelar</a>
+                <button type="submit" class="da-btn da-btn-primary">Anunciar ve√≠culo</button>
             </div>
         </form>
-    </div>
+    </section>
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    <script>
+        (function () {
+            var checkboxes = Array.from(document.querySelectorAll('input[name="opcionalItem"]'));
+            var hidden = document.getElementById('opcionaisHidden');
+
+            function syncOpcionais() {
+                if (!hidden) {
+                    return;
+                }
+                hidden.value = checkboxes
+                    .filter(function (item) { return item.checked; })
+                    .map(function (item) { return item.value; })
+                    .join(', ');
+            }
+
+            checkboxes.forEach(function (item) {
+                item.addEventListener('change', syncOpcionais);
+            });
+            syncOpcionais();
+        })();
+    </script>
 }
-
-<style>
-    /* Estilo para a ·rea de arrastar e soltar fotos */
-    .drag-drop-area {
-        border: 2px dashed #ccc;
-        border-radius: 8px;
-        padding: 50px;
-        cursor: pointer;
-        transition: border-color 0.3s ease;
-    }
-
-    .drag-drop-area:hover {
-        border-color: #007bff;
-    }
-
-    .drag-drop-label {
-        color: #007bff;
-        cursor: pointer;
-        font-weight: 500;
-        font-size: 1.1rem;
-    }
-
-    .drag-drop-label .fas {
-        margin-right: 5px;
-    }
-</style>

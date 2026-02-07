@@ -89,7 +89,7 @@ public partial class DesapegAutoContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Cnpj)
-                .HasMaxLength(14)
+                .HasMaxLength(18)
                 .HasColumnName("cnpj");
             entity.Property(e => e.Email)
                 .HasMaxLength(50)
@@ -126,12 +126,15 @@ public partial class DesapegAutoContext : DbContext
 
             entity.ToTable("modelo");
 
+            entity.HasIndex(e => e.IdCategoria, "fk_modelo_categoria1_idx");
+
             entity.HasIndex(e => e.IdMarca, "fk_modelo_marca1_idx");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Categoria)
                 .HasMaxLength(50)
                 .HasColumnName("categoria");
+            entity.Property(e => e.IdCategoria).HasColumnName("idCategoria");
             entity.Property(e => e.IdMarca).HasColumnName("idMarca");
             entity.Property(e => e.Nome)
                 .HasMaxLength(50)
@@ -139,6 +142,18 @@ public partial class DesapegAutoContext : DbContext
             entity.Property(e => e.Versoes)
                 .HasMaxLength(100)
                 .HasColumnName("versoes");
+
+            entity.HasOne<Categoria>()
+                .WithMany()
+                .HasForeignKey(e => e.IdCategoria)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("fk_modelo_categoria1");
+
+            entity.HasOne(e => e.IdMarcaNavigation)
+                .WithMany()
+                .HasForeignKey(e => e.IdMarca)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("fk_modelo_marca1");
         });
 
         modelBuilder.Entity<Pessoa>(entity =>
@@ -266,6 +281,12 @@ public partial class DesapegAutoContext : DbContext
             entity.Property(e => e.Nome)
                 .HasMaxLength(50)
                 .HasColumnName("nome");
+
+            entity.HasOne(e => e.IdModeloNavigation)
+                .WithMany(m => m.Versaos)
+                .HasForeignKey(e => e.IdModelo)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("fk_versao_modelo1");
         });
 
         OnModelCreatingPartial(modelBuilder);

@@ -1,11 +1,14 @@
 ﻿using AutoMapper;
 using Core;
+using Core.Exceptions;
 using Core.Service;
 using DesapegAutoWeb.Models;
-using Microsoft.AspNetCore.Mvc;
-using System.Linq;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace DesapegAutoWeb.Controllers
 {
@@ -13,24 +16,28 @@ namespace DesapegAutoWeb.Controllers
     {
         private readonly IModeloService modeloService;
         private readonly IMarcaService marcaService;
+        private readonly ICategoriaService categoriaService;
         private readonly IMapper mapper;
 
-        public ModeloController(IModeloService modeloService, IMarcaService marcaService, IMapper mapper)
+        public ModeloController(
+            IModeloService modeloService,
+            IMarcaService marcaService,
+            ICategoriaService categoriaService,
+            IMapper mapper)
         {
             this.modeloService = modeloService;
             this.marcaService = marcaService;
+            this.categoriaService = categoriaService;
             this.mapper = mapper;
         }
 
-        // GET: Modelo
         public ActionResult Index()
         {
             var listaModelos = modeloService.GetAll();
             var listaModelosVm = mapper.Map<IEnumerable<ModeloViewModel>>(listaModelos);
-            return View(listaModelosVm);
+            return RenderIndex(listaModelosVm);
         }
 
-        // GET: Modelo/Details/5
         public ActionResult Details(int id)
         {
             var modelo = modeloService.Get(id);
@@ -38,35 +45,46 @@ namespace DesapegAutoWeb.Controllers
             {
                 return NotFound();
             }
+
             var vm = mapper.Map<ModeloViewModel>(modelo);
             return View(vm);
         }
 
-        // GET: Modelo/Create
         [Authorize(Roles = "Admin,Funcionario")]
         public ActionResult Create()
         {
-            var vm = new ModeloViewModel();
-            // Optionally populate vm.Marcas from marcaService here
-            return View(vm);
+            return RedirectToAction(nameof(Index));
         }
 
-        // POST: Modelo/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Funcionario")]
         public ActionResult Create(ModeloViewModel modeloViewModel)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+            {
+                TempData["ErrorMessage"] = "Preencha os campos obrigatorios para cadastrar o modelo.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            try
             {
                 var modelo = mapper.Map<Modelo>(modeloViewModel);
                 modeloService.Create(modelo);
-                return RedirectToAction(nameof(Index));
+                TempData["SuccessMessage"] = "Modelo cadastrado com sucesso.";
             }
-            return View(modeloViewModel);
+            catch (ServiceException ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+            }
+            catch (DbUpdateException)
+            {
+                TempData["ErrorMessage"] = "Nao foi possivel salvar o modelo devido a uma inconsistencia no banco de dados.";
+            }
+
+            return RedirectToAction(nameof(Index));
         }
 
-        // GET: Modelo/Edit/5
         [Authorize(Roles = "Admin,Funcionario")]
         public ActionResult Edit(int id)
         {
@@ -75,11 +93,12 @@ namespace DesapegAutoWeb.Controllers
             {
                 return NotFound();
             }
+
             var vm = mapper.Map<ModeloViewModel>(modelo);
+            PopulateCombos();
             return View(vm);
         }
 
-        // POST: Modelo/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Funcionario")]
@@ -90,16 +109,33 @@ namespace DesapegAutoWeb.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+            {
+                PopulateCombos();
+                return View(modeloViewModel);
+            }
+
+            try
             {
                 var modelo = mapper.Map<Modelo>(modeloViewModel);
                 modeloService.Edit(modelo);
+                TempData["SuccessMessage"] = "Modelo atualizado com sucesso.";
                 return RedirectToAction(nameof(Index));
             }
-            return View(modeloViewModel);
+            catch (ServiceException ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+                PopulateCombos();
+                return View(modeloViewModel);
+            }
+            catch (DbUpdateException)
+            {
+                ModelState.AddModelError(string.Empty, "Nao foi possivel atualizar o modelo devido a uma inconsistencia no banco de dados.");
+                PopulateCombos();
+                return View(modeloViewModel);
+            }
         }
 
-        // GET: Modelo/Delete/5
         [Authorize(Roles = "Admin")]
         public ActionResult Delete(int id)
         {
@@ -108,11 +144,11 @@ namespace DesapegAutoWeb.Controllers
             {
                 return NotFound();
             }
+
             var vm = mapper.Map<ModeloViewModel>(modelo);
             return View(vm);
         }
 
-        // POST: Modelo/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
@@ -121,32 +157,33 @@ namespace DesapegAutoWeb.Controllers
             try
             {
                 modeloService.Delete(id);
-                return RedirectToAction(nameof(Index));
+                TempData["SuccessMessage"] = "Modelo removido com sucesso.";
             }
-            catch (Core.Exceptions.ServiceException ex)
+            catch (ServiceException ex)
             {
-                if (TempData != null)
-                {
-                    TempData["ErrorMessage"] = ex.Message;
-                }
-                return RedirectToAction(nameof(Index));
+                TempData["ErrorMessage"] = ex.Message;
             }
+            catch (DbUpdateException)
+            {
+                TempData["ErrorMessage"] = "Nao foi possivel remover o modelo porque ele esta em uso.";
+            }
+
+            return RedirectToAction(nameof(Index));
         }
 
-        // Additional Methods from IModeloService
         public ActionResult GetByMarca(int idMarca)
         {
             var modelosDto = modeloService.GetByMarca(idMarca);
-            // Map DTO -> ViewModel
             var vms = modelosDto.Select(m => new ModeloViewModel
             {
                 Id = m.Id,
                 Nome = m.Nome ?? string.Empty,
                 Versoes = m.Versoes,
                 IdMarca = m.IdMarca,
-                Categoria = string.Empty
+                IdCategoria = m.IdCategoria
             });
-            return View("Index", vms);
+
+            return RenderIndex(vms);
         }
 
         public ActionResult GetByCategoria(string categoria)
@@ -158,9 +195,11 @@ namespace DesapegAutoWeb.Controllers
                 Nome = m.Nome ?? string.Empty,
                 Versoes = m.Versoes,
                 IdMarca = m.IdMarca,
+                IdCategoria = m.IdCategoria,
                 Categoria = categoria
             });
-            return View("Index", vms);
+
+            return RenderIndex(vms);
         }
 
         public ActionResult GetByNome(string nome)
@@ -172,9 +211,58 @@ namespace DesapegAutoWeb.Controllers
                 Nome = m.Nome ?? string.Empty,
                 Versoes = m.Versoes,
                 IdMarca = m.IdMarca,
-                Categoria = string.Empty
+                IdCategoria = m.IdCategoria
             });
-            return View("Index", vms);
+
+            return RenderIndex(vms);
+        }
+
+        private ActionResult RenderIndex(IEnumerable<ModeloViewModel> modelos)
+        {
+            var lista = modelos.ToList();
+            var marcas = marcaService.GetAll().ToDictionary(m => m.Id, m => m.Nome);
+            var categorias = categoriaService.GetAll().ToDictionary(c => c.Id, c => c.Nome);
+
+            foreach (var item in lista)
+            {
+                if (marcas.TryGetValue(item.IdMarca, out var nomeMarca))
+                {
+                    item.NomeMarca = nomeMarca;
+                }
+
+                if (categorias.TryGetValue(item.IdCategoria, out var nomeCategoria))
+                {
+                    item.NomeCategoria = nomeCategoria;
+                    if (string.IsNullOrWhiteSpace(item.Categoria))
+                    {
+                        item.Categoria = nomeCategoria;
+                    }
+                }
+            }
+
+            PopulateCombos();
+            return View("Index", lista);
+        }
+
+        private void PopulateCombos()
+        {
+            ViewBag.Marcas = marcaService.GetAll()
+                .OrderBy(m => m.Nome)
+                .Select(m => new SelectListItem
+                {
+                    Value = m.Id.ToString(),
+                    Text = m.Nome
+                })
+                .ToList();
+
+            ViewBag.Categorias = categoriaService.GetAll()
+                .OrderBy(c => c.Nome)
+                .Select(c => new SelectListItem
+                {
+                    Value = c.Id.ToString(),
+                    Text = c.Nome
+                })
+                .ToList();
         }
     }
 }

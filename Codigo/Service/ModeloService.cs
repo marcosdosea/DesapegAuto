@@ -1,7 +1,7 @@
-using Core;
+ï»¿using Core;
 using Core.DTO;
-using Core.Service;
 using Core.Exceptions;
+using Core.Service;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,15 +19,37 @@ namespace Service
 
         public int Create(Modelo modelo)
         {
-            var modeloExistente = context.Modelos
-                .FirstOrDefault(m => m.Nome.ToLower() == modelo.Nome.ToLower() && m.IdMarca == modelo.IdMarca);
-                
-            if (modeloExistente != null)
+            if (string.IsNullOrWhiteSpace(modelo.Nome))
             {
-                throw new ServiceException("Erro: Modelo já existente para esta marca.");
+                throw new ServiceException("Erro: O nome do modelo e obrigatorio.");
             }
 
-            context.Add(modelo);
+            modelo.Nome = modelo.Nome.Trim();
+            modelo.Versoes = (modelo.Versoes ?? string.Empty).Trim();
+
+            if (!context.Marcas.Any(m => m.Id == modelo.IdMarca))
+            {
+                throw new ServiceException("Erro: Marca invalida para o modelo.");
+            }
+
+            var categoria = context.Categoria.FirstOrDefault(c => c.Id == modelo.IdCategoria);
+            if (categoria == null)
+            {
+                throw new ServiceException("Erro: Categoria invalida para o modelo.");
+            }
+
+            modelo.Categoria = categoria.Nome;
+
+            var nomeModelo = modelo.Nome.ToLower();
+            var modeloExistente = context.Modelos
+                .FirstOrDefault(m => m.Nome.ToLower() == nomeModelo && m.IdMarca == modelo.IdMarca);
+
+            if (modeloExistente != null)
+            {
+                throw new ServiceException("Erro: Modelo ja existente para esta marca.");
+            }
+
+            context.Modelos.Add(modelo);
             context.SaveChanges();
             return modelo.Id;
         }
@@ -37,19 +59,43 @@ namespace Service
             var modeloExistente = context.Modelos.Find(modelo.Id);
             if (modeloExistente == null)
             {
-                throw new ServiceException("Erro: Modelo não encontrado. A operação foi cancelada.");
+                throw new ServiceException("Erro: Modelo nao encontrado. A operacao foi cancelada.");
+            }
+
+            if (string.IsNullOrWhiteSpace(modelo.Nome))
+            {
+                throw new ServiceException("Erro: O nome do modelo e obrigatorio.");
+            }
+
+            modelo.Nome = modelo.Nome.Trim();
+            modelo.Versoes = (modelo.Versoes ?? string.Empty).Trim();
+
+            if (!context.Marcas.Any(m => m.Id == modelo.IdMarca))
+            {
+                throw new ServiceException("Erro: Marca invalida para o modelo.");
+            }
+
+            var categoria = context.Categoria.FirstOrDefault(c => c.Id == modelo.IdCategoria);
+            if (categoria == null)
+            {
+                throw new ServiceException("Erro: Categoria invalida para o modelo.");
             }
 
             var modeloMesmoNome = context.Modelos
-                .FirstOrDefault(m => m.Id != modelo.Id && 
-                                   m.Nome.ToLower() == modelo.Nome.ToLower() && 
-                                   m.IdMarca == modelo.IdMarca);
+                .FirstOrDefault(m => m.Id != modelo.Id &&
+                                     m.Nome.ToLower() == modelo.Nome.ToLower() &&
+                                     m.IdMarca == modelo.IdMarca);
             if (modeloMesmoNome != null)
             {
-                throw new ServiceException("Erro: Já existe outro modelo com este nome para esta marca.");
+                throw new ServiceException("Erro: Ja existe outro modelo com este nome para esta marca.");
             }
 
-            context.Update(modelo);
+            modeloExistente.Nome = modelo.Nome;
+            modeloExistente.IdMarca = modelo.IdMarca;
+            modeloExistente.IdCategoria = modelo.IdCategoria;
+            modeloExistente.Categoria = categoria.Nome;
+            modeloExistente.Versoes = modelo.Versoes;
+
             context.SaveChanges();
         }
 
@@ -58,7 +104,7 @@ namespace Service
             var modelo = context.Modelos.Find(id);
             if (modelo == null)
             {
-                throw new ServiceException("Erro: Modelo não encontrado. A operação foi cancelada.");
+                throw new ServiceException("Erro: Modelo nao encontrado. A operacao foi cancelada.");
             }
 
             context.Remove(modelo);
@@ -85,7 +131,7 @@ namespace Service
                     Nome = m.Nome,
                     Versoes = m.Versoes,
                     IdMarca = m.IdMarca,
-                    IdCategoria = 0 // Ajuste conforme necessário
+                    IdCategoria = m.IdCategoria
                 }).ToList();
         }
 
@@ -99,7 +145,7 @@ namespace Service
                     Nome = m.Nome,
                     Versoes = m.Versoes,
                     IdMarca = m.IdMarca,
-                    IdCategoria = 0 // Ajuste conforme necessário
+                    IdCategoria = m.IdCategoria
                 }).ToList();
         }
 
@@ -113,7 +159,7 @@ namespace Service
                     Nome = m.Nome,
                     Versoes = m.Versoes,
                     IdMarca = m.IdMarca,
-                    IdCategoria = 0 // Ajuste conforme necessário
+                    IdCategoria = m.IdCategoria
                 }).ToList();
         }
     }

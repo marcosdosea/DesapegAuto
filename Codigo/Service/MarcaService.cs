@@ -1,4 +1,5 @@
 ﻿using Core;
+using Core.Exceptions;
 using Core.Service;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,74 +14,75 @@ namespace Service
             this.context = context;
         }
 
-        /// <summary>
-        /// Cadastrar uma nova marca na base de dados
-        /// </summary>
-        /// <param name="marca">Dados da marca</param>
-        /// <returns>ID da nova marca cadastrada</returns>
         public int Create(Marca marca)
         {
+            if (string.IsNullOrWhiteSpace(marca.Nome))
+            {
+                throw new ServiceException("Erro: Nome da marca e obrigatorio.");
+            }
+
+            marca.Nome = marca.Nome.Trim();
+
             Marca? marcaExistente = context.Marcas
                 .FirstOrDefault(m => m.Nome.ToLower() == marca.Nome.ToLower());
 
             if (marcaExistente != null)
             {
-                throw new Exception("Marca já existente na base de dados.");
+                throw new ServiceException("Erro: Marca ja existente na base de dados.");
             }
 
-            context.Add(marca);
+            context.Marcas.Add(marca);
             context.SaveChanges();
             return marca.Id;
         }
 
-        /// <summary>
-        /// Editar os dados de uma marca existente
-        /// </summary>
-        /// <param name="marca">Dados da marca a serem atualizados</param>
         public void Edit(Marca marca)
         {
-            context.Update(marca);
+            var marcaExistente = context.Marcas.Find(marca.Id);
+            if (marcaExistente == null)
+            {
+                throw new ServiceException("Erro: Marca nao encontrada. A operacao foi cancelada.");
+            }
+
+            if (string.IsNullOrWhiteSpace(marca.Nome))
+            {
+                throw new ServiceException("Erro: Nome da marca e obrigatorio.");
+            }
+
+            var nomeMarca = marca.Nome.Trim();
+            var marcaMesmoNome = context.Marcas
+                .FirstOrDefault(m => m.Id != marca.Id && m.Nome.ToLower() == nomeMarca.ToLower());
+            if (marcaMesmoNome != null)
+            {
+                throw new ServiceException("Erro: Ja existe outra marca com este nome.");
+            }
+
+            marcaExistente.Nome = nomeMarca;
             context.SaveChanges();
         }
 
-        /// <summary>
-        /// Apagar uma marca da base de dados
-        /// </summary>
-        /// <param name="id">ID da marca a ser apagada</param>
         public void Delete(int id)
         {
             var marca = context.Marcas.Find(id);
-            if (marca != null)
+            if (marca == null)
             {
-                context.Remove(marca);
-                context.SaveChanges();
+                throw new ServiceException("Erro: Marca nao encontrada. A operacao foi cancelada.");
             }
+
+            context.Remove(marca);
+            context.SaveChanges();
         }
 
-        /// <summary>
-        /// Obter os dados de uma marca específica pelo ID
-        /// </summary>
-        /// <param name="id">ID da marca</param>
-        /// <returns>Dados da marca encontrada ou null</returns>
         public Marca? Get(int id)
         {
             return context.Marcas.Find(id);
         }
 
-        /// <summary>
-        /// Obter todas as marcas cadastradas
-        /// </summary>
-        /// <returns>Lista de todas as marcas</returns>
         public IEnumerable<Marca> GetAll()
         {
             return context.Marcas.AsNoTracking();
         }
 
-        /// <summary>
-        /// Buscar marcas que contenham o nome pesquisado (case insensitive)
-        /// </summary>
-        /// <param name="nome">Nome a ser pesquisado</param>
-        /// <returns>Lista de marcas encontradas</returns>
         public IEnumerable<Marca> GetByNome(string nome)
         {
             return context.Marcas

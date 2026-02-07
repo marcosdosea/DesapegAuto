@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc.Rendering;
+ï»¿using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 
 namespace DesapegAutoWeb.Models
@@ -8,27 +8,31 @@ namespace DesapegAutoWeb.Models
         [Key]
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "O nome do modelo é obrigatório.")]
+        [Required(ErrorMessage = "O nome do modelo e obrigatorio.")]
         [Display(Name = "Nome do Modelo")]
-        [StringLength(100, ErrorMessage = "O nome do modelo deve ter no máximo 100 caracteres.")]
+        [StringLength(100, ErrorMessage = "O nome do modelo deve ter no maximo 100 caracteres.")]
         public string Nome { get; set; } = null!;
 
-        [Required(ErrorMessage = "A categoria é obrigatória.")]
+        [Required(ErrorMessage = "A categoria e obrigatoria.")]
         [Display(Name = "Categoria")]
-        public string Categoria { get; set; } = null!;
+        public int IdCategoria { get; set; }
 
-        [Display(Name = "Versões")]
+        // Denormalized category text persisted in legacy schema.
+        public string? Categoria { get; set; }
+
+        [Display(Name = "Versoes")]
         public string? Versoes { get; set; }
 
-        [Required(ErrorMessage = "A marca é obrigatória.")]
+        [Required(ErrorMessage = "A marca e obrigatoria.")]
         [Display(Name = "Marca")]
         public int IdMarca { get; set; }
 
-        // Helper properties for UI
         [Display(Name = "Marca")]
         public string? NomeMarca { get; set; }
 
-        // Dropdown list to populate marcas in forms
+        [Display(Name = "Categoria")]
+        public string? NomeCategoria { get; set; }
+
         public IEnumerable<SelectListItem>? Marcas { get; set; }
     }
 }

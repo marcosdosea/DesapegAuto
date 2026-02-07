@@ -1,213 +1,103 @@
-@model IEnumerable<DesapegAutoWeb.Models.AnuncioViewModel>
+Ôªø@model IEnumerable<DesapegAutoWeb.Models.AnuncioViewModel>
+@using System.Globalization
 @{
-    ViewData["Title"] = "Resultados da pesquisa";
+    ViewData["Title"] = "Pesquisa";
+    var anuncios = Model?.ToList() ?? new List<DesapegAutoWeb.Models.AnuncioViewModel>();
+    var opcionaisSelecionados = (ViewBag.Opcionais as IEnumerable<string> ?? Enumerable.Empty<string>()).ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+    bool IsSelected(string value) => opcionaisSelecionados.Contains(value);
 }
 
-<div class="home-header">
-    <div class="container">
-        <div class="row">
-            <div class="col-12">
-                <div class="welcome-section">
-                    @if (User.Identity?.IsAuthenticated == true)
-                    {
-                        var userName = User.Identity.Name?.Split('@')[0] ?? "usu·rio";
-                        <h1 class="welcome-text">Ol·, @userName</h1>
-                    }
-                    else
-                    {
-                        <h1 class="welcome-text">Bem-vindo</h1>
-                    }
-                    <div class="user-actions">
-                        <a href="#" class="btn btn-link user-icon">
-                            <i class="fas fa-user"></i>
-                        </a>
-                        <a href="#" class="btn btn-link help-icon">
-                            <i class="fas fa-question-circle"></i>
-                        </a>
-                    </div>
-                </div>
+<div class="da-page">
+    <div class="da-search-layout">
+        <aside class="da-filter-panel">
+            <div class="da-top-actions">
+                <h2 class="da-filter-title" style="margin:0;">Filtros</h2>
+                <a asp-controller="Home" asp-action="Index" class="da-btn da-btn-soft" aria-label="Voltar">‚Üê</a>
             </div>
-        </div>
-    </div>
-</div>
 
-<div class="container mt-4">
-    <div class="row">
-        <!-- Sidebar de Filtros -->
-        <div class="col-md-3">
-            <div class="filters-sidebar">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4>Filtros</h4>
-                    <a href="@Url.Action("Search", "Home")" class="btn btn-link text-primary">
-                        <i class="fas fa-arrow-left"></i>
-                    </a>
+            <form asp-controller="Home" asp-action="Search" method="get" class="da-stack">
+                <button type="submit" class="da-btn da-btn-outline da-btn-wide">Limpar filtros</button>
+
+                <div class="da-field">
+                    <p class="da-label">Localiza√ß√£o</p>
+                    <input type="text" name="localizacao" class="da-input" value="@ViewBag.Localizacao" placeholder="Digite sua cidade ou estado" />
                 </div>
 
-                <form asp-controller="Home" asp-action="Search" method="get">
-                    <button type="submit" class="btn btn-outline-primary w-100 mb-4">Limpar filtros</button>
-
-                    <!-- LocalizaÁ„o -->
-                    <div class="mb-4">
-                        <label class="form-label fw-bold">LocalizaÁ„o</label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="fas fa-search"></i></span>
-                            <input type="text" name="localizacao" class="form-control" 
-                                   placeholder="Digite sua cidade ou estado" 
-                                   value="@ViewBag.Localizacao" />
-                        </div>
+                <div class="da-field">
+                    <p class="da-label">Pre√ßo</p>
+                    <p class="da-muted">Escolha um intervalo</p>
+                    <div class="da-inline-range">
+                        <input type="number" name="precoMin" class="da-input" value="@ViewBag.PrecoMin" placeholder="M√≠nimo" />
+                        <input type="number" name="precoMax" class="da-input" value="@ViewBag.PrecoMax" placeholder="M√°ximo" />
                     </div>
+                </div>
 
-                    <!-- PreÁo -->
-                    <div class="mb-4">
-                        <label class="form-label fw-bold">PreÁo</label>
-                        <p class="text-muted small">Escolha um intervalo</p>
-                        <div class="row g-2">
-                            <div class="col-6">
-                                <input type="number" name="precoMin" class="form-control" 
-                                       placeholder="MÌnimo" value="@ViewBag.PrecoMin" />
-                            </div>
-                            <div class="col-6">
-                                <input type="number" name="precoMax" class="form-control" 
-                                       placeholder="M·ximo" value="@ViewBag.PrecoMax" />
-                            </div>
-                        </div>
+                <div class="da-field">
+                    <p class="da-label">Ano</p>
+                    <p class="da-muted">Escolha um intervalo</p>
+                    <div class="da-inline-range">
+                        <input type="number" name="anoMin" class="da-input" value="@ViewBag.AnoMin" placeholder="De" />
+                        <input type="number" name="anoMax" class="da-input" value="@ViewBag.AnoMax" placeholder="At√©" />
                     </div>
+                </div>
 
-                    <!-- Ano -->
-                    <div class="mb-4">
-                        <label class="form-label fw-bold">Ano</label>
-                        <p class="text-muted small">Escolha um intervalo</p>
-                        <div class="row g-2">
-                            <div class="col-6">
-                                <input type="number" name="anoMin" class="form-control" 
-                                       placeholder="De" value="@ViewBag.AnoMin" />
-                            </div>
-                            <div class="col-6">
-                                <input type="number" name="anoMax" class="form-control" 
-                                       placeholder="AtÈ" value="@ViewBag.AnoMax" />
-                            </div>
-                        </div>
+                <div class="da-field">
+                    <p class="da-label">Quilometragem</p>
+                    <p class="da-muted">Escolha um intervalo</p>
+                    <div class="da-inline-range">
+                        <input type="number" name="kmMin" class="da-input" value="@ViewBag.KmMin" placeholder="M√≠nimo" />
+                        <input type="number" name="kmMax" class="da-input" value="@ViewBag.KmMax" placeholder="M√°ximo" />
                     </div>
+                </div>
 
-                    <!-- Quilometragem -->
-                    <div class="mb-4">
-                        <label class="form-label fw-bold">Quilometragem</label>
-                        <p class="text-muted small">Escolha um intervalo</p>
-                        <div class="row g-2">
-                            <div class="col-6">
-                                <input type="number" name="kmMin" class="form-control" 
-                                       placeholder="MÌnimo" value="@ViewBag.KmMin" />
-                            </div>
-                            <div class="col-6">
-                                <input type="number" name="kmMax" class="form-control" 
-                                       placeholder="M·ximo" value="@ViewBag.KmMax" />
-                            </div>
-                        </div>
+                <div class="da-field">
+                    <p class="da-label">Opcionais</p>
+                    <div class="da-checkbox-grid">
+                        <label class="da-check-item"><input type="checkbox" name="opcionais" value="ar condicionado" @(IsSelected("ar condicionado") ? "checked" : "") />Ar condicionado</label>
+                        <label class="da-check-item"><input type="checkbox" name="opcionais" value="dire√ß√£o hidr√°ulica" @(IsSelected("dire√ß√£o hidr√°ulica") ? "checked" : "") />Dire√ß√£o hidr√°ulica</label>
+                        <label class="da-check-item"><input type="checkbox" name="opcionais" value="vidros el√©tricos" @(IsSelected("vidros el√©tricos") ? "checked" : "") />Vidros el√©tricos</label>
+                        <label class="da-check-item"><input type="checkbox" name="opcionais" value="airbag" @(IsSelected("airbag") ? "checked" : "") />Airbag</label>
+                        <label class="da-check-item"><input type="checkbox" name="opcionais" value="alarme" @(IsSelected("alarme") ? "checked" : "") />Alarme</label>
+                        <label class="da-check-item"><input type="checkbox" name="opcionais" value="som" @(IsSelected("som") ? "checked" : "") />Som</label>
                     </div>
+                </div>
 
-                    <!-- Opcionais -->
-                    <div class="mb-4">
-                        <label class="form-label fw-bold">Opcionais</label>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="opcionais" value="ar condicionado" id="opcionalAr">
-                            <label class="form-check-label" for="opcionalAr">
-                                Ar condicionado
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="opcionais" value="direÁ„o hidr·ulica" id="opcionalDirecao">
-                            <label class="form-check-label" for="opcionalDirecao">
-                                DireÁ„o hidr·ulica
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="opcionais" value="vidros elÈtricos" id="opcionalVidros">
-                            <label class="form-check-label" for="opcionalVidros">
-                                Vidros elÈtricos
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="opcionais" value="airbag" id="opcionalAirbag">
-                            <label class="form-check-label" for="opcionalAirbag">
-                                Airbag
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="opcionais" value="alarme" id="opcionalAlarme">
-                            <label class="form-check-label" for="opcionalAlarme">
-                                Alarme
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="opcionais" value="som" id="opcionalSom">
-                            <label class="form-check-label" for="opcionalSom">
-                                Som
-                            </label>
-                        </div>
-                    </div>
+                <input type="hidden" name="termo" value="@ViewBag.Termo" />
+                <button type="submit" class="da-btn da-btn-primary da-btn-wide">Aplicar filtros</button>
+            </form>
+        </aside>
 
-                    <input type="hidden" name="termo" value="@ViewBag.Termo" />
-                    <button type="submit" class="btn btn-primary w-100">Aplicar filtros</button>
-                </form>
-            </div>
-        </div>
+        <section class="da-results-panel">
+            <h2 class="da-subtitle">Resultados da pesquisa</h2>
 
-        <!-- Resultados -->
-        <div class="col-md-9">
-            <div class="results-section">
-                <h2 class="mb-4">Resultados da pesquisa</h2>
-
-                @if (Model != null && Model.Any())
-                {
-                    @foreach (var anuncio in Model)
-                    {
-                        <div class="vehicle-result-card mb-4">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="vehicle-image-large placeholder-image">
-                                        <i class="fas fa-image fa-3x"></i>
-                                    </div>
-                                </div>
-                                <div class="col-md-8">
-                                    <div class="vehicle-result-info">
-                                        <h3 class="vehicle-result-title">@(anuncio.Veiculo?.NomeMarca ?? "") @(anuncio.Veiculo?.NomeModelo ?? "")</h3>
-                                        <p class="vehicle-result-year">@anuncio.Veiculo?.Ano</p>
-                                        <p class="vehicle-result-price">@anuncio.Veiculo?.Preco.ToString("C")</p>
-                                        <div class="vehicle-result-actions mt-3">
-                                            <a asp-controller="Anuncio" asp-action="Details" asp-route-id="@anuncio.Id" 
-                                               class="btn btn-outline-primary w-100">Ver detalhes</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    }
-                }
-                else
-                {
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle me-2"></i>
-                        Nenhum resultado encontrado. Tente ajustar os filtros.
-                    </div>
-                }
-            </div>
-        </div>
-    </div>
-</div>
-
-@section Scripts {
-    <script>
-        $(document).ready(function() {
-            // Marcar checkboxes de opcionais se estiverem na URL
-            @if (ViewBag.Opcionais != null)
+            @if (anuncios.Any())
             {
-                @foreach (var opcional in ViewBag.Opcionais)
+                foreach (var anuncio in anuncios)
                 {
-                    <text>
-                    $('input[name="opcionais"][value="@opcional"]').prop('checked', true);
-                    </text>
+                    var nomeVeiculo = $"{anuncio.Veiculo?.NomeMarca} {anuncio.Veiculo?.NomeModelo}".Trim();
+                    if (string.IsNullOrWhiteSpace(nomeVeiculo))
+                    {
+                        nomeVeiculo = "Ve√≠culo";
+                    }
+
+                    <article class="da-result-card">
+                        <div class="da-result-image">
+                            <div class="da-vehicle-placeholder">Imagem do ve√≠culo</div>
+                        </div>
+                        <div class="da-result-body">
+                            <h3 class="da-vehicle-name">@nomeVeiculo</h3>
+                            <p class="da-vehicle-year">@anuncio.Veiculo?.Ano</p>
+                            <p class="da-vehicle-price">@((anuncio.Veiculo?.Preco ?? 0m).ToString("C0", new CultureInfo("pt-BR")))</p>
+                            <a asp-controller="Anuncio" asp-action="Details" asp-route-id="@anuncio.Id" class="da-btn da-btn-outline da-btn-wide">Ver detalhes</a>
+                        </div>
+                    </article>
                 }
             }
-        });
-    </script>
-}
+            else
+            {
+                <div class="da-empty">Nenhum ve√≠culo encontrado com os filtros selecionados.</div>
+            }
+        </section>
+    </div>
+</div>

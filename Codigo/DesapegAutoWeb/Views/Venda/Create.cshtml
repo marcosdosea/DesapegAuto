@@ -1,56 +1,91 @@
 ﻿@model DesapegAutoWeb.Models.VendaViewModel
-
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Vender Veículo";
+    dynamic? preview = ViewBag.VeiculoPreview;
+    var veiculoId = preview?.Id as int?;
+    var nome = (string?)(preview?.Nome) ?? "Veículo";
+    var ano = preview?.Ano?.ToString() ?? "-";
+    var preco = (string?)(preview?.Preco) ?? "R$ 0";
+    var cor = (string?)(preview?.Cor) ?? "-";
+    var quilometragem = preview?.Quilometragem?.ToString() ?? "-";
+    var editarId = veiculoId ?? 0;
 }
 
-<h1>Create</h1>
+<div class="da-page">
+    <h1 class="da-title">Vender Veículo</h1>
 
-<h4>VendaViewModel</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
+    <section class="da-sale-card">
+        <div class="da-sale-main">
+            <div class="da-sale-photo">
+                <div class="da-vehicle-placeholder">Imagem</div>
+            </div>
+            <div class="da-stack">
+                <h2 class="da-subtitle">@nome</h2>
+                <p class="da-vehicle-year">@ano</p>
+                <p class="da-vehicle-price">@preco</p>
+
+                <div class="da-sale-grid">
+                    <div>
+                        <p class="da-label">Transmissão</p>
+                        <p class="da-detail-val">Automático</p>
+                    </div>
+                    <div>
+                        <p class="da-label">Cor</p>
+                        <p class="da-detail-val">@cor</p>
+                    </div>
+                    <div>
+                        <p class="da-label">Quilometragem</p>
+                        <p class="da-detail-val">@quilometragem km</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <form asp-action="Create" method="post" class="da-card-pad da-stack" style="border-top:1px solid var(--da-border);">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Id" class="control-label"></label>
-                <input asp-for="Id" class="form-control" />
-                <span asp-validation-for="Id" class="text-danger"></span>
+
+            <div class="da-grid-2">
+                <div class="da-field">
+                    <label asp-for="DataVenda" class="da-label">Data da venda</label>
+                    <input asp-for="DataVenda" class="da-input" type="date" />
+                    <span asp-validation-for="DataVenda" class="text-danger"></span>
+                </div>
+                <div class="da-field">
+                    <label asp-for="ValorFinal" class="da-label">Valor final</label>
+                    <input asp-for="ValorFinal" class="da-input" value="@Model.ValorFinal" />
+                    <span asp-validation-for="ValorFinal" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="DataVenda" class="control-label"></label>
-                <input asp-for="DataVenda" class="form-control" />
-                <span asp-validation-for="DataVenda" class="text-danger"></span>
+
+            <div class="da-grid-2">
+                <div class="da-field">
+                    <label asp-for="FormaPagamento" class="da-label">Forma de pagamento</label>
+                    <input asp-for="FormaPagamento" class="da-input" placeholder="Ex.: PIX, Cartão, Financiamento" />
+                    <span asp-validation-for="FormaPagamento" class="text-danger"></span>
+                </div>
+                <div class="da-field">
+                    <label asp-for="IdPessoa" class="da-label">Comprador</label>
+                    <select asp-for="IdPessoa" asp-items="ViewBag.IdPessoa" class="da-select">
+                        <option value="">Selecione o comprador</option>
+                    </select>
+                    <span asp-validation-for="IdPessoa" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="ValorFinal" class="control-label"></label>
-                <input asp-for="ValorFinal" class="form-control" />
-                <span asp-validation-for="ValorFinal" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FormaPagamento" class="control-label"></label>
-                <input asp-for="FormaPagamento" class="form-control" />
-                <span asp-validation-for="FormaPagamento" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="IdConcessionaria" class="control-label"></label>
-                <input asp-for="IdConcessionaria" class="form-control" />
+
+            <div class="da-field">
+                <label asp-for="IdConcessionaria" class="da-label">Concessionária</label>
+                <select asp-for="IdConcessionaria" asp-items="ViewBag.IdConcessionaria" class="da-select">
+                    <option value="">Selecione a concessionária</option>
+                </select>
                 <span asp-validation-for="IdConcessionaria" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="IdPessoa" class="control-label"></label>
-                <input asp-for="IdPessoa" class="form-control" />
-                <span asp-validation-for="IdPessoa" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+
+            <div class="da-sale-actions">
+                <a asp-controller="Veiculo" asp-action="Edit" asp-route-id="@editarId" class="da-btn da-btn-outline">Editar anúncio</a>
+                <button type="submit" class="da-btn da-btn-primary">Confirmar venda</button>
             </div>
         </form>
-    </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
+    </section>
 </div>
 
 @section Scripts {
