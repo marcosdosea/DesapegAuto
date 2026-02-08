@@ -3,11 +3,13 @@ using Core;
 using Core.Exceptions;
 using Core.Service;
 using DesapegAutoWeb.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace DesapegAutoWeb.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class VersaoController : Controller
     {
         private readonly IVersaoService versaoService;

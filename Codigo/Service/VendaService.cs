@@ -56,6 +56,8 @@ namespace Service
             var query = from venda in context.Venda
                         join concessionaria in context.Concessionaria on venda.IdConcessionaria equals concessionaria.Id
                         join pessoa in context.Pessoas on venda.IdPessoa equals pessoa.Id
+                        join anuncio in context.Anuncios on venda.Id equals anuncio.IdVenda into anuncios
+                        from anuncio in anuncios.DefaultIfEmpty()
                         select new VendaDTO
                         {
                             Id = venda.Id,
@@ -63,7 +65,8 @@ namespace Service
                             ValorFinal = venda.ValorFinal,
                             FormaPagamento = venda.FormaPagamento,
                             NomeConcessionaria = concessionaria.Nome,
-                            NomePessoa = pessoa.Nome
+                            NomePessoa = pessoa.Nome,
+                            StatusAnuncio = anuncio != null ? anuncio.StatusAnuncio : null
                         };
 
             return query.AsNoTracking().ToList();

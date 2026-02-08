@@ -12,6 +12,7 @@ using System.Linq;
 
 namespace DesapegAutoWeb.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class ModeloController : Controller
     {
         private readonly IModeloService modeloService;

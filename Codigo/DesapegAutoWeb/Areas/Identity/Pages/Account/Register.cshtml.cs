@@ -30,15 +30,13 @@ namespace DesapegAutoWeb.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<ApplicationUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
-        private readonly RoleManager<IdentityRole> _roleManager;
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
             IUserStore<ApplicationUser> userStore,
             SignInManager<ApplicationUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender,
-            RoleManager<IdentityRole> roleManager)
+            IEmailSender emailSender)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -46,7 +44,6 @@ namespace DesapegAutoWeb.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
-            _roleManager = roleManager;
         }
 
         /// <summary>
@@ -102,13 +99,10 @@ namespace DesapegAutoWeb.Areas.Identity.Pages.Account
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
 
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
             [Required]
-            [Display(Name = "Tipo de Usuário")]
+            [Display(Name = "Tipo de conta")]
             public string Role { get; set; }
+
         }
 
 
@@ -134,11 +128,15 @@ namespace DesapegAutoWeb.Areas.Identity.Pages.Account
                 {
                     _logger.LogInformation("User created a new account with password.");
 
-                    // Adicionar role ao usuário
-                    if (!string.IsNullOrEmpty(Input.Role))
+                    var allowedRoles = new[] { "Cliente", "Funcionario", "Admin" };
+                    var selectedRole = string.IsNullOrWhiteSpace(Input.Role) ? "Cliente" : Input.Role;
+                    if (!allowedRoles.Contains(selectedRole))
                     {
-                        await _userManager.AddToRoleAsync(user, Input.Role);
+                        ModelState.AddModelError(string.Empty, "Tipo de conta invalido.");
+                        return Page();
                     }
+
+                    await _userManager.AddToRoleAsync(user, selectedRole);
 
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);

@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Authorization;
 using System.Globalization;
+using System;
+using System.Linq;
 
 namespace DesapegAutoWeb.Controllers
 {
@@ -18,6 +20,7 @@ namespace DesapegAutoWeb.Controllers
       private readonly IVeiculoService? veiculoService;
       private readonly IModeloService? modeloService;
       private readonly IMarcaService? marcaService;
+      private readonly IAnuncioService anuncioService;
  private readonly IMapper mapper;
 
         public VendaController(
@@ -25,6 +28,7 @@ namespace DesapegAutoWeb.Controllers
        IConcessionariaService concessionariaService,
    IPessoaService pessoaService,
 IMapper mapper,
+   IAnuncioService anuncioService,
    IVeiculoService? veiculoService = null,
    IModeloService? modeloService = null,
    IMarcaService? marcaService = null)
@@ -35,16 +39,19 @@ this.concessionariaService = concessionariaService;
        this.veiculoService = veiculoService;
        this.modeloService = modeloService;
        this.marcaService = marcaService;
+       this.anuncioService = anuncioService;
      this.mapper = mapper;
      }
 
+        [Authorize(Roles = "Admin,Funcionario")]
         public ActionResult Index()
     {
             var listaVendas = vendaService.GetAllDTO();
         return View(listaVendas);
   }
 
-   public ActionResult Details(int id)
+  [Authorize(Roles = "Admin,Funcionario")]
+  public ActionResult Details(int id)
         {
  var venda = vendaService.Get(id);
             if (venda == null)
@@ -67,6 +74,24 @@ this.concessionariaService = concessionariaService;
         {
             PopulateViewBags();
 
+      if (!idVeiculo.HasValue)
+      {
+        return NotFound();
+      }
+
+      var anuncio = anuncioService.GetAll().FirstOrDefault(a => a.IdVeiculo == idVeiculo.Value);
+      if (anuncio == null)
+      {
+        TempData["ErrorMessage"] = "Anuncio nao encontrado para este veiculo.";
+        return RedirectToAction("Index", "Anuncio");
+      }
+
+      if (anuncio.IdVenda != 0 || string.Equals(anuncio.StatusAnuncio, "V", StringComparison.OrdinalIgnoreCase))
+      {
+        TempData["ErrorMessage"] = "Este veiculo ja foi vendido.";
+        return RedirectToAction("Index", "Anuncio");
+      }
+
             if (idVeiculo.HasValue && veiculoService != null)
             {
                 var veiculo = veiculoService.Get(idVeiculo.Value);
@@ -87,7 +112,8 @@ this.concessionariaService = concessionariaService;
                 }
             }
 
-    return View();
+        var model = new VendaViewModel { IdVeiculo = idVeiculo.Value };
+    return View(model);
 }
 
         [HttpPost]
@@ -99,10 +125,17 @@ this.concessionariaService = concessionariaService;
  {
   var venda = mapper.Map<Venda>(vendaViewModel);
        vendaService.Create(venda);
+         var anuncio = anuncioService.GetAll().FirstOrDefault(a => a.IdVeiculo == vendaViewModel.IdVeiculo);
+         if (anuncio != null)
+         {
+           anuncio.IdVenda = venda.Id;
+           anuncio.StatusAnuncio = "V";
+           anuncioService.Edit(anuncio);
+         }
       return RedirectToAction(nameof(Index));
           }
 
-          PopulateViewBags(vendaViewModel);
+             PopulateViewBags(vendaViewModel);
    return View(vendaViewModel);
   }
 
@@ -163,6 +196,27 @@ return View(vendaViewModel);
      ModelState.AddModelError(string.Empty, ex.Message);
       return View(vendaViewModel);
  }
+        }
+
+        [Authorize(Roles = "Admin,Funcionario")]
+        public ActionResult Confirmar(int id)
+        {
+          var venda = vendaService.Get(id);
+          if (venda == null)
+          {
+            return NotFound();
+          }
+
+          var anuncio = anuncioService.GetAll().FirstOrDefault(a => a.IdVenda == id);
+          if (anuncio == null)
+          {
+            return NotFound();
+          }
+
+          anuncio.StatusAnuncio = "V";
+          anuncioService.Edit(anuncio);
+          TempData["SuccessMessage"] = "Venda confirmada com sucesso.";
+          return RedirectToAction(nameof(Index));
         }
 
 private void PopulateViewBags(VendaViewModel? model = null)

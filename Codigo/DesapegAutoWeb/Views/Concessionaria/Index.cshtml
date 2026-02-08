@@ -23,38 +23,39 @@
 
             <form asp-action="Create" method="post" class="da-stack">
                 <div class="da-field">
-                    <label class="da-label" for="Nome">Nome da Concessionaria</label>
+                    <label class="da-label" for="Nome">Nome da Concessionaria *</label>
                     <input class="da-input" id="Nome" name="Nome" required />
                 </div>
 
                 <div class="da-field">
-                    <label class="da-label" for="Cnpj">CNPJ</label>
+                    <label class="da-label" for="Cnpj">CNPJ *</label>
                     <input class="da-input cnpj-mask" id="Cnpj" name="Cnpj" placeholder="00.000.000/0000-00" inputmode="numeric" maxlength="18" required />
                 </div>
 
                 <div class="da-field">
-                    <label class="da-label" for="Email">E-mail</label>
+                    <label class="da-label" for="Email">E-mail *</label>
                     <input type="email" class="da-input" id="Email" name="Email" required />
                 </div>
 
                 <div class="da-field">
-                    <label class="da-label" for="Telefone">Telefone</label>
+                    <label class="da-label" for="Telefone">Telefone *</label>
                     <input class="da-input" id="Telefone" name="Telefone" placeholder="(00) 0000-0000" required />
                 </div>
 
                 <div class="da-field">
-                    <label class="da-label" for="Endereco">Endereco</label>
+                    <label class="da-label" for="Endereco">Endereco *</label>
                     <textarea class="da-textarea" id="Endereco" name="Endereco" required></textarea>
                 </div>
 
                 <div class="da-field">
-                    <label class="da-label" for="Senha">Senha</label>
-                    <input type="password" class="da-input" id="Senha" name="Senha" required />
+                    <label class="da-label" for="Senha">Senha *</label>
+                    <input type="password" class="da-input" id="Senha" name="Senha" maxlength="8" pattern="(?=.*[A-Za-z])(?=.*\d).+" title="A senha deve conter ao menos uma letra e um numero." required />
+                    <small class="text-muted">A senha deve conter ao menos uma letra e um numero.</small>
                 </div>
 
                 <div class="da-field">
-                    <label class="da-label" for="ConfirmarSenha">Confirmar senha</label>
-                    <input type="password" class="da-input" id="ConfirmarSenha" name="ConfirmarSenha" />
+                    <label class="da-label" for="ConfirmarSenha">Confirmar senha *</label>
+                    <input type="password" class="da-input" id="ConfirmarSenha" name="ConfirmarSenha" required />
                 </div>
 
                 <button type="submit" class="da-btn da-btn-primary da-btn-wide">Cadastrar Concessionaria</button>

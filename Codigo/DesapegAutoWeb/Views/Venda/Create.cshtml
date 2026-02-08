@@ -14,6 +14,11 @@
 <div class="da-page">
     <h1 class="da-title">Vender Veículo</h1>
 
+    @if (TempData["ErrorMessage"] is string errorMessage)
+    {
+        <div class="alert alert-danger" role="alert">@errorMessage</div>
+    }
+
     <section class="da-sale-card">
         <div class="da-sale-main">
             <div class="da-sale-photo">
@@ -43,6 +48,8 @@
 
         <form asp-action="Create" method="post" class="da-card-pad da-stack" style="border-top:1px solid var(--da-border);">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <input type="hidden" asp-for="IdVeiculo" />
 
             <div class="da-grid-2">
                 <div class="da-field">

@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DesapegAutoWeb.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class MarcaController : Controller
     {
         private readonly IMarcaService marcaService;

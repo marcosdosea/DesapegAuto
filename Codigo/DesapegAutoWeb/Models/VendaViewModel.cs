@@ -31,5 +31,9 @@ namespace DesapegAutoWeb.Models
         [Required(ErrorMessage = "O comprador é obrigatório.")]
         [Display(Name = "Pessoa (Comprador)")]
         public int IdPessoa { get; set; }
+
+        [Required(ErrorMessage = "O veiculo e obrigatorio.")]
+        [Display(Name = "Veiculo")]
+        public int IdVeiculo { get; set; }
     }
 }

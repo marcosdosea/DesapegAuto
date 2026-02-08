@@ -45,6 +45,18 @@
             </div>
         </header>
     }
+    else
+    {
+        <header class="da-topbar">
+            <div class="da-topbar-inner">
+                <a class="da-topbar-greeting" asp-controller="Home" asp-action="Index">DesapegAuto</a>
+                <div class="da-topbar-actions">
+                    <a class="da-topbar-link" asp-area="Identity" asp-page="/Account/Login">Entrar</a>
+                    <a class="da-topbar-link" asp-area="Identity" asp-page="/Account/Register">Criar conta</a>
+                </div>
+            </div>
+        </header>
+    }
 
     <main class="da-main">
         @RenderBody()

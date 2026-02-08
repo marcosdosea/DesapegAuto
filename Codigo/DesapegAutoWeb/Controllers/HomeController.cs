@@ -34,12 +34,6 @@ namespace DesapegAutoWeb.Controllers
 
         public IActionResult Index()
         {
-            // Redirect unauthenticated users to register/login flow.
-            if (!User.Identity?.IsAuthenticated ?? true)
-            {
-                return RedirectToPage("/Account/Register", new { area = "Identity" });
-            }
-
             // Dealership users start from the ads dashboard.
             if (User.IsInRole("Funcionario"))
             {

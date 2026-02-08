@@ -1,0 +1,103 @@
+@model DesapegAutoWeb.Models.CompraViewModel
+@using System.Globalization
+@{
+    ViewData["Title"] = "Comprar Veiculo";
+    var nomeVeiculo = ViewBag.NomeVeiculo as string ?? "Veiculo";
+    var ano = ViewBag.Ano as int?;
+    var preco = ViewBag.Preco as decimal? ?? 0m;
+    var cor = ViewBag.Cor as string ?? "-";
+    var quilometragem = ViewBag.Quilometragem as int?;
+    var concessionaria = ViewBag.Concessionaria as string ?? "Concessionaria";
+    var descricao = ViewBag.Descricao as string ?? string.Empty;
+}
+
+<div class="da-page">
+    <h1 class="da-title">Comprar Veiculo</h1>
+
+    @if (TempData["ErrorMessage"] is string errorMessage)
+    {
+        <div class="alert alert-danger" role="alert">@errorMessage</div>
+    }
+
+    <section class="da-sale-card">
+        <div class="da-sale-main">
+            <div class="da-sale-photo">
+                <div class="da-vehicle-placeholder">Imagem</div>
+            </div>
+            <div class="da-stack">
+                <h2 class="da-subtitle">@nomeVeiculo</h2>
+                <p class="da-vehicle-year">@ano</p>
+                <p class="da-vehicle-price">@preco.ToString("C0", new CultureInfo("pt-BR"))</p>
+                <p class="da-muted">Concessionaria: @concessionaria</p>
+
+                <div class="da-sale-grid">
+                    <div>
+                        <p class="da-label">Cor</p>
+                        <p class="da-detail-val">@cor</p>
+                    </div>
+                    <div>
+                        <p class="da-label">Quilometragem</p>
+                        <p class="da-detail-val">@(quilometragem?.ToString() ?? "-") km</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="da-card da-card-pad" style="border-top:1px solid var(--da-border);">
+            <p class="da-muted">@descricao</p>
+        </div>
+
+        <form asp-action="Create" method="post" class="da-card-pad da-stack" style="border-top:1px solid var(--da-border);">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="IdAnuncio" />
+
+            <div class="da-grid-2">
+                <div class="da-field">
+                    <label asp-for="Nome" class="da-label">Nome completo</label>
+                    <input asp-for="Nome" class="da-input" />
+                    <span asp-validation-for="Nome" class="text-danger"></span>
+                </div>
+                <div class="da-field">
+                    <label asp-for="Email" class="da-label">E-mail</label>
+                    <input asp-for="Email" class="da-input" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="da-grid-2">
+                <div class="da-field">
+                    <label asp-for="Cpf" class="da-label">CPF</label>
+                    <input asp-for="Cpf" class="da-input" placeholder="000.000.000-00" />
+                    <span asp-validation-for="Cpf" class="text-danger"></span>
+                </div>
+                <div class="da-field">
+                    <label asp-for="Telefone" class="da-label">Telefone</label>
+                    <input asp-for="Telefone" class="da-input" placeholder="(00) 00000-0000" />
+                    <span asp-validation-for="Telefone" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="da-grid-2">
+                <div class="da-field">
+                    <label asp-for="FormaPagamento" class="da-label">Forma de pagamento</label>
+                    <input asp-for="FormaPagamento" class="da-input" placeholder="PIX, Cartao, Financiamento" />
+                    <span asp-validation-for="FormaPagamento" class="text-danger"></span>
+                </div>
+                <div class="da-field">
+                    <label asp-for="ValorFinal" class="da-label">Valor final</label>
+                    <input asp-for="ValorFinal" class="da-input" />
+                    <span asp-validation-for="ValorFinal" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="da-sale-actions">
+                <a asp-controller="Home" asp-action="Index" class="da-btn da-btn-outline">Cancelar</a>
+                <button type="submit" class="da-btn da-btn-primary">Enviar solicitacao</button>
+            </div>
+        </form>
+    </section>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,13 @@
+@{
+    ViewData["Title"] = "Compra registrada";
+}
+
+<div class="da-page">
+    <h1 class="da-title">Solicitacao enviada</h1>
+    @if (TempData["SuccessMessage"] is string successMessage)
+    {
+        <div class="alert alert-success" role="alert">@successMessage</div>
+    }
+    <p class="da-muted">Assim que a concessionaria confirmar, voce sera contatado.</p>
+    <a asp-controller="Home" asp-action="Index" class="da-btn da-btn-primary">Voltar ao inicio</a>
+</div>

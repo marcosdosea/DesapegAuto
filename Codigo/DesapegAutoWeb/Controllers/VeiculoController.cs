@@ -4,21 +4,25 @@ using Core.Service;
 using DesapegAutoWeb.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using System.Linq;
 
 namespace DesapegAutoWeb.Controllers
 {
     public class VeiculoController : Controller
     {
         private readonly IVeiculoService veiculoService;
+        private readonly IAnuncioService anuncioService;
         private readonly IMapper mapper;
 
-        public VeiculoController(IVeiculoService veiculoService, IMapper mapper)
+        public VeiculoController(IVeiculoService veiculoService, IAnuncioService anuncioService, IMapper mapper)
         {
             this.veiculoService = veiculoService;
+            this.anuncioService = anuncioService;
             this.mapper = mapper;
         }
 
         // GET: Veiculo
+        [Authorize(Roles = "Admin,Funcionario")]
         public ActionResult Index()
         {
             var listaVeiculos = veiculoService.GetAll();
@@ -27,6 +31,7 @@ namespace DesapegAutoWeb.Controllers
         }
 
         // GET: Veiculo/Details/5
+        [Authorize(Roles = "Admin,Funcionario")]
         public ActionResult Details(int id)
         {
             var veiculo = veiculoService.Get(id);
@@ -81,7 +86,7 @@ namespace DesapegAutoWeb.Controllers
         }
 
         // GET: Veiculo/Delete/5
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Funcionario")]
         public ActionResult Delete(int id)
         {
             var veiculo = veiculoService.Get(id);
@@ -92,16 +97,17 @@ namespace DesapegAutoWeb.Controllers
         // POST: Veiculo/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Funcionario")]
         public ActionResult Delete(int id, VeiculoViewModel veiculoViewModel)
         {
+            var anuncio = anuncioService.GetAll().FirstOrDefault(a => a.IdVeiculo == id);
+            if (anuncio != null && anuncio.IdVenda != 0)
+            {
+                ModelState.AddModelError(string.Empty, "Nao e possivel remover. Veiculo esta em uma venda pendente ou concluida.");
+                return View(veiculoViewModel);
+            }
             veiculoService.Delete(id);
             return RedirectToAction(nameof(Index));
-        }
-
-        public RedirectToActionResult Edit(VeiculoViewModel veiculoViewModel)
-        {
-            throw new NotImplementedException();
         }
     }
 }

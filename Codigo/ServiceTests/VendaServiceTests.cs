@@ -36,8 +36,8 @@ namespace Service.Tests
 
             var concessionarias = new List<Concessionaria>
             {
-                new() { Id = 1, Nome = "AutoFácil", Cnpj = "12345678000100", Email = "contato@autofacil.com", Telefone = "1133334444", Senha = "senha123", IdEndereco = 1 },
-                new() { Id = 2, Nome = "VendeCar", Cnpj = "98765432000199", Email = "contato@vendecar.com", Telefone = "1144445555", Senha = "senha456", IdEndereco = 2 }
+                new() { Id = 1, Nome = "AutoFácil", Cnpj = "12345678000100", Email = "contato@autofacil.com", Telefone = "1133334444", Senha = "senha123" },
+                new() { Id = 2, Nome = "VendeCar", Cnpj = "98765432000199", Email = "contato@vendecar.com", Telefone = "1144445555", Senha = "senha456" }
             };
             context.Concessionaria.AddRange(concessionarias);
 

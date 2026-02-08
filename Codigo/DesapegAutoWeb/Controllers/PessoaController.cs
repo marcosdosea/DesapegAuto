@@ -2,10 +2,12 @@
 using Core;
 using Core.Service;
 using DesapegAutoWeb.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DesapegAutoWeb.Controllers
 {
+    [Authorize(Roles = "Admin,Funcionario")]
     public class PessoaController : Controller
     {
         private readonly IPessoaService _pessoaService;

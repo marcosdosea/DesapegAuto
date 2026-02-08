@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DesapegAutoWeb.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class CategoriaController : Controller
     {
         private readonly ICategoriaService categoriaService;

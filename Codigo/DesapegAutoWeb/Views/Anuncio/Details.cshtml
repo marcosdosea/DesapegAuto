@@ -34,7 +34,14 @@
 
         <aside class="da-price-box">
             <p class="da-price-value">@((veiculo?.Preco ?? 0m).ToString("C0", new CultureInfo("pt-BR")))</p>
-            <a class="da-btn da-btn-primary da-btn-wide" asp-controller="Venda" asp-action="Create" asp-route-idVeiculo="@Model.IdVeiculo">Falar com concessionária</a>
+            @if (User.IsInRole("Admin") || User.IsInRole("Funcionario"))
+            {
+                <a class="da-btn da-btn-primary da-btn-wide" asp-controller="Venda" asp-action="Create" asp-route-idVeiculo="@Model.IdVeiculo">Vender veiculo</a>
+            }
+            else
+            {
+                <a class="da-btn da-btn-primary da-btn-wide" asp-controller="Compra" asp-action="Create" asp-route-id="@Model.Id">Comprar</a>
+            }
         </aside>
     </section>
 

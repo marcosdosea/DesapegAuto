@@ -9,6 +9,8 @@ namespace Core.Service
         void Edit(Pessoa pessoa);
         void Delete(int idPessoa);
         Pessoa? Get(int idPessoa);
+        Pessoa? GetByEmail(string email);
+        Pessoa? GetByCpf(string cpf);
         IEnumerable<Pessoa> GetAll();
         IEnumerable<Pessoa> GetByNome(string nome);
     }

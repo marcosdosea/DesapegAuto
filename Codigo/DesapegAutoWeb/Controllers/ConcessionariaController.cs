@@ -3,22 +3,35 @@ using Core;
 using Core.Exceptions;
 using Core.Service;
 using DesapegAutoWeb.Models;
+using DesapegAutoWeb.Areas.Identity.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace DesapegAutoWeb.Controllers
 {
+    [Authorize]
     public class ConcessionariaController : Controller
     {
         private readonly IConcessionariaService concessionariaService;
         private readonly IMapper mapper;
+        private readonly UserManager<ApplicationUser> userManager;
 
-        public ConcessionariaController(IConcessionariaService concessionariaService, IMapper mapper)
+        public ConcessionariaController(
+            IConcessionariaService concessionariaService,
+            IMapper mapper,
+            UserManager<ApplicationUser> userManager)
         {
             this.concessionariaService = concessionariaService;
             this.mapper = mapper;
+            this.userManager = userManager;
         }
 
+        [Authorize(Roles = "Admin")]
         public ActionResult Index()
         {
             var lista = concessionariaService.GetAll();
@@ -26,6 +39,7 @@ namespace DesapegAutoWeb.Controllers
             return View(vm);
         }
 
+        [Authorize(Roles = "Admin")]
         public ActionResult Details(int id)
         {
             var c = concessionariaService.Get(id);
@@ -33,6 +47,7 @@ namespace DesapegAutoWeb.Controllers
             return View(vm);
         }
 
+        [Authorize(Roles = "Admin")]
         public ActionResult Create()
         {
             return View();
@@ -40,7 +55,8 @@ namespace DesapegAutoWeb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(ConcessionariaViewModel vm)
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult> Create(ConcessionariaViewModel vm)
         {
             if (!ModelState.IsValid)
             {
@@ -52,6 +68,24 @@ namespace DesapegAutoWeb.Controllers
             {
                 var c = mapper.Map<Concessionaria>(vm);
                 concessionariaService.Create(c);
+
+                var user = new ApplicationUser
+                {
+                    UserName = vm.Email,
+                    Email = vm.Email,
+                    EmailConfirmed = true
+                };
+
+                var result = await userManager.CreateAsync(user, vm.Senha);
+                if (!result.Succeeded)
+                {
+                    concessionariaService.Delete(c.Id);
+                    TempData["ErrorMessage"] = string.Join(" ", result.Errors.Select(e => e.Description));
+                    return RedirectToAction(nameof(Index));
+                }
+
+                await userManager.AddToRoleAsync(user, "Funcionario");
+                await userManager.AddClaimAsync(user, new Claim("ConcessionariaId", c.Id.ToString()));
                 TempData["SuccessMessage"] = "Concessionaria cadastrada com sucesso.";
             }
             catch (ServiceException ex)
@@ -60,12 +94,13 @@ namespace DesapegAutoWeb.Controllers
             }
             catch (DbUpdateException)
             {
-                TempData["ErrorMessage"] = "Nao foi possivel salvar a concessionaria devido a uma inconsistencia no banco de dados.";
+                TempData["ErrorMessage"] = "Nao foi possivel salvar a concessionaria devido a uma inconsistencia no banco de dados. Verifique se a senha tem no maximo 8 caracteres e se todos os campos obrigatorios existem no banco.";
             }
 
             return RedirectToAction(nameof(Index));
         }
 
+        [Authorize(Roles = "Admin")]
         public ActionResult Edit(int id)
         {
             var c = concessionariaService.Get(id);
@@ -75,6 +110,7 @@ namespace DesapegAutoWeb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public ActionResult Edit(int id, ConcessionariaViewModel vm)
         {
             if (id != vm.Id)
@@ -106,6 +142,7 @@ namespace DesapegAutoWeb.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
         public ActionResult Delete(int id)
         {
             var c = concessionariaService.Get(id);
@@ -115,6 +152,7 @@ namespace DesapegAutoWeb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public ActionResult Delete(int id, ConcessionariaViewModel vm)
         {
             try
@@ -133,6 +171,70 @@ namespace DesapegAutoWeb.Controllers
                 ModelState.AddModelError(string.Empty, "Nao foi possivel remover a concessionaria porque ela esta em uso.");
                 return View(vm);
             }
+        }
+
+        [Authorize(Roles = "Funcionario")]
+        public ActionResult MeuCadastro()
+        {
+            var concessionariaId = GetConcessionariaIdFromUser();
+            if (!concessionariaId.HasValue)
+            {
+                return Forbid();
+            }
+
+            var c = concessionariaService.Get(concessionariaId.Value);
+            if (c == null)
+            {
+                return NotFound();
+            }
+
+            var vm = mapper.Map<ConcessionariaViewModel>(c);
+            ViewBag.SelfEdit = true;
+            return View("Edit", vm);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Funcionario")]
+        public ActionResult MeuCadastro(ConcessionariaViewModel vm)
+        {
+            var concessionariaId = GetConcessionariaIdFromUser();
+            if (!concessionariaId.HasValue || concessionariaId.Value != vm.Id)
+            {
+                return Forbid();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                ViewBag.SelfEdit = true;
+                return View("Edit", vm);
+            }
+
+            try
+            {
+                var c = mapper.Map<Concessionaria>(vm);
+                concessionariaService.Edit(c);
+                TempData["SuccessMessage"] = "Concessionaria atualizada com sucesso.";
+                return RedirectToAction("Index", "Anuncio");
+            }
+            catch (ServiceException ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+                ViewBag.SelfEdit = true;
+                return View("Edit", vm);
+            }
+            catch (DbUpdateException)
+            {
+                ModelState.AddModelError(string.Empty, "Nao foi possivel atualizar a concessionaria devido a uma inconsistencia no banco de dados.");
+                ViewBag.SelfEdit = true;
+                return View("Edit", vm);
+            }
+        }
+
+        private int? GetConcessionariaIdFromUser()
+        {
+            var claim = User.FindFirst("ConcessionariaId");
+            return claim != null && int.TryParse(claim.Value, out var id) ? id : null;
         }
     }
 }

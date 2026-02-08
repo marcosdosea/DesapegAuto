@@ -4,6 +4,7 @@ using Core.Service;
 using Service;
 using Microsoft.AspNetCore.Identity;
 using DesapegAutoWeb.Areas.Identity.Data;
+using Microsoft.Extensions.Configuration;
 
 namespace DesapegAutoWeb
 {
@@ -67,15 +68,10 @@ namespace DesapegAutoWeb
 
                 try
                 {
-                    // Ensure main schema exists.
-                    var appDbContext = services.GetRequiredService<DesapegAutoContext>();
-                    appDbContext.Database.EnsureCreated();
-                    logger.LogInformation("Banco principal verificado/criado com sucesso.");
-
-                    // Ensure identity schema exists.
+                    // Apply Identity migrations to ensure tables exist even when DB already exists.
                     var identityDbContext = services.GetRequiredService<ApplicationIdentityDbContext>();
-                    identityDbContext.Database.EnsureCreated();
-                    logger.LogInformation("Banco de identidade verificado/criado com sucesso.");
+                    identityDbContext.Database.Migrate();
+                    logger.LogInformation("Banco de identidade migrado com sucesso.");
 
                     // Create default roles.
                     SeedRoles(services).Wait();
@@ -126,5 +122,7 @@ namespace DesapegAutoWeb
                 }
             }
         }
+
+        
     }
 }

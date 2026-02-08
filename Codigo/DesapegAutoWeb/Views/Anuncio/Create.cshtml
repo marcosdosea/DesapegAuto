@@ -1,4 +1,4 @@
-﻿@model DesapegAutoWeb.Models.AnuncioViewModel
+﻿@model DesapegAutoWeb.Models.AnuncioCreateViewModel
 @{
     ViewData["Title"] = "Anunciar Veículo";
 }
@@ -11,22 +11,44 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
             <div class="da-grid-2">
+                @if (Model.IdConcessionaria > 0)
+                {
+                    <div class="da-field">
+                        <label class="da-label">Concessionaria</label>
+                        <input class="da-input" value="@ViewBag.ConcessionariaNome" readonly />
+                        <input type="hidden" asp-for="IdConcessionaria" />
+                    </div>
+                }
+                else
+                {
+                    <div class="da-field">
+                        <label asp-for="IdConcessionaria" class="da-label">Concessionaria</label>
+                        <select asp-for="IdConcessionaria" asp-items="ViewBag.Concessionarias" class="da-select">
+                            <option value="">Selecione a concessionaria</option>
+                        </select>
+                        <span asp-validation-for="IdConcessionaria" class="text-danger"></span>
+                    </div>
+                }
+
                 <div class="da-field">
-                    <label asp-for="IdVeiculo" class="da-label">Marca</label>
-                    <select asp-for="IdVeiculo" asp-items="ViewBag.Veiculos" class="da-select">
+                    <label asp-for="IdMarca" class="da-label">Marca</label>
+                    <select asp-for="IdMarca" asp-items="ViewBag.Marcas" class="da-select">
                         <option value="">Selecione a marca</option>
                     </select>
-                    <span asp-validation-for="IdVeiculo" class="text-danger"></span>
+                    <span asp-validation-for="IdMarca" class="text-danger"></span>
                 </div>
 
                 <div class="da-field">
-                    <label class="da-label">Modelo</label>
-                    <input class="da-input" name="visual_modelo" placeholder="Modelo" />
+                    <label asp-for="IdModelo" class="da-label">Modelo</label>
+                    <select asp-for="IdModelo" asp-items="ViewBag.Modelos" class="da-select">
+                        <option value="">Selecione o modelo</option>
+                    </select>
+                    <span asp-validation-for="IdModelo" class="text-danger"></span>
                 </div>
 
                 <div class="da-field">
-                    <label class="da-label">Cor</label>
-                    <select class="da-select" name="visual_cor">
+                    <label asp-for="Cor" class="da-label">Cor</label>
+                    <select class="da-select" asp-for="Cor">
                         <option value="">Selecione a cor</option>
                         <option>Branco</option>
                         <option>Preto</option>
@@ -35,26 +57,31 @@
                         <option>Vermelho</option>
                         <option>Azul</option>
                     </select>
+                    <span asp-validation-for="Cor" class="text-danger"></span>
                 </div>
 
                 <div class="da-field">
-                    <label class="da-label">Ano</label>
-                    <input type="number" class="da-input" name="visual_ano" placeholder="Ano" />
+                    <label asp-for="Ano" class="da-label">Ano</label>
+                    <input type="number" class="da-input" asp-for="Ano" placeholder="Ano" />
+                    <span asp-validation-for="Ano" class="text-danger"></span>
                 </div>
 
                 <div class="da-field">
-                    <label class="da-label">Quilometragem</label>
-                    <input type="number" class="da-input" name="visual_quilometragem" placeholder="Quilometragem" />
+                    <label asp-for="Quilometragem" class="da-label">Quilometragem</label>
+                    <input type="number" class="da-input" asp-for="Quilometragem" placeholder="Quilometragem" />
+                    <span asp-validation-for="Quilometragem" class="text-danger"></span>
                 </div>
 
                 <div class="da-field">
-                    <label class="da-label">Preço</label>
-                    <input type="number" class="da-input" name="visual_preco" placeholder="Preço" />
+                    <label asp-for="Preco" class="da-label">Preco</label>
+                    <input type="number" class="da-input" asp-for="Preco" placeholder="Preco" />
+                    <span asp-validation-for="Preco" class="text-danger"></span>
                 </div>
 
                 <div class="da-field">
-                    <label class="da-label">Placa</label>
-                    <input class="da-input" name="visual_placa" placeholder="Placa" />
+                    <label asp-for="Placa" class="da-label">Placa</label>
+                    <input class="da-input" asp-for="Placa" placeholder="Placa" />
+                    <span asp-validation-for="Placa" class="text-danger"></span>
                 </div>
             </div>
 
@@ -67,26 +94,16 @@
             <div class="da-field">
                 <p class="da-label">Opcionais</p>
                 <div class="da-checkbox-grid">
-                    <label class="da-check-item"><input type="checkbox" name="opcionalItem" value="Ar condicionado" />Ar condicionado</label>
-                    <label class="da-check-item"><input type="checkbox" name="opcionalItem" value="Direção hidráulica" />Direção hidráulica</label>
-                    <label class="da-check-item"><input type="checkbox" name="opcionalItem" value="Vidros elétricos" />Vidros elétricos</label>
-                    <label class="da-check-item"><input type="checkbox" name="opcionalItem" value="Travas elétricas" />Travas elétricas</label>
-                    <label class="da-check-item"><input type="checkbox" name="opcionalItem" value="Airbag" />Airbag</label>
-                    <label class="da-check-item"><input type="checkbox" name="opcionalItem" value="Freios ABS" />Freios ABS</label>
-                    <label class="da-check-item"><input type="checkbox" name="opcionalItem" value="Central multimídia" />Central multimídia</label>
-                    <label class="da-check-item"><input type="checkbox" name="opcionalItem" value="Câmera de ré" />Câmera de ré</label>
+                    <label class="da-check-item"><input type="checkbox" name="OpcionaisSelecionados" value="Ar condicionado" />Ar condicionado</label>
+                    <label class="da-check-item"><input type="checkbox" name="OpcionaisSelecionados" value="Direcao hidraulica" />Direcao hidraulica</label>
+                    <label class="da-check-item"><input type="checkbox" name="OpcionaisSelecionados" value="Vidros eletricos" />Vidros eletricos</label>
+                    <label class="da-check-item"><input type="checkbox" name="OpcionaisSelecionados" value="Travas eletricas" />Travas eletricas</label>
+                    <label class="da-check-item"><input type="checkbox" name="OpcionaisSelecionados" value="Airbag" />Airbag</label>
+                    <label class="da-check-item"><input type="checkbox" name="OpcionaisSelecionados" value="Freios ABS" />Freios ABS</label>
+                    <label class="da-check-item"><input type="checkbox" name="OpcionaisSelecionados" value="Central multimidia" />Central multimidia</label>
+                    <label class="da-check-item"><input type="checkbox" name="OpcionaisSelecionados" value="Camera de re" />Camera de re</label>
                 </div>
-                <input type="hidden" asp-for="Opcionais" id="opcionaisHidden" />
             </div>
-
-            <div class="da-field">
-                <label asp-for="IdVenda" class="da-label">Venda vinculada (opcional)</label>
-                <select asp-for="IdVenda" asp-items="ViewBag.Vendas" class="da-select">
-                    <option value="0">Nenhuma venda vinculada</option>
-                </select>
-            </div>
-
-            <input type="hidden" asp-for="StatusAnuncio" value="D" />
 
             <div class="da-top-actions" style="margin-bottom:0;">
                 <a asp-action="Index" class="da-btn da-btn-outline">Cancelar</a>
@@ -98,25 +115,4 @@
 
 @section Scripts {
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
-    <script>
-        (function () {
-            var checkboxes = Array.from(document.querySelectorAll('input[name="opcionalItem"]'));
-            var hidden = document.getElementById('opcionaisHidden');
-
-            function syncOpcionais() {
-                if (!hidden) {
-                    return;
-                }
-                hidden.value = checkboxes
-                    .filter(function (item) { return item.checked; })
-                    .map(function (item) { return item.value; })
-                    .join(', ');
-            }
-
-            checkboxes.forEach(function (item) {
-                item.addEventListener('change', syncOpcionais);
-            });
-            syncOpcionais();
-        })();
-    </script>
 }

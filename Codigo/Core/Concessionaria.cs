@@ -19,5 +19,4 @@ public partial class Concessionaria
 
     public string Senha { get; set; } = null!;
 
-    public int IdEndereco { get; set; }
 }
