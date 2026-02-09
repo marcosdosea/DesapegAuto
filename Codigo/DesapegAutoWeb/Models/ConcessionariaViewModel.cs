@@ -24,7 +24,14 @@ namespace DesapegAutoWeb.Models
 
         [Required(ErrorMessage = "A senha e obrigatoria.")]
         [DataType(DataType.Password)]
+        [StringLength(8, MinimumLength = 6, ErrorMessage = "A senha deve ter entre 6 e 8 caracteres.")]
+        [RegularExpression("^(?=.*[A-Za-z])(?=.*\\d).+$", ErrorMessage = "A senha deve conter ao menos uma letra e um numero.")]
         public string Senha { get; set; } = null!;
+
+        [Required(ErrorMessage = "A confirmacao de senha e obrigatoria.")]
+        [DataType(DataType.Password)]
+        [Compare("Senha", ErrorMessage = "A confirmacao de senha nao confere.")]
+        public string ConfirmarSenha { get; set; } = null!;
 
         [Required(ErrorMessage = "O endereco e obrigatorio.")]
         [StringLength(80, ErrorMessage = "O endereco deve ter no maximo 80 caracteres.")]

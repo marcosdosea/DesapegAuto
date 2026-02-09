@@ -5,6 +5,8 @@ using DesapegAutoWeb.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Authorization;
+using Core.Exceptions;
+using System.Linq;
 
 namespace DesapegAutoWeb.Controllers
 {
@@ -12,30 +14,40 @@ namespace DesapegAutoWeb.Controllers
     {
         private readonly IAnuncioService anuncioService;
         private readonly IVeiculoService veiculoService;
-        private readonly IVendaService vendaService;
         private readonly IModeloService modeloService;
         private readonly IMarcaService marcaService;
+        private readonly IConcessionariaService concessionariaService;
         private readonly IMapper mapper;
 
         public AnuncioController(
             IAnuncioService anuncioService,
             IVeiculoService veiculoService,
-            IVendaService vendaService,
             IModeloService modeloService,
             IMarcaService marcaService,
+            IConcessionariaService concessionariaService,
             IMapper mapper)
         {
             this.anuncioService = anuncioService;
             this.veiculoService = veiculoService;
-            this.vendaService = vendaService;
             this.modeloService = modeloService;
             this.marcaService = marcaService;
+            this.concessionariaService = concessionariaService;
             this.mapper = mapper;
         }
 
+        [Authorize(Roles = "Admin,Funcionario")]
         public ActionResult Index()
         {
             var anuncios = anuncioService.GetAll();
+            var concessionariaId = GetConcessionariaIdFromUser();
+            if (concessionariaId.HasValue)
+            {
+                anuncios = anuncios.Where(a =>
+                {
+                    var veiculo = veiculoService.Get(a.IdVeiculo);
+                    return veiculo != null && veiculo.IdConcessionaria == concessionariaId.Value;
+                });
+            }
             var model = mapper.Map<IEnumerable<AnuncioViewModel>>(anuncios).ToList();
             foreach (var anuncio in model)
             {
@@ -86,26 +98,69 @@ namespace DesapegAutoWeb.Controllers
         [Authorize(Roles = "Admin,Funcionario")]
         public ActionResult Create()
         {
-            var model = new AnuncioViewModel();
-            PopulateViewBags();
+            var model = new AnuncioCreateViewModel();
+            var concessionariaId = GetConcessionariaIdFromUser();
+            if (concessionariaId.HasValue)
+            {
+                model.IdConcessionaria = concessionariaId.Value;
+                SetConcessionariaDisplay(concessionariaId.Value);
+            }
+            PopulateCreateViewBags(model.IdMarca, model.IdModelo, model.IdConcessionaria);
             return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Funcionario")]
-        public ActionResult Create(AnuncioViewModel anuncioViewModel)
+        public ActionResult Create(AnuncioCreateViewModel anuncioViewModel)
         {
-            if (ModelState.IsValid)
+            var concessionariaId = GetConcessionariaIdFromUser();
+            if (concessionariaId.HasValue)
             {
-                anuncioViewModel.Descricao ??= string.Empty;
-                anuncioViewModel.Opcionais ??= string.Empty;
-                var anuncio = mapper.Map<Anuncio>(anuncioViewModel);
+                anuncioViewModel.IdConcessionaria = concessionariaId.Value;
+                SetConcessionariaDisplay(concessionariaId.Value);
+            }
+
+            if (!ModelState.IsValid)
+            {
+                PopulateCreateViewBags(anuncioViewModel.IdMarca, anuncioViewModel.IdModelo, anuncioViewModel.IdConcessionaria);
+                return View(anuncioViewModel);
+            }
+
+            try
+            {
+                var veiculo = new Veiculo
+                {
+                    IdConcessionaria = anuncioViewModel.IdConcessionaria,
+                    IdMarca = anuncioViewModel.IdMarca,
+                    IdModelo = anuncioViewModel.IdModelo,
+                    Ano = anuncioViewModel.Ano,
+                    Cor = anuncioViewModel.Cor,
+                    Quilometragem = anuncioViewModel.Quilometragem,
+                    Preco = anuncioViewModel.Preco,
+                    Placa = anuncioViewModel.Placa
+                };
+
+                var veiculoId = veiculoService.Create(veiculo);
+                var anuncio = new Anuncio
+                {
+                    IdVeiculo = veiculoId,
+                    IdVenda = 0,
+                    Descricao = anuncioViewModel.Descricao ?? string.Empty,
+                    Opcionais = string.Join(", ", anuncioViewModel.OpcionaisSelecionados ?? new List<string>()),
+                    StatusAnuncio = "D",
+                    Visualizacoes = 0
+                };
+
                 anuncioService.Create(anuncio);
                 return RedirectToAction(nameof(Index));
             }
+            catch (ServiceException ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+            }
 
-            PopulateViewBags(anuncioViewModel);
+            PopulateCreateViewBags(anuncioViewModel.IdMarca, anuncioViewModel.IdModelo, anuncioViewModel.IdConcessionaria);
             return View(anuncioViewModel);
         }
 
@@ -127,10 +182,23 @@ namespace DesapegAutoWeb.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private void PopulateViewBags(AnuncioViewModel? model = null)
+        private void PopulateCreateViewBags(int? idMarca = null, int? idModelo = null, int? idConcessionaria = null)
         {
-            ViewBag.Veiculos = new SelectList(veiculoService.GetAll(), "Id", "Placa", model?.IdVeiculo);
-            ViewBag.Vendas = new SelectList(vendaService.GetAll(), "Id", "Id", model?.IdVenda);
+            ViewBag.Marcas = new SelectList(marcaService.GetAll(), "Id", "Nome", idMarca);
+            ViewBag.Modelos = new SelectList(modeloService.GetAll(), "Id", "Nome", idModelo);
+            ViewBag.Concessionarias = new SelectList(concessionariaService.GetAll(), "Id", "Nome", idConcessionaria);
+        }
+
+        private int? GetConcessionariaIdFromUser()
+        {
+            var claim = User.FindFirst("ConcessionariaId");
+            return claim != null && int.TryParse(claim.Value, out var id) ? id : null;
+        }
+
+        private void SetConcessionariaDisplay(int id)
+        {
+            var concessionaria = concessionariaService.Get(id);
+            ViewBag.ConcessionariaNome = concessionaria?.Nome ?? $"#{id}";
         }
     }
 }

@@ -1,10 +1,16 @@
-﻿@model IEnumerable<DesapegAutoWeb.Models.VendaViewModel>
+﻿@model IEnumerable<Core.DTO.VendaDTO>
+@using System
 
 @{
     ViewData["Title"] = "Index";
 }
 
 <h1>Index</h1>
+
+@if (TempData["SuccessMessage"] is string successMessage)
+{
+    <div class="alert alert-success" role="alert">@successMessage</div>
+}
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -25,10 +31,13 @@
                 @Html.DisplayNameFor(model => model.FormaPagamento)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.IdConcessionaria)
+                @Html.DisplayNameFor(model => model.NomeConcessionaria)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.IdPessoa)
+                @Html.DisplayNameFor(model => model.NomePessoa)
+            </th>
+            <th>
+                Status
             </th>
             <th></th>
         </tr>
@@ -49,15 +58,23 @@
                 @Html.DisplayFor(modelItem => item.FormaPagamento)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.IdConcessionaria)
+                @Html.DisplayFor(modelItem => item.NomeConcessionaria)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.IdPessoa)
+                @Html.DisplayFor(modelItem => item.NomePessoa)
+            </td>
+            <td>
+                @item.StatusAnuncio
             </td>
             <td>
                 @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
                 @Html.ActionLink("Details", "Details", new { id=item.Id }) |
                 @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+                @if (string.Equals(item.StatusAnuncio, "P", StringComparison.OrdinalIgnoreCase))
+                {
+                    <text> | </text>
+                    @Html.ActionLink("Confirmar", "Confirmar", new { id=item.Id })
+                }
             </td>
         </tr>
 }

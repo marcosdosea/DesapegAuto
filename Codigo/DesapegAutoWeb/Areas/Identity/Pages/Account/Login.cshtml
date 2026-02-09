@@ -13,120 +13,168 @@
  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
  <title>@ViewData["Title"] - DesapegAuto</title>
  <style>
+ @@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&display=swap');
+
  :root {
- --bg-0: #0f0f10; --bg-1: #141416; --bg-2: #1b1c1f; --line: #26272b;
- --muted: #a9a9ac; --text: #e9e9ea; --text-dim: #cfcfd1;
- --btn: #e6e6e7; --btn-text: #111113; --focus: #d0d0d2;
+ --bg: #eef3ff;
+ --card: #ffffff;
+ --primary: #2f5ae8;
+ --primary-dark: #2448c5;
+ --text: #1b2b5a;
+ --muted: #5f6d8c;
+ --line: #d6e1ff;
+ --focus: rgba(47, 90, 232, 0.25);
  }
+
  * { box-sizing: border-box; }
- html, body { height:100%; }
- body { margin:0; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color: var(--text);
- background: linear-gradient(160deg, var(--bg-0), var(--bg-1)); display:flex; align-items:center; justify-content:center; }
- .auth { width:100%; max-width:480px; background: var(--bg-2); border:1px solid var(--line); border-radius:16px; overflow:hidden; box-shadow:010px30px rgba(0,0,0,.35); }
- .auth-hd { padding:28px24px; border-bottom:1px solid var(--line); }
- .brand { font-size:14px; letter-spacing: .18em; color: var(--muted); text-transform: uppercase; }
- .title { margin:6px00; font-weight:600; font-size:22px; color: var(--text); }
+ html, body { height: 100%; }
 
-
- .auth-bd {
-    padding: 40px 30px;
-}
-
-.group {
- margin-bottom: 18px;
-}
-
-label {
- display: block;
- margin-bottom: 8px;
- font-size: 13px;
- color: var(--muted);
-}
-
-.control {
- width: 100%;
- padding: 14px 12px;
- border-radius: 12px;
- border: 1px solid var(--line);
- background: #15161a;
- color: var(--text-dim);
- outline: none;
- transition: border-color .2s, background .2s;
-}
-
-.control:focus {
- border-color: var(--focus);
- background: #17181d;
-}
-
-.form-check {
+ body {
+ margin: 0;
+ font-family: "Sora", "Segoe UI", sans-serif;
+ color: var(--text);
+ background: radial-gradient(circle at top, #f7faff, var(--bg));
  display: flex;
  align-items: center;
- gap: 8px;
- margin: 8px 0;
- color: var(--muted);
-}
+ justify-content: center;
+ padding: 24px;
+ }
 
-.btn {
+ .auth {
  width: 100%;
- padding: 14px;
- border: none;
- border-radius: 12px;
- background: var(--btn);
- color: var(--btn-text);
- font-weight: 600;
- cursor: pointer;
- transition: transform .15s ease, filter .2s ease;
-}
+ max-width: 520px;
+ background: var(--card);
+ border: 1px solid var(--line);
+ border-radius: 16px;
+ box-shadow: 0 18px 40px rgba(26, 64, 160, 0.12);
+ overflow: hidden;
+ }
 
-.btn:hover {
- filter: brightness(0.96);
-}
+ .auth-hd {
+ padding: 28px 32px 10px;
+ text-align: center;
+ }
 
-.btn:active {
- transform: translateY(1px);
-}
+ .brand {
+ font-size: 24px;
+ font-weight: 800;
+ color: var(--primary);
+ margin: 0 0 6px;
+ }
 
-.validation-summary {
- background: #16171b;
+ .title {
+ margin: 0;
+ font-weight: 700;
+ font-size: 18px;
+ color: var(--text);
+ }
+
+ .auth-bd {
+ padding: 24px 32px 30px;
+ }
+
+ .group {
+ margin-bottom: 16px;
+ }
+
+ label {
+ display: block;
+ margin-bottom: 8px;
+ font-size: 12px;
+ font-weight: 700;
+ color: var(--primary);
+ }
+
+ .control {
+ width: 100%;
+ padding: 12px 14px;
+ border-radius: 10px;
+ border: 1px solid var(--line);
+ background: #f8faff;
+ color: var(--text);
+ font-size: 14px;
+ outline: none;
+ transition: border-color .2s, box-shadow .2s;
+ }
+
+ .control:focus {
+ border-color: var(--primary);
+ box-shadow: 0 0 0 4px var(--focus);
+ }
+
+ .validation-summary {
+ background: #f7f9ff;
  border: 1px solid var(--line);
  color: var(--muted);
  border-radius: 12px;
  padding: 12px;
  margin-bottom: 16px;
-}
+ font-size: 13px;
+ }
 
-.auth-ft {
- padding: 16px 24px;
- border-top: 1px solid var(--line);
- color: var(--muted);
- text-align: center;
-}
+ .btn {
+ width: 100%;
+ padding: 12px 14px;
+ border: none;
+ border-radius: 10px;
+ background: var(--primary);
+ color: #ffffff;
+ font-weight: 700;
+ cursor: pointer;
+ transition: transform .15s ease, background-color .2s ease;
+ }
 
-.link {
- color: var(--text);
- text-underline-offset: 3px;
+ .btn:hover {
+ background: var(--primary-dark);
+ }
+
+ .btn:active {
+ transform: translateY(1px);
+ }
+
+ .btn-outline {
+ width: 100%;
+ padding: 12px 14px;
+ border-radius: 10px;
+ border: 1px solid var(--line);
+ background: #ffffff;
+ color: var(--primary);
+ font-weight: 700;
  text-decoration: none;
- border-bottom: 1px dashed var(--line);
-}
+ display: inline-flex;
+ align-items: center;
+ justify-content: center;
+ margin-top: 10px;
+ }
 
-.link:hover {
- border-bottom-color: var(--focus);
-}
+ .btn-outline:hover {
+ border-color: var(--primary);
+ }
+
+ .link {
+ color: var(--primary);
+ text-decoration: none;
+ font-weight: 600;
+ }
+
+ .link:hover {
+ text-decoration: underline;
+ text-underline-offset: 3px;
+ }
  </style>
 </head>
 <body>
  <main class="auth" aria-labelledby="login-titulo">
  <header class="auth-hd">
  <div class="brand">DesapegAuto</div>
- <h1 id="login-titulo" class="title">Entrar</h1>
+ <h1 id="login-titulo" class="title">Login</h1>
  </header>
  <section class="auth-bd">
  <form id="account" method="post" novalidate>
  <div asp-validation-summary="ModelOnly" class="validation-summary" role="alert"></div>
  <div class="group">
- <label asp-for="Input.Email">Email</label>
- <input asp-for="Input.Email" class="control" autocomplete="username" placeholder="seu@email.com" />
+ <label for="Input_Email">E-mail ou CPF</label>
+ <input asp-for="Input.Email" class="control" autocomplete="username" placeholder="Digite seu e-mail ou CPF" />
  <span asp-validation-for="Input.Email" class="text-danger"></span>
  </div>
  <div class="group">
@@ -134,19 +182,14 @@ label {
  <input asp-for="Input.Password" class="control" type="password" autocomplete="current-password" placeholder="••••••" />
  <span asp-validation-for="Input.Password" class="text-danger"></span>
  </div>
- <div class="form-check">
- <input class="form-check-input" asp-for="Input.RememberMe" />
- <label class="form-check-label" asp-for="Input.RememberMe">@Html.DisplayNameFor(m => m.Input.RememberMe)</label>
- </div>
  <button id="login-submit" type="submit" class="btn">Entrar</button>
  <div style="margin-top:12px; text-align:center;">
- <a id="forgot-password" class="link" asp-page="./ForgotPassword">Esqueceu sua senha?</a>
+ <a id="forgot-password" class="link" asp-page="./ForgotPassword">Esqueci minha senha</a>
  </div>
+ <a class="btn-outline" asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Cadastrar-se</a>
  </form>
  </section>
- <footer class="auth-ft">
- Não tem uma conta? <a class="link" asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Criar conta</a>
- </footer>
+ <footer class="auth-ft" style="display:none;"></footer>
  </main>
 
  <script src="~/lib/jquery/dist/jquery.min.js"></script>

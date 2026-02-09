@@ -9,6 +9,7 @@ namespace Core.DTO
         public decimal ValorFinal { get; set; }
         public string? FormaPagamento { get; set; }
         public string? NomeConcessionaria { get; set; }
-        public string? NomePessoa { get; set; } 
+        public string? NomePessoa { get; set; }
+        public string? StatusAnuncio { get; set; }
     }
 }

@@ -12,32 +12,37 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="Nome" class="control-label"></label>
+                <label asp-for="Nome" class="control-label">Nome *</label>
                 <input asp-for="Nome" class="form-control" />
                 <span asp-validation-for="Nome" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Cnpj" class="control-label"></label>
+                <label asp-for="Cnpj" class="control-label">CNPJ *</label>
                 <input asp-for="Cnpj" class="form-control cnpj-mask" inputmode="numeric" maxlength="18" />
                 <span asp-validation-for="Cnpj" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
+                <label asp-for="Email" class="control-label">Email *</label>
                 <input asp-for="Email" class="form-control" />
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Telefone" class="control-label"></label>
+                <label asp-for="Telefone" class="control-label">Telefone *</label>
                 <input asp-for="Telefone" class="form-control" />
                 <span asp-validation-for="Telefone" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Senha" class="control-label"></label>
-                <input asp-for="Senha" class="form-control" type="password" />
+                <label asp-for="Senha" class="control-label">Senha *</label>
+                <input asp-for="Senha" class="form-control" type="password" maxlength="8" />
                 <span asp-validation-for="Senha" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Endereco" class="control-label"></label>
+                <label asp-for="ConfirmarSenha" class="control-label">Confirmar senha *</label>
+                <input asp-for="ConfirmarSenha" class="form-control" type="password" maxlength="8" />
+                <span asp-validation-for="ConfirmarSenha" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Endereco" class="control-label">Endereco *</label>
                 <input asp-for="Endereco" class="form-control" />
                 <span asp-validation-for="Endereco" class="text-danger"></span>
             </div>

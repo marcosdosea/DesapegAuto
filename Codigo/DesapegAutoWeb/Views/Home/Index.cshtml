@@ -4,6 +4,8 @@
     ViewData["Title"] = "Início";
     var anuncios = Model?.ToList() ?? new List<DesapegAutoWeb.Models.AnuncioViewModel>();
     var isAdmin = User.IsInRole("Admin");
+    var isSignedIn = User.Identity?.IsAuthenticated ?? false;
+    var canAnnounce = User.IsInRole("Admin") || User.IsInRole("Funcionario");
 }
 
 <div class="da-page">
@@ -43,10 +45,41 @@
                 </div>
                 <a class="da-btn da-btn-primary da-btn-wide" asp-controller="Concessionaria" asp-action="Index">Gerenciar Concessionárias</a>
             </article>
+
+            <article class="da-admin-card">
+                <div>
+                    <h3>Anúncios</h3>
+                    <p>Crie e acompanhe os anúncios de veículos.</p>
+                </div>
+                <a class="da-btn da-btn-primary da-btn-wide" asp-controller="Anuncio" asp-action="Create">Anunciar veículo</a>
+            </article>
         </section>
     }
     else
     {
+        <section class="da-card da-card-pad da-home-actions">
+            <div class="da-home-actions-main">
+                <div>
+                    <h2 class="da-subtitle">Quer anunciar seu veículo?</h2>
+                    <p class="da-muted">Para anunciar, é preciso vincular uma concessionária ao cadastro.</p>
+                </div>
+                <div class="da-home-actions-cta">
+                    @if (canAnnounce)
+                    {
+                        <a class="da-btn da-btn-primary da-btn-wide" asp-controller="Anuncio" asp-action="Create">Anunciar veículo</a>
+                    }
+                    else if (!isSignedIn)
+                    {
+                        <a class="da-btn da-btn-primary da-btn-wide" asp-area="Identity" asp-page="/Account/Login" asp-route-returnUrl="@Url.Action("Create", "Anuncio")">Entrar para anunciar</a>
+                    }
+                    else
+                    {
+                        <button type="button" class="da-btn da-btn-soft da-btn-wide" disabled>Disponível para Admin/Funcionário</button>
+                    }
+                </div>
+            </div>
+        </section>
+
         <section class="da-card da-card-pad da-home-search">
             <form asp-controller="Home" asp-action="Search" method="get">
                 <div class="da-field">
