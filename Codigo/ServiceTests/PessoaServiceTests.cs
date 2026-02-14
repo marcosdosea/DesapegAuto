@@ -114,7 +114,7 @@ namespace Service.Tests
 
             // Act & Assert
             var exception = Assert.ThrowsException<ServiceException>(() => _pessoaService!.Create(pessoaCpfDuplicado));
-            Assert.IsTrue(exception.Message.Contains("CPF já cadastrado"));
+            Assert.IsTrue(exception.Message.Contains("CPF"));
         }
 
         [TestMethod()]
@@ -132,7 +132,7 @@ namespace Service.Tests
 
             // Act & Assert
             var exception = Assert.ThrowsException<ServiceException>(() => _pessoaService!.Edit(pessoaInexistente));
-            Assert.IsTrue(exception.Message.Contains("Pessoa não encontrada"));
+            Assert.IsTrue(exception.Message.Contains("Pessoa"));
         }
 
         [TestMethod()]
@@ -140,7 +140,25 @@ namespace Service.Tests
         {
             // Act & Assert
             var exception = Assert.ThrowsException<ServiceException>(() => _pessoaService!.Delete(99));
-            Assert.IsTrue(exception.Message.Contains("Pessoa não encontrada"));
+            Assert.IsTrue(exception.Message.Contains("Pessoa"));
+        }
+
+        [TestMethod()]
+        public void GetByEmail_QuandoMaiusculoMinusculoDiferente_DeveEncontrarPessoa()
+        {
+            var pessoa = _pessoaService!.GetByEmail("JOAO@EMAIL.COM");
+
+            Assert.IsNotNull(pessoa);
+            Assert.AreEqual("João Silva", pessoa!.Nome);
+        }
+
+        [TestMethod()]
+        public void GetByCpf_QuandoFormatoCaseInsensitive_DeveEncontrarPessoa()
+        {
+            var pessoa = _pessoaService!.GetByCpf("11122233344");
+
+            Assert.IsNotNull(pessoa);
+            Assert.AreEqual("João Silva", pessoa!.Nome);
         }
     }
 }

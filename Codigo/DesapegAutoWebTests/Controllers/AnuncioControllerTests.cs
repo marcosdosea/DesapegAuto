@@ -1,9 +1,11 @@
 using AutoMapper;
 using Core;
+using Core.Exceptions;
 using Core.Service;
 using DesapegAutoWeb.Controllers;
 using DesapegAutoWeb.Mappers;
 using DesapegAutoWeb.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -60,6 +62,11 @@ namespace DesapegAutoWebTests.Controllers
                 mockMarcaService.Object,
                 mockConcessionariaService.Object,
                 mapper);
+
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext()
+            };
         }
 
         [TestMethod]
@@ -82,6 +89,27 @@ namespace DesapegAutoWebTests.Controllers
             Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(AnuncioViewModel));
             var model = (AnuncioViewModel)viewResult.ViewData.Model;
             Assert.AreEqual(1, model.Id);
+        }
+
+        [TestMethod]
+        public void DetailsTest_DeveIncrementarVisualizacoesEEditarAnuncio()
+        {
+            var anuncio = new Anuncio
+            {
+                Id = 10,
+                IdVeiculo = 1,
+                StatusAnuncio = "D",
+                DataPublicacao = System.DateTime.Now,
+                Visualizacoes = 7,
+                Descricao = "teste",
+                Opcionais = "ar"
+            };
+            mockAnuncioService.Setup(s => s.Get(10)).Returns(anuncio);
+
+            var result = controller.Details(10);
+
+            Assert.IsInstanceOfType(result, typeof(ViewResult));
+            mockAnuncioService.Verify(s => s.Edit(It.Is<Anuncio>(a => a.Id == 10 && a.Visualizacoes == 8)), Times.Once);
         }
 
         [TestMethod]
@@ -111,6 +139,35 @@ namespace DesapegAutoWebTests.Controllers
             Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
             var redirect = (RedirectToActionResult)result;
             Assert.AreEqual("Index", redirect.ActionName);
+        }
+
+        [TestMethod]
+        public void CreateTest_Post_QuandoServicoFalha_DeveRetornarViewComErro()
+        {
+            mockVeiculoService.Setup(s => s.Create(It.IsAny<Veiculo>()))
+                .Throws(new ServiceException("Falha ao criar veículo"));
+
+            var viewModel = new AnuncioCreateViewModel
+            {
+                IdConcessionaria = 1,
+                IdMarca = 1,
+                IdModelo = 1,
+                Ano = 2022,
+                Cor = "Prata",
+                Quilometragem = 10000,
+                Preco = 120000.00m,
+                Placa = "TES-2022",
+                Descricao = "Falha esperada",
+                OpcionaisSelecionados = new List<string> { "Sensor" }
+            };
+
+            var result = controller.Create(viewModel);
+
+            Assert.IsInstanceOfType(result, typeof(ViewResult));
+            var viewResult = (ViewResult)result;
+            Assert.IsInstanceOfType(viewResult.Model, typeof(AnuncioCreateViewModel));
+            Assert.IsFalse(controller.ModelState.IsValid);
+            Assert.IsTrue(controller.ModelState.ContainsKey(string.Empty));
         }
 
         [TestMethod]

@@ -1,4 +1,5 @@
 ﻿using Core;
+using Core.Exceptions;
 using Core.Service;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -102,6 +103,24 @@ namespace Service.Tests
             Assert.IsNotNull(categorias);
             Assert.AreEqual(1, categorias.Count());
             Assert.AreEqual("Sedan", categorias.First().Nome);
+        }
+
+        [TestMethod()]
+        public void Create_QuandoNomeVazio_DeveLancarServiceException()
+        {
+            var exception = Assert.ThrowsException<ServiceException>(() =>
+                _categoriaService!.Create(new Categoria { Id = 4, Nome = "   " }));
+
+            Assert.IsTrue(exception.Message.Contains("Nome da categoria"));
+        }
+
+        [TestMethod()]
+        public void Create_QuandoNomeDuplicado_DeveLancarServiceException()
+        {
+            var exception = Assert.ThrowsException<ServiceException>(() =>
+                _categoriaService!.Create(new Categoria { Id = 4, Nome = "suv" }));
+
+            Assert.IsTrue(exception.Message.Contains("Categoria ja existente"));
         }
     }
 }

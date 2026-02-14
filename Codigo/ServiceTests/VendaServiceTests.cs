@@ -157,6 +157,15 @@ namespace Service.Tests
         }
 
         [TestMethod()]
+        public void GetAllDTO_QuandoVendaNaoTemAnuncio_DeveRetornarStatusAnuncioNulo()
+        {
+            var listaVendasDTO = vendaService.GetAllDTO().ToList();
+
+            Assert.IsTrue(listaVendasDTO.Count >= 2);
+            Assert.IsTrue(listaVendasDTO.All(v => v.StatusAnuncio == null));
+        }
+
+        [TestMethod()]
         public void GetAll_QuandoBancoVazio_RetornaListaVazia()
         {
             context.Database.EnsureDeleted();
