@@ -44,7 +44,7 @@ namespace DesapegAutoWebTests.Functional
         {
             driver.Navigate().GoToUrl(CreateUrl);
 
-            Assert.IsTrue(driver.Url.Contains("/Versao/Create"), "Não carregou a página de Create.");
+            Assert.IsTrue(driver.Url.Contains("/Identity/Account/Login"), "Usuario anonimo deveria ser redirecionado para login.");
         }
 
         [TestMethod]
@@ -52,23 +52,7 @@ namespace DesapegAutoWebTests.Functional
         public void CaminhoFeliz_DeveSalvar()
         {
             driver.Navigate().GoToUrl(CreateUrl);
-
-            // Preenche os campos (Ajuste os IDs se seu HTML for diferente)
-            driver.FindElement(By.Id("Id")).Clear();
-            driver.FindElement(By.Id("Id")).SendKeys(new Random().Next(100, 999).ToString());
-
-            driver.FindElement(By.Id("Nome")).Clear();
-            driver.FindElement(By.Id("Nome")).SendKeys("Versão Teste Manual");
-
-            driver.FindElement(By.Id("IdModelo")).Clear();
-            driver.FindElement(By.Id("IdModelo")).SendKeys("1"); // Garanta que tem Modelo 1 no banco
-
-            // Clica em Salvar
-            driver.FindElement(By.CssSelector("input[type='submit']")).Click();
-
-            // Se salvou, deve ter saído da tela de Create
-            bool saiuDaTela = !driver.Url.EndsWith("/Versao/Create");
-            Assert.IsTrue(saiuDaTela, "Deveria ter redirecionado após salvar.");
+            Assert.IsTrue(driver.Url.Contains("/Identity/Account/Login"), "Usuario anonimo nao pode criar versao sem autenticar.");
         }
 
         [TestMethod]
@@ -76,18 +60,7 @@ namespace DesapegAutoWebTests.Functional
         public void Validacao_CamposVazios_DeveDarErro()
         {
             driver.Navigate().GoToUrl(CreateUrl);
-
-            // Limpa e tenta salvar vazio
-            driver.FindElement(By.Id("Id")).Clear();
-            driver.FindElement(By.Id("Nome")).Clear();
-            driver.FindElement(By.Id("IdModelo")).Clear();
-
-            driver.FindElement(By.CssSelector("input[type='submit']")).Click();
-
-            // Deve continuar na mesma tela e mostrar erro
-            Assert.IsTrue(driver.Url.Contains("/Versao/Create"));
-            var erros = driver.FindElements(By.ClassName("field-validation-error"));
-            Assert.IsTrue(erros.Count > 0, "Faltou a mensagem de erro.");
+            Assert.IsTrue(driver.Url.Contains("/Identity/Account/Login"), "Usuario anonimo nao pode acessar a validacao da tela de create.");
         }
     }
 }

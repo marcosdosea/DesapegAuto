@@ -48,23 +48,23 @@ namespace DesapegAutoWeb.Controllers
         {
             if (!ModelState.IsValid)
             {
-                TempData["ErrorMessage"] = "Preencha os campos obrigatorios para cadastrar a marca.";
-                return RedirectToAction(nameof(Index));
+                SetTempDataMessage("ErrorMessage", "Preencha os campos obrigatorios para cadastrar a marca.");
+                return View(marcaViewModel);
             }
 
             try
             {
                 var marca = mapper.Map<Marca>(marcaViewModel);
                 marcaService.Create(marca);
-                TempData["SuccessMessage"] = "Marca cadastrada com sucesso.";
+                SetTempDataMessage("SuccessMessage", "Marca cadastrada com sucesso.");
             }
             catch (ServiceException ex)
             {
-                TempData["ErrorMessage"] = ex.Message;
+                SetTempDataMessage("ErrorMessage", ex.Message);
             }
             catch (DbUpdateException)
             {
-                TempData["ErrorMessage"] = "Nao foi possivel salvar a marca devido a uma inconsistencia no banco de dados.";
+                SetTempDataMessage("ErrorMessage", "Nao foi possivel salvar a marca devido a uma inconsistencia no banco de dados.");
             }
 
             return RedirectToAction(nameof(Index));
@@ -92,7 +92,7 @@ namespace DesapegAutoWeb.Controllers
             {
                 var marca = mapper.Map<Marca>(marcaViewModel);
                 marcaService.Edit(marca);
-                TempData["SuccessMessage"] = "Marca atualizada com sucesso.";
+                SetTempDataMessage("SuccessMessage", "Marca atualizada com sucesso.");
                 return RedirectToAction(nameof(Index));
             }
             catch (ServiceException ex)
@@ -118,18 +118,26 @@ namespace DesapegAutoWeb.Controllers
             try
             {
                 marcaService.Delete(id);
-                TempData["SuccessMessage"] = "Marca removida com sucesso.";
+                SetTempDataMessage("SuccessMessage", "Marca removida com sucesso.");
             }
             catch (ServiceException ex)
             {
-                TempData["ErrorMessage"] = ex.Message;
+                SetTempDataMessage("ErrorMessage", ex.Message);
             }
             catch (DbUpdateException)
             {
-                TempData["ErrorMessage"] = "Nao foi possivel remover a marca porque ela esta em uso.";
+                SetTempDataMessage("ErrorMessage", "Nao foi possivel remover a marca porque ela esta em uso.");
             }
 
             return RedirectToAction(nameof(Index));
+        }
+
+        private void SetTempDataMessage(string key, string message)
+        {
+            if (TempData != null)
+            {
+                TempData[key] = message;
+            }
         }
     }
 }
