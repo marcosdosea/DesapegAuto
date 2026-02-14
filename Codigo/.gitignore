@@ -8,6 +8,19 @@
 # Build results
 [Bb]in/
 [Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+[Xx]64/
+[Xx]86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+
+# Build / publish artifacts
+publish/
+artifacts/
+*.cache
+*.tmp
+*.temp
 
 # Visual Studio Code
 .vscode/
@@ -22,5 +35,23 @@
 # Logs
 *.log
 
+# Testes e cobertura
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+coverage/
+
+# NuGet
+packages/
+*.nuget.props
+*.nuget.targets
+
+# Arquivos de sistema
+.DS_Store
+Thumbs.db
+
 # Configurações locais
 *.local
+appsettings.Local.json
+appsettings.*.Local.json
