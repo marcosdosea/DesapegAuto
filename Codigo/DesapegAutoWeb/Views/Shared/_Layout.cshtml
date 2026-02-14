@@ -20,6 +20,18 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - DesapegAuto</title>
+    <script>
+        (() => {
+            try {
+                const savedTheme = localStorage.getItem("da-theme");
+                const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+                const theme = savedTheme || (prefersDark ? "dark" : "light");
+                document.documentElement.setAttribute("data-theme", theme);
+            } catch {
+                document.documentElement.setAttribute("data-theme", "light");
+            }
+        })();
+    </script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/DesapegAutoWeb.styles.css" asp-append-version="true" />
@@ -31,6 +43,9 @@
             <div class="da-topbar-inner">
                 <a class="da-topbar-greeting" asp-controller="Home" asp-action="Index">Olá, @displayName</a>
                 <div class="da-topbar-actions">
+                    <button type="button" class="da-icon-link da-theme-toggle" data-theme-toggle title="Alternar tema" aria-label="Alternar tema">
+                        <span class="da-theme-toggle-icon" data-theme-icon>🌙</span>
+                    </button>
                     <a class="da-icon-link" asp-controller="Perfil" asp-action="Index" title="Perfil" aria-label="Perfil">
                         <svg viewBox="0 0 24 24" aria-hidden="true">
                             <path d="M12 12a4.75 4.75 0 1 0 0-9.5 4.75 4.75 0 0 0 0 9.5Zm0 2.5c-4.33 0-8 2.28-8 5v1h16v-1c0-2.72-3.67-5-8-5Z" />
@@ -51,6 +66,9 @@
             <div class="da-topbar-inner">
                 <a class="da-topbar-greeting" asp-controller="Home" asp-action="Index">DesapegAuto</a>
                 <div class="da-topbar-actions">
+                    <button type="button" class="da-icon-link da-theme-toggle" data-theme-toggle title="Alternar tema" aria-label="Alternar tema">
+                        <span class="da-theme-toggle-icon" data-theme-icon>🌙</span>
+                    </button>
                     <a class="da-topbar-link" asp-area="Identity" asp-page="/Account/Login">Entrar</a>
                     <a class="da-topbar-link" asp-area="Identity" asp-page="/Account/Register">Criar conta</a>
                 </div>

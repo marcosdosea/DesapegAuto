@@ -7,9 +7,30 @@
     --da-border: #cfe3ff;
     --da-bg: #f4f9ff;
     --da-text: #0f2f73;
+    --da-text-strong: #132b64;
     --da-muted: #6a7aa6;
     --da-danger: #ff4f4f;
     --da-white: #ffffff;
+    --da-surface: #ffffff;
+    --da-surface-soft: #f5f6f8;
+    --da-surface-alt: #f8fbff;
+    --da-topbar-shadow: 0 6px 18px rgba(31, 99, 243, 0.2);
+}
+
+html[data-theme="dark"] {
+    color-scheme: dark;
+    --da-blue: #4a86ff;
+    --da-blue-dark: #2e6fe8;
+    --da-blue-soft: #1a2b4d;
+    --da-border: #2c4571;
+    --da-bg: #0d172b;
+    --da-text: #d9e6ff;
+    --da-text-strong: #e6efff;
+    --da-muted: #a7b9de;
+    --da-surface: #13223f;
+    --da-surface-soft: #1a2a49;
+    --da-surface-alt: #182745;
+    --da-topbar-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
 }
 
 * {
@@ -50,7 +71,7 @@ a {
     top: 0;
     z-index: 100;
     background: var(--da-blue);
-    box-shadow: 0 6px 18px rgba(31, 99, 243, 0.2);
+    box-shadow: var(--da-topbar-shadow);
 }
 
 .da-topbar-inner {
@@ -139,7 +160,7 @@ a {
 .da-card {
     border: 1px solid var(--da-border);
     border-radius: 14px;
-    background: var(--da-white);
+    background: var(--da-surface);
     box-shadow: 0 4px 16px rgba(31, 99, 243, 0.06);
 }
 
@@ -174,8 +195,8 @@ a {
     border-radius: 10px;
     border: 1px solid var(--da-border);
     padding: 0.72rem 0.8rem;
-    background: var(--da-white);
-    color: #132b64;
+    background: var(--da-surface);
+    color: var(--da-text-strong);
     font-size: 0.95rem;
     box-shadow: none;
 }
@@ -241,7 +262,7 @@ a {
 .da-btn-outline,
 .btn-outline-primary,
 .btn-secondary {
-    background: var(--da-white);
+    background: var(--da-surface);
     border-color: var(--da-border);
     color: var(--da-blue);
 }
@@ -296,7 +317,7 @@ a {
 
 .da-empty {
     border: 1px dashed var(--da-border);
-    background: #f8fbff;
+    background: var(--da-surface-alt);
     border-radius: 12px;
     text-align: center;
     padding: 2rem 1rem;
@@ -353,14 +374,14 @@ a {
     border: 1px solid var(--da-border);
     border-radius: 12px;
     overflow: hidden;
-    background: var(--da-white);
+    background: var(--da-surface);
 }
 
 .da-vehicle-image {
     width: 100%;
     height: 240px;
     border-bottom: 1px solid var(--da-border);
-    background: #f5f6f8;
+    background: var(--da-surface-soft);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -375,12 +396,12 @@ a {
 .da-vehicle-placeholder {
     width: 90%;
     height: 78%;
-    border: 1px dashed #d4dff5;
+    border: 1px dashed var(--da-border);
     border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #8a9cc8;
+    color: var(--da-muted);
     font-weight: 700;
 }
 
@@ -453,7 +474,7 @@ a {
 .da-result-image {
     height: 210px;
     border-bottom: 1px solid var(--da-border);
-    background: #f5f6f8;
+    background: var(--da-surface-soft);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -475,7 +496,7 @@ a {
     height: 220px;
     border: 1px solid var(--da-border);
     border-radius: 10px;
-    background: #f5f6f8;
+    background: var(--da-surface-soft);
     overflow: hidden;
     display: flex;
     align-items: center;
@@ -499,7 +520,7 @@ a {
     border: 1px solid var(--da-border);
     border-radius: 12px;
     padding: 0.95rem;
-    background: var(--da-white);
+    background: var(--da-surface);
 }
 
 .da-detail-name {
@@ -519,7 +540,7 @@ a {
 .da-price-box {
     border: 1px solid var(--da-border);
     border-radius: 12px;
-    background: var(--da-white);
+    background: var(--da-surface);
     padding: 0.95rem;
     display: flex;
     flex-direction: column;
@@ -537,7 +558,7 @@ a {
 .da-description-box {
     border: 1px solid var(--da-border);
     border-radius: 12px;
-    background: var(--da-white);
+    background: var(--da-surface);
     padding: 0.95rem;
     margin-bottom: 0.9rem;
 }
@@ -568,7 +589,7 @@ a {
     display: none;
     border: 1px solid var(--da-border);
     border-radius: 12px;
-    background: var(--da-white);
+    background: var(--da-surface);
     padding: 0.95rem;
 }
 
@@ -586,7 +607,7 @@ a {
     border: 1px solid var(--da-border);
     border-radius: 10px;
     padding: 0.7rem;
-    background: #fbfdff;
+    background: var(--da-surface-alt);
 }
 
 .da-detail-key {
@@ -623,7 +644,7 @@ a {
 .da-anuncio-row {
     border: 1px solid var(--da-border);
     border-radius: 12px;
-    background: var(--da-white);
+    background: var(--da-surface);
     margin-bottom: 0.9rem;
     overflow: hidden;
 }
@@ -639,7 +660,7 @@ a {
     height: 130px;
     border: 1px solid var(--da-border);
     border-radius: 10px;
-    background: #f5f6f8;
+    background: var(--da-surface-soft);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -678,7 +699,7 @@ a {
     height: 130px;
     border: 1px solid var(--da-border);
     border-radius: 10px;
-    background: #f5f6f8;
+    background: var(--da-surface-soft);
     position: relative;
     display: flex;
     align-items: center;
@@ -689,7 +710,7 @@ a {
 
 .da-photo-card.da-photo-add {
     border-style: dashed;
-    background: #fbfdff;
+    background: var(--da-surface-alt);
 }
 
 .da-photo-remove {
@@ -747,7 +768,7 @@ a {
 .da-admin-card {
     border: 1px solid var(--da-border);
     border-radius: 12px;
-    background: var(--da-white);
+    background: var(--da-surface);
     padding: 0.9rem;
     min-height: 210px;
     display: flex;
@@ -817,7 +838,7 @@ a {
 .da-sale-card {
     border: 1px solid var(--da-border);
     border-radius: 12px;
-    background: var(--da-white);
+    background: var(--da-surface);
     overflow: hidden;
 }
 
@@ -832,10 +853,57 @@ a {
     height: 225px;
     border: 1px solid var(--da-border);
     border-radius: 10px;
-    background: #f5f6f8;
+    background: var(--da-surface-soft);
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.da-theme-toggle {
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.08);
+    padding: 0;
+    cursor: pointer;
+}
+
+.da-theme-toggle-icon {
+    font-size: 0.95rem;
+    line-height: 1;
+}
+
+html[data-theme="dark"] .da-title,
+html[data-theme="dark"] .da-subtitle,
+html[data-theme="dark"] .da-vehicle-name,
+html[data-theme="dark"] .da-vehicle-price,
+html[data-theme="dark"] .da-detail-name,
+html[data-theme="dark"] .da-price-value,
+html[data-theme="dark"] .da-filter-title,
+html[data-theme="dark"] .da-admin-card h3 {
+    color: #8fb3ff;
+}
+
+html[data-theme="dark"] .da-vehicle-year,
+html[data-theme="dark"] .da-admin-card p,
+html[data-theme="dark"] .da-detail-sub,
+html[data-theme="dark"] .da-detail-key,
+html[data-theme="dark"] .da-list-note,
+html[data-theme="dark"] .da-switch-btn,
+html[data-theme="dark"] .da-tab-btn {
+    color: var(--da-muted);
+}
+
+html[data-theme="dark"] .da-detail-val,
+html[data-theme="dark"] .da-list-name,
+html[data-theme="dark"] .da-check-item,
+html[data-theme="dark"] .da-list-meta,
+html[data-theme="dark"] .da-chip {
+    color: var(--da-text-strong);
+}
+
+html[data-theme="dark"] .da-icon-link,
+html[data-theme="dark"] .da-topbar-link,
+html[data-theme="dark"] .da-theme-toggle {
+    border-color: rgba(255, 255, 255, 0.55);
 }
 
 .da-sale-grid {
