@@ -13,14 +13,16 @@ namespace DesapegAutoWebTests.Controllers
     [TestClass()]
     public class VeiculoControllerTests
     {
-        private static VeiculoController controller;
-        private static Mock<IVeiculoService> mockService;
+        private static VeiculoController controller = null!;
+        private static Mock<IVeiculoService> mockService = null!;
+        private static Mock<IAnuncioService> mockAnuncioService = null!;
 
         [TestInitialize]
         public void Initialize()
         {
             // Arrange
             mockService = new Mock<IVeiculoService>();
+            mockAnuncioService = new Mock<IAnuncioService>();
             IMapper mapper = new MapperConfiguration(cfg =>
                 cfg.AddProfile(new VeiculoProfile())).CreateMapper();
 
@@ -39,7 +41,10 @@ namespace DesapegAutoWebTests.Controllers
             mockService.Setup(service => service.Delete(99))
                 .Throws(new ServiceException("Veículo não encontrado"));
 
-            controller = new VeiculoController(mockService.Object, mapper);
+            mockAnuncioService.Setup(service => service.GetAll())
+                .Returns(new List<Anuncio>());
+
+            controller = new VeiculoController(mockService.Object, mockAnuncioService.Object, mapper);
         }
 
         [TestMethod()]

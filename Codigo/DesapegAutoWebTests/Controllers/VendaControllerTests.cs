@@ -26,6 +26,7 @@ namespace DesapegAutoWebTests.Controllers
             var mockVendaService = new Mock<IVendaService>();
             var mockConcessionariaService = new Mock<IConcessionariaService>();
             var mockPessoaService = new Mock<IPessoaService>();
+            var mockAnuncioService = new Mock<IAnuncioService>();
 
             IMapper mapper = new MapperConfiguration(cfg =>
                 cfg.AddProfile(new VendaProfile())).CreateMapper();
@@ -47,12 +48,18 @@ namespace DesapegAutoWebTests.Controllers
 
             mockConcessionariaService.Setup(service => service.GetAll()).Returns(new List<Concessionaria>());
             mockPessoaService.Setup(service => service.GetAll()).Returns(new List<Pessoa>());
+            mockAnuncioService.Setup(service => service.GetAll()).Returns(new List<Anuncio>
+            {
+                new Anuncio { Id = 1, IdVeiculo = 1, IdVenda = 0, StatusAnuncio = "D" }
+            });
+            mockAnuncioService.Setup(service => service.Edit(It.IsAny<Anuncio>())).Verifiable();
 
             controller = new VendaController(
                 mockVendaService.Object,
                 mockConcessionariaService.Object,
                 mockPessoaService.Object,
-                mapper);
+                mapper,
+                mockAnuncioService.Object);
         }
 
         [TestMethod()]
@@ -140,7 +147,7 @@ namespace DesapegAutoWebTests.Controllers
         public void Create_Get_PopulaViewBagsCorretamente()
         {
             
-            var result = controller.Create();
+            var result = controller.Create(1);
 
             
             Assert.IsInstanceOfType(result, typeof(ViewResult));

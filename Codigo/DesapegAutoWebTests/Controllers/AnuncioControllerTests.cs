@@ -18,7 +18,7 @@ namespace DesapegAutoWebTests.Controllers
         private static AnuncioController controller = null!;
         private static Mock<IAnuncioService> mockAnuncioService = null!;
         private static Mock<IVeiculoService> mockVeiculoService = null!;
-        private static Mock<IVendaService> mockVendaService = null!;
+        private static Mock<IConcessionariaService> mockConcessionariaService = null!;
         private static Mock<IModeloService> mockModeloService = null!;
         private static Mock<IMarcaService> mockMarcaService = null!;
         private static IMapper mapper = null!;
@@ -28,7 +28,7 @@ namespace DesapegAutoWebTests.Controllers
         {
             mockAnuncioService = new Mock<IAnuncioService>();
             mockVeiculoService = new Mock<IVeiculoService>();
-            mockVendaService = new Mock<IVendaService>();
+            mockConcessionariaService = new Mock<IConcessionariaService>();
             mockModeloService = new Mock<IModeloService>();
             mockMarcaService = new Mock<IMarcaService>();
             mapper = new MapperConfiguration(cfg =>
@@ -45,7 +45,10 @@ namespace DesapegAutoWebTests.Controllers
 
             mockVeiculoService.Setup(s => s.Get(It.IsAny<int>())).Returns(GetTargetVeiculo());
             mockVeiculoService.Setup(s => s.GetAll()).Returns(new List<Veiculo> { GetTargetVeiculo() });
-            mockVendaService.Setup(s => s.GetAll()).Returns(new List<Venda>());
+            mockConcessionariaService.Setup(s => s.GetAll()).Returns(new List<Concessionaria>());
+            mockConcessionariaService.Setup(s => s.Get(It.IsAny<int>())).Returns(new Concessionaria { Id = 1, Nome = "Concessionária Teste" });
+            mockModeloService.Setup(s => s.GetAll()).Returns(new List<Modelo> { new Modelo { Id = 1, Nome = "Corolla", IdMarca = 1 } });
+            mockMarcaService.Setup(s => s.GetAll()).Returns(new List<Marca> { new Marca { Id = 1, Nome = "Toyota" } });
             
             mockModeloService.Setup(s => s.Get(It.IsAny<int>())).Returns(new Modelo { Id = 1, Nome = "Corolla" });
             mockMarcaService.Setup(s => s.Get(It.IsAny<int>())).Returns(new Marca { Id = 1, Nome = "Toyota" });
@@ -53,9 +56,9 @@ namespace DesapegAutoWebTests.Controllers
             controller = new AnuncioController(
                 mockAnuncioService.Object,
                 mockVeiculoService.Object,
-                mockVendaService.Object,
                 mockModeloService.Object,
                 mockMarcaService.Object,
+                mockConcessionariaService.Object,
                 mapper);
         }
 
@@ -91,7 +94,19 @@ namespace DesapegAutoWebTests.Controllers
         [TestMethod]
         public void CreateTest_Post_Valido()
         {
-            var viewModel = new AnuncioViewModel { Id = 3, IdVeiculo = 1 };
+            var viewModel = new AnuncioCreateViewModel
+            {
+                IdConcessionaria = 1,
+                IdMarca = 1,
+                IdModelo = 1,
+                Ano = 2020,
+                Cor = "Preto",
+                Quilometragem = 15000,
+                Preco = 90000.00m,
+                Placa = "TES-0001",
+                Descricao = "Anúncio de teste",
+                OpcionaisSelecionados = new List<string> { "Ar Condicionado" }
+            };
             var result = controller.Create(viewModel);
             Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
             var redirect = (RedirectToActionResult)result;

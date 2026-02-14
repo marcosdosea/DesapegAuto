@@ -15,7 +15,7 @@ namespace DesapegAutoWeb.Controllers.Tests
     [TestClass()]
     public class MarcaControllerTests
     {
-        private static MarcaController controller;
+        private static MarcaController controller = null!;
 
         [TestInitialize]
         public void Initialize()

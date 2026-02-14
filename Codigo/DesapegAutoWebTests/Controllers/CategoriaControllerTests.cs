@@ -15,7 +15,7 @@ namespace DesapegAutoWeb.Controllers.Tests
     [TestClass()]
     public class CategoriaControllerTests
     {
-        private static CategoriaController controller;
+        private static CategoriaController controller = null!;
 
         [TestInitialize]
         public void Initialize()

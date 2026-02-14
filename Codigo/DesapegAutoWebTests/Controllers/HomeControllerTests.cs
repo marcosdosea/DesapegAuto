@@ -80,7 +80,7 @@ namespace DesapegAutoWebTests.Controllers
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             var viewResult = (ViewResult)result;
             Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(IEnumerable<AnuncioViewModel>));
-            var lista = (IEnumerable<AnuncioViewModel>)viewResult.ViewData.Model;
+            var lista = (IEnumerable<AnuncioViewModel>)viewResult.ViewData.Model!;
             Assert.IsTrue(lista.Count() <= 3, "Index deve retornar no m�ximo 3 an�ncios");
         }
 
@@ -94,7 +94,7 @@ namespace DesapegAutoWebTests.Controllers
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             var viewResult = (ViewResult)result;
             Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(IEnumerable<AnuncioViewModel>));
-            var lista = (IEnumerable<AnuncioViewModel>)viewResult.ViewData.Model;
+            var lista = (IEnumerable<AnuncioViewModel>)viewResult.ViewData.Model!;
             Assert.AreEqual(3, lista.Count());
         }
 
@@ -110,7 +110,7 @@ namespace DesapegAutoWebTests.Controllers
             // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             var viewResult = (ViewResult)result;
-            var lista = (IEnumerable<AnuncioViewModel>)viewResult.ViewData.Model;
+            var lista = (IEnumerable<AnuncioViewModel>)viewResult.ViewData.Model!;
             
             // Verifica que todos os resultados cont�m Toyota
             foreach (var item in lista)
@@ -134,7 +134,7 @@ namespace DesapegAutoWebTests.Controllers
             // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             var viewResult = (ViewResult)result;
-            var lista = (IEnumerable<AnuncioViewModel>)viewResult.ViewData.Model;
+            var lista = (IEnumerable<AnuncioViewModel>)viewResult.ViewData.Model!;
             
             // O filtro por termo funciona - verifica que retornou resultados
             // (o controller filtra por marca/modelo via serviço)
@@ -154,7 +154,7 @@ namespace DesapegAutoWebTests.Controllers
             // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             var viewResult = (ViewResult)result;
-            var lista = (IEnumerable<AnuncioViewModel>)viewResult.ViewData.Model;
+            var lista = (IEnumerable<AnuncioViewModel>)viewResult.ViewData.Model!;
 
             // Verifica que todos os ve�culos est�o dentro da faixa de pre�o
             foreach (var item in lista)
@@ -177,7 +177,7 @@ namespace DesapegAutoWebTests.Controllers
             // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             var viewResult = (ViewResult)result;
-            var lista = (IEnumerable<AnuncioViewModel>)viewResult.ViewData.Model;
+            var lista = (IEnumerable<AnuncioViewModel>)viewResult.ViewData.Model!;
 
             // Verifica que todos os ve�culos est�o dentro da faixa de ano
             foreach (var item in lista)
@@ -200,7 +200,7 @@ namespace DesapegAutoWebTests.Controllers
             // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             var viewResult = (ViewResult)result;
-            var lista = (IEnumerable<AnuncioViewModel>)viewResult.ViewData.Model;
+            var lista = (IEnumerable<AnuncioViewModel>)viewResult.ViewData.Model!;
 
             // Verifica que todos os ve�culos est�o dentro da faixa de quilometragem
             foreach (var item in lista)
@@ -226,7 +226,7 @@ namespace DesapegAutoWebTests.Controllers
             // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             var viewResult = (ViewResult)result;
-            var lista = (IEnumerable<AnuncioViewModel>)viewResult.ViewData.Model;
+            var lista = (IEnumerable<AnuncioViewModel>)viewResult.ViewData.Model!;
 
             // Verifica que todos os resultados atendem aos crit�rios
             foreach (var item in lista)
@@ -254,7 +254,7 @@ namespace DesapegAutoWebTests.Controllers
             // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             var viewResult = (ViewResult)result;
-            var lista = (IEnumerable<AnuncioViewModel>)viewResult.ViewData.Model;
+            var lista = (IEnumerable<AnuncioViewModel>)viewResult.ViewData.Model!;
 
             // Verifica que todos os ve�culos t�m o opcional
             foreach (var item in lista)
