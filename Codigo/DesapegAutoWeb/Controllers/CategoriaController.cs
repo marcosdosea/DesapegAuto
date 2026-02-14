@@ -48,23 +48,23 @@ namespace DesapegAutoWeb.Controllers
         {
             if (!ModelState.IsValid)
             {
-                TempData["ErrorMessage"] = "Preencha os campos obrigatorios para cadastrar a categoria.";
-                return RedirectToAction(nameof(Index));
+                SetTempDataMessage("ErrorMessage", "Preencha os campos obrigatorios para cadastrar a categoria.");
+                return View(categoriaViewModel);
             }
 
             try
             {
                 var categoria = mapper.Map<Categoria>(categoriaViewModel);
                 categoriaService.Create(categoria);
-                TempData["SuccessMessage"] = "Categoria cadastrada com sucesso.";
+                SetTempDataMessage("SuccessMessage", "Categoria cadastrada com sucesso.");
             }
             catch (ServiceException ex)
             {
-                TempData["ErrorMessage"] = ex.Message;
+                SetTempDataMessage("ErrorMessage", ex.Message);
             }
             catch (DbUpdateException)
             {
-                TempData["ErrorMessage"] = "Nao foi possivel salvar a categoria devido a uma inconsistencia no banco de dados.";
+                SetTempDataMessage("ErrorMessage", "Nao foi possivel salvar a categoria devido a uma inconsistencia no banco de dados.");
             }
 
             return RedirectToAction(nameof(Index));
@@ -92,7 +92,7 @@ namespace DesapegAutoWeb.Controllers
             {
                 var categoria = mapper.Map<Categoria>(categoriaViewModel);
                 categoriaService.Edit(categoria);
-                TempData["SuccessMessage"] = "Categoria atualizada com sucesso.";
+                SetTempDataMessage("SuccessMessage", "Categoria atualizada com sucesso.");
                 return RedirectToAction(nameof(Index));
             }
             catch (ServiceException ex)
@@ -118,18 +118,26 @@ namespace DesapegAutoWeb.Controllers
             try
             {
                 categoriaService.Delete(id);
-                TempData["SuccessMessage"] = "Categoria removida com sucesso.";
+                SetTempDataMessage("SuccessMessage", "Categoria removida com sucesso.");
             }
             catch (ServiceException ex)
             {
-                TempData["ErrorMessage"] = ex.Message;
+                SetTempDataMessage("ErrorMessage", ex.Message);
             }
             catch (DbUpdateException)
             {
-                TempData["ErrorMessage"] = "Nao foi possivel remover a categoria porque ela esta em uso.";
+                SetTempDataMessage("ErrorMessage", "Nao foi possivel remover a categoria porque ela esta em uso.");
             }
 
             return RedirectToAction(nameof(Index));
+        }
+
+        private void SetTempDataMessage(string key, string message)
+        {
+            if (TempData != null)
+            {
+                TempData[key] = message;
+            }
         }
     }
 }
