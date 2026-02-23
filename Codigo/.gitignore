@@ -56,5 +56,4 @@ Thumbs.db
 appsettings.Local.json
 appsettings.*.Local.json
 
-# Claude Code — skills e configurações locais
-.claude/
+

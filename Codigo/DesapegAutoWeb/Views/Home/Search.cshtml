@@ -13,11 +13,10 @@
         <aside class="da-filter-panel">
             <div class="da-top-actions">
                 <h2 class="da-filter-title">Filtros</h2>
-                <a asp-controller="Home" asp-action="Index" class="da-btn da-btn-soft" aria-label="Voltar">←</a>
             </div>
 
             <form asp-controller="Home" asp-action="Search" method="get" class="da-stack">
-                <button type="submit" class="da-btn da-btn-outline da-btn-wide">Limpar filtros</button>
+                <a href="@Url.Action("Search", "Home")" class="da-btn da-btn-outline da-btn-wide">Limpar filtros</a>
 
                 <div class="da-field">
                     <p class="da-label da-label-icon">

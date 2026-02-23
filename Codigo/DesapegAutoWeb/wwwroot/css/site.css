@@ -216,6 +216,9 @@ body.da-body {
     font-family: "DM Sans", "Segoe UI", sans-serif;
     line-height: 1.5;
     transition: background-color 0.3s ease, color 0.3s ease;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 /* Sora for display/headings */
@@ -238,11 +241,12 @@ a {
 .da-main {
     width: 100%;
     padding: 1rem 1.2rem 2rem;
+    flex: 1;
 }
 
 .da-page {
     width: 100%;
-    max-width: 1700px;
+    max-width: 1800px;
     margin: 0 auto;
 }
 
@@ -258,17 +262,43 @@ a {
     max-width: 1800px;
     margin: 0 auto;
     padding: 0.9rem 1.2rem;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+}
+
+.da-topbar-left {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    gap: 1rem;
+}
+
+.da-topbar-center {
+    display: flex;
+    justify-content: center;
+}
+
+.da-topbar-brand {
+    font-family: "Sora", sans-serif;
+    color: var(--da-white);
+    font-size: 2.2rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    text-decoration: none;
+}
+
+.da-topbar-brand:hover {
+    color: var(--da-white);
+    opacity: 0.9;
 }
 
 .da-topbar-greeting {
     color: var(--da-white);
-    font-size: 2rem;
-    font-weight: 700;
-    letter-spacing: -0.02em;
+    font-size: 1.2rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
     text-decoration: none;
+    white-space: nowrap;
 }
 
 .da-topbar-greeting:hover {
@@ -278,6 +308,7 @@ a {
 .da-topbar-actions {
     display: flex;
     align-items: center;
+    justify-content: flex-end;
     gap: 1.1rem;
 }
 
@@ -601,6 +632,338 @@ a {
     gap: 0.8rem;
 }
 
+/* ── Welcome Section (Logged User) ── */
+.da-welcome-section {
+    margin-bottom: 1.5rem;
+}
+
+.da-welcome-hero {
+    background: linear-gradient(135deg, #1f63f3 0%, #0f51de 100%);
+    border-radius: 16px;
+    padding: 2rem 2.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    box-shadow: 0 8px 32px rgba(31, 99, 243, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.da-welcome-hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 400px;
+    height: 400px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 50%;
+}
+
+.da-welcome-content {
+    position: relative;
+    z-index: 1;
+}
+
+.da-welcome-title {
+    font-family: "Sora", sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 0 0 0.4rem;
+    letter-spacing: -0.02em;
+}
+
+.da-welcome-sub {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin: 0;
+}
+
+.da-welcome-visual {
+    position: relative;
+    z-index: 1;
+    flex-shrink: 0;
+    margin-left: 1rem;
+}
+
+.da-welcome-visual svg {
+    width: 160px;
+    height: auto;
+    opacity: 0.85;
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
+}
+
+.da-welcome-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.da-quick-action {
+    flex: 1;
+    min-width: 140px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 1.1rem 1rem;
+    background: var(--da-card-bg);
+    border: 1px solid var(--da-border);
+    border-radius: 12px;
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.da-quick-action:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--da-shadow-card-hover);
+    border-color: var(--da-blue);
+    color: inherit;
+}
+
+.da-quick-icon {
+    width: 2.8rem;
+    height: 2.8rem;
+    border-radius: 10px;
+    background: var(--da-blue-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--da-blue);
+    transition: background-color 0.2s ease;
+}
+
+.da-quick-action:hover .da-quick-icon {
+    background: var(--da-blue);
+    color: #ffffff;
+}
+
+.da-quick-icon svg {
+    width: 1.2rem;
+    height: 1.2rem;
+}
+
+.da-quick-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--da-text);
+    text-align: center;
+}
+
+/* ── Welcome Search (Professional) ── */
+.da-welcome-search {
+    margin-bottom: 1.5rem;
+}
+
+.da-welcome-search-form {
+    background: var(--da-card-bg);
+    border: 1px solid var(--da-border);
+    border-radius: 14px;
+    padding: 1.25rem;
+    box-shadow: var(--da-shadow-card);
+}
+
+.da-welcome-search-row {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 0.9rem;
+}
+
+.da-welcome-search-field {
+    flex: 1;
+    position: relative;
+}
+
+.da-welcome-search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1.2rem;
+    height: 1.2rem;
+    color: var(--da-muted);
+}
+
+.da-welcome-search-input {
+    width: 100%;
+    height: 3.2rem;
+    padding: 0 1rem 0 3rem;
+    border-radius: 10px;
+    border: 1px solid var(--da-border);
+    background: var(--da-input-bg);
+    color: var(--da-input-text);
+    font-size: 1rem;
+}
+
+.da-welcome-search-input:focus {
+    outline: none;
+    border-color: var(--da-blue);
+    box-shadow: 0 0 0 3px rgba(31, 99, 243, 0.12);
+}
+
+.da-welcome-search-btn {
+    height: 3.2rem;
+    padding: 0 2rem;
+    background: var(--da-blue);
+    color: var(--da-white);
+    border: none;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.da-welcome-search-btn:hover {
+    background: var(--da-blue-dark);
+}
+
+.da-welcome-search-chips {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+/* ── Vehicle Grid (4:3 Cards) ── */
+.da-vehicle-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    width: 100%;
+    padding: 0 0.25rem;
+}
+
+@media (max-width: 1200px) {
+    .da-vehicle-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 900px) {
+    .da-vehicle-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 500px) {
+    .da-vehicle-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (min-width: 1600px) {
+    .da-vehicle-grid {
+        grid-template-columns: repeat(5, 1fr);
+    }
+}
+
+@media (min-width: 2000px) {
+    .da-vehicle-grid {
+        grid-template-columns: repeat(6, 1fr);
+    }
+}
+
+.da-vehicle-grid .da-vehicle-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border-radius: 14px;
+    overflow: hidden;
+    background: var(--da-card-bg);
+    border: 1px solid var(--da-border);
+    transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+
+.da-vehicle-grid .da-vehicle-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--da-shadow-card-hover);
+}
+
+.da-vehicle-grid .da-vehicle-image {
+    aspect-ratio: 4 / 3;
+    height: auto;
+    min-height: 160px;
+    background: var(--da-placeholder-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid var(--da-border);
+    position: relative;
+    overflow: hidden;
+}
+
+.da-vehicle-grid .da-vehicle-image svg {
+    width: 48px;
+    height: 48px;
+    color: var(--da-muted);
+    opacity: 0.35;
+}
+
+.da-vehicle-grid .da-vehicle-body {
+    padding: 1.1rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.da-vehicle-grid .da-vehicle-name {
+    font-family: "Sora", sans-serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--da-blue);
+    margin: 0 0 0.3rem;
+    line-height: 1.3;
+}
+
+.da-vehicle-grid .da-vehicle-year {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--da-year-text);
+    margin: 0;
+}
+
+.da-vehicle-grid .da-vehicle-price {
+    font-family: "Sora", sans-serif;
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--da-blue);
+    margin: auto 0 0;
+    padding-top: 0.6rem;
+}
+
+.da-vehicle-grid .da-btn {
+    margin-top: 0.9rem;
+    width: 100%;
+}
+
+/* Responsive */
+@media (max-width: 760px) {
+    .da-welcome-hero {
+        flex-direction: column;
+        text-align: center;
+        padding: 1.8rem 1.5rem;
+    }
+
+    .da-welcome-visual {
+        display: none;
+    }
+
+    .da-welcome-title {
+        font-size: 1.6rem;
+    }
+
+    .da-welcome-search-row {
+        flex-direction: column;
+    }
+
+    .da-welcome-search-btn {
+        width: 100%;
+    }
+}
+
 /* Home and listing cards */
 .da-home-actions {
     padding: 1rem;
@@ -695,9 +1058,11 @@ a {
 /* Search page */
 .da-search-layout {
     display: grid;
-    grid-template-columns: 390px 1fr;
-    gap: 1rem;
+    grid-template-columns: 350px 1fr;
+    gap: 2rem;
     align-items: start;
+    max-width: 1600px;
+    margin: 0 auto;
 }
 
 .da-filter-panel,
@@ -718,6 +1083,11 @@ a {
     color: var(--da-blue);
     font-size: 2rem;
     font-weight: 800;
+}
+
+.da-filter-title::before,
+.da-filter-title::after {
+    display: none;
 }
 
 .da-inline-range {
@@ -865,6 +1235,18 @@ a {
     gap: 0.7rem;
 }
 
+@media (min-width: 1400px) {
+    .da-detail-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (min-width: 1700px) {
+    .da-detail-grid {
+        grid-template-columns: repeat(5, 1fr);
+    }
+}
+
 .da-detail-cell {
     border: 1px solid var(--da-border);
     border-radius: 10px;
@@ -896,6 +1278,7 @@ a {
     display: flex;
     flex-wrap: wrap;
     gap: 0.45rem;
+    align-items: center;
 }
 
 .da-chip {
@@ -907,6 +1290,10 @@ a {
     font-size: 0.82rem;
     font-weight: 700;
     transition: all 0.2s ease;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
 }
 
 .da-chip:hover {
@@ -1024,6 +1411,31 @@ a {
     color: var(--da-blue);
     font-size: 1.15rem;
     font-weight: 800;
+}
+
+.da-opcionais-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 0.6rem;
+}
+
+.da-opcional-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: var(--da-blue-soft);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--da-text);
+}
+
+.da-opcional-item svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    color: var(--da-blue);
 }
 
 .da-ad-description {
@@ -1230,7 +1642,9 @@ a {
 .da-split-layout {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 0.8rem;
+    gap: 1.5rem;
+    max-width: 1400px;
+    margin: 0 auto;
 }
 
 .da-list-rows {
@@ -2011,6 +2425,10 @@ a {
         font-size: 3rem;
     }
 
+    .da-vehicle-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
     .da-search-layout {
         grid-template-columns: 1fr;
     }
@@ -2080,6 +2498,11 @@ a {
 
     .da-subtitle {
         font-size: 1.45rem;
+    }
+
+    .da-vehicle-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
     }
 
     .da-admin-panel-grid {
@@ -2290,7 +2713,9 @@ a {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1rem;
+    margin-bottom: 1.25rem;
+    margin-top: 2.5rem;
+    padding: 0 0.25rem;
 }
 
 .da-home-header .da-subtitle {
@@ -2362,11 +2787,12 @@ a {
     gap: 1.2rem;
     padding: 1rem;
     align-items: center;
+    max-width: 1200px;
 }
 
 .da-result-image-new {
     width: 220px;
-    height: 150px;
+    height: 165px;
     flex-shrink: 0;
     border-radius: 10px;
     overflow: hidden;
@@ -2388,7 +2814,7 @@ a {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    min-height: 150px;
+    min-height: 165px;
 }
 
 .da-result-top {
@@ -2553,4 +2979,426 @@ a {
     .da-home-search-btn {
         width: 100%;
     }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   HOME SPECIAL SECTIONS  (grouped layout)
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Container for each sub-group (Honda, SUV, Até R$30k, etc.) */
+.da-group-block {
+    padding: 0 0 2.5rem;
+}
+
+/* Row: title + count on the left, "Ver todos" link on the right */
+.da-group-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1.5px solid var(--da-border);
+    padding: 0 0.25rem 0.65rem;
+    margin-bottom: 1.1rem;
+}
+
+.da-group-header-left {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+}
+
+.da-group-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--da-text);
+    margin: 0;
+}
+
+.da-group-count {
+    font-size: 0.8rem;
+    color: var(--da-muted);
+}
+
+.da-group-link {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--da-blue);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: opacity 0.15s;
+}
+
+.da-group-link:hover {
+    opacity: 0.75;
+    text-decoration: underline;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   FOOTER
+   ═══════════════════════════════════════════════════════════════ */
+
+.da-footer {
+    margin-top: 0;
+    background: var(--da-topbar-bg);
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.da-footer-inner {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 3rem;
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 3rem 2rem 2rem;
+}
+
+/* Brand column */
+.da-footer-logo {
+    display: inline-block;
+    font-family: 'Sora', sans-serif;
+    font-weight: 800;
+    font-size: 1.4rem;
+    color: #fff;
+    text-decoration: none;
+    letter-spacing: -0.5px;
+    margin-bottom: 0.6rem;
+}
+
+.da-footer-logo:hover {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.da-footer-desc {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.6;
+    max-width: 340px;
+    margin: 0 0 1.25rem;
+}
+
+.da-footer-social {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.da-footer-social-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.1rem;
+    height: 2.1rem;
+    border: 1.5px solid rgba(255, 255, 255, 0.6);
+    border-radius: 50%;
+    color: #fff;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+    text-decoration: none;
+}
+
+.da-footer-social-link svg {
+    width: 1rem;
+    height: 1rem;
+}
+
+.da-footer-social-link:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: #fff;
+    color: #fff;
+}
+
+/* Instagram: Vibrant gradient on hover, warm tone default */
+.da-footer-social-link.da-social-instagram {
+    color: #ff8a65;
+    border-color: rgba(255, 138, 101, 0.4);
+}
+.da-footer-social-link.da-social-instagram:hover {
+    background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+    border-color: transparent;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(220, 39, 67, 0.3);
+}
+
+/* Facebook: Official Blue */
+.da-footer-social-link.da-social-facebook {
+    color: #74a7ff; /* Lighter blue for better contrast on the blue footer */
+    border-color: rgba(116, 167, 255, 0.4);
+}
+.da-footer-social-link.da-social-facebook:hover {
+    background: #1877F2;
+    border-color: #1877F2;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(24, 119, 242, 0.3);
+}
+
+/* WhatsApp: Official Green */
+.da-footer-social-link.da-social-whatsapp {
+    color: #4ade80;
+    border-color: rgba(74, 222, 128, 0.4);
+}
+.da-footer-social-link.da-social-whatsapp:hover {
+    background: #25D366;
+    border-color: #25D366;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+}
+
+/* Nav & legal columns */
+.da-footer-heading {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(255, 255, 255, 0.5);
+    margin: 0 0 0.9rem;
+}
+
+.da-footer-nav-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+}
+
+.da-footer-nav-list a {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.78);
+    text-decoration: none;
+    transition: color 0.15s;
+}
+
+.da-footer-nav-list a:hover {
+    color: #fff;
+}
+
+/* Bottom bar */
+.da-footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 1rem 2rem;
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+.da-footer-bottom p {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.45);
+    margin: 0;
+    text-align: center;
+}
+
+/* Responsive footer */
+@media (max-width: 900px) {
+    .da-footer-inner {
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+    }
+
+    .da-footer-brand-col {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 560px) {
+    .da-footer-inner {
+        grid-template-columns: 1fr;
+        padding: 2rem 1.25rem 1.5rem;
+        gap: 1.5rem;
+    }
+
+    .da-footer-bottom {
+        padding: 0.75rem 1.25rem;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ADMIN UI
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Toast banners (replace Bootstrap alerts) ── */
+.da-toast-banner {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.85rem 1.1rem;
+    border-radius: 12px;
+    border: 1.5px solid;
+    font-weight: 600;
+    font-size: 0.92rem;
+    margin-bottom: 1.25rem;
+}
+
+.da-toast-banner svg {
+    width: 1.15rem;
+    height: 1.15rem;
+    flex-shrink: 0;
+}
+
+.da-toast-banner--success {
+    background: var(--da-success-bg);
+    border-color: var(--da-success-border);
+    color: var(--da-success-text);
+}
+
+.da-toast-banner--error {
+    background: var(--da-danger-bg);
+    border-color: var(--da-danger-border);
+    color: var(--da-danger-text);
+}
+
+/* ── Admin section tabs ── */
+.da-admin-tabs {
+    display: flex;
+    gap: 0.15rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid var(--da-border);
+    padding-bottom: 0;
+}
+
+.da-admin-tab {
+    padding: 0.55rem 1.1rem;
+    border-radius: 8px 8px 0 0;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--da-muted);
+    text-decoration: none;
+    transition: color 0.15s, background 0.15s;
+    margin-bottom: -2px;
+    border: 2px solid transparent;
+    border-bottom: none;
+    white-space: nowrap;
+}
+
+.da-admin-tab:hover {
+    color: var(--da-blue);
+    background: var(--da-blue-soft);
+}
+
+.da-admin-tab--active {
+    color: var(--da-blue);
+    background: var(--da-card-bg);
+    border-color: var(--da-border);
+    border-bottom-color: var(--da-card-bg);
+}
+
+/* ── Admin layout: narrow form + wide table ── */
+.da-admin-layout {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 1.5rem;
+    align-items: start;
+}
+
+@media (max-width: 860px) {
+    .da-admin-layout {
+        grid-template-columns: 1fr;
+    }
+    .da-admin-tabs {
+        overflow-x: auto;
+    }
+}
+
+/* ── Count badge (inline next to subtitle) ── */
+.da-count-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--da-blue-soft);
+    color: var(--da-blue);
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.1rem 0.55rem;
+    border-radius: 999px;
+    margin-left: 0.5rem;
+    vertical-align: middle;
+    letter-spacing: 0.02em;
+}
+
+/* ── Scrollable table wrapper ── */
+.da-table-wrap {
+    overflow-x: auto;
+}
+
+/* ── Small version chips in table cells ── */
+.da-version-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.12rem 0.5rem;
+    border-radius: 999px;
+    background: var(--da-blue-soft);
+    border: 1px solid var(--da-border);
+    color: var(--da-chip-text);
+    font-size: 0.73rem;
+    font-weight: 600;
+    white-space: nowrap;
+    margin: 0.1rem 0.1rem 0 0;
+}
+
+.da-version-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.15rem;
+}
+
+/* ── Delete confirmation page ── */
+.da-delete-confirm {
+    max-width: 480px;
+    margin: 3rem auto;
+    text-align: center;
+    background: var(--da-card-bg);
+    border: 1.5px solid var(--da-danger-border);
+    border-radius: 20px;
+    padding: 2.5rem 2rem;
+    box-shadow: var(--da-shadow-card);
+}
+
+.da-delete-confirm__icon {
+    width: 4rem;
+    height: 4rem;
+    background: var(--da-danger-bg);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.25rem;
+    color: var(--da-danger);
+}
+
+.da-delete-confirm__icon svg {
+    width: 2rem;
+    height: 2rem;
+}
+
+.da-delete-confirm__title {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--da-text);
+    margin: 0 0 0.4rem;
+}
+
+.da-delete-confirm__subtitle {
+    color: var(--da-muted);
+    font-size: 0.9rem;
+    margin: 0 0 0.75rem;
+}
+
+.da-delete-confirm__entity {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--da-danger);
+    background: var(--da-danger-bg);
+    border: 1px solid var(--da-danger-border);
+    border-radius: 10px;
+    padding: 0.6rem 1rem;
+    margin: 0 0 0.75rem;
+}
+
+.da-delete-confirm__warning {
+    font-size: 0.82rem;
+    color: var(--da-muted);
+    margin: 0 0 1.5rem;
+}
+
+.da-delete-confirm__actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
 }

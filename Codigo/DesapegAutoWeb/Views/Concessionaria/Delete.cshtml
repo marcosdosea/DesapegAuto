@@ -2,24 +2,34 @@
 
 @{
     ViewData["Title"] = "Excluir Concessionária";
+
+    Func<string, string> FormatCnpj = raw => {
+        var d = System.Text.RegularExpressions.Regex.Replace(raw ?? "", @"\D", "");
+        if (d.Length != 14) return raw ?? "";
+        return $"{d[..2]}.{d[2..5]}.{d[5..8]}/{d[8..12]}-{d[12..14]}";
+    };
+    Func<string, string> FormatTelefone = raw => {
+        var d = System.Text.RegularExpressions.Regex.Replace(raw ?? "", @"\D", "");
+        if (d.Length == 11) return $"({d[..2]}) {d[2..7]}-{d[7..11]}";
+        if (d.Length == 10) return $"({d[..2]}) {d[2..6]}-{d[6..10]}";
+        return raw ?? "";
+    };
 }
 
 <div class="da-page">
-    <h1 class="da-title">Excluir Concessionária</h1>
+    <div class="da-delete-confirm">
+        <div class="da-delete-confirm__icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <h1 class="da-delete-confirm__title">Excluir Concessionária</h1>
+        <p class="da-delete-confirm__subtitle">Tem certeza que deseja excluir esta concessionária? Esta ação não pode ser desfeita.</p>
 
-    <div class="da-confirm-box">
-        <p>Tem certeza que deseja excluir esta concessionária? Esta ação não pode ser desfeita.</p>
-    </div>
+        <div class="da-delete-confirm__entity">@Model.Nome</div>
 
-    <div class="da-card da-card-pad">
-        <div class="da-detail-list">
-            <div class="da-detail-item">
-                <p class="da-detail-item-label">Nome</p>
-                <p class="da-detail-item-value">@Model.Nome</p>
-            </div>
+        <div class="da-detail-list" style="text-align:left;margin:1rem 0;">
             <div class="da-detail-item">
                 <p class="da-detail-item-label">CNPJ</p>
-                <p class="da-detail-item-value">@Model.Cnpj</p>
+                <p class="da-detail-item-value">@FormatCnpj(Model.Cnpj)</p>
             </div>
             <div class="da-detail-item">
                 <p class="da-detail-item-label">Email</p>
@@ -27,16 +37,16 @@
             </div>
             <div class="da-detail-item">
                 <p class="da-detail-item-label">Telefone</p>
-                <p class="da-detail-item-value">@Model.Telefone</p>
+                <p class="da-detail-item-value">@FormatTelefone(Model.Telefone)</p>
             </div>
         </div>
 
-        <form asp-action="Delete">
+        <p class="da-delete-confirm__warning">Todos os anúncios desta concessionária também serão removidos.</p>
+
+        <form asp-action="Delete" class="da-delete-confirm__actions">
             <input type="hidden" asp-for="Id" />
-            <div class="da-action-row">
-                <button type="submit" class="da-btn-danger">Excluir</button>
-                <a asp-action="Index" class="da-btn-outline">Cancelar</a>
-            </div>
+            <button type="submit" class="da-btn da-btn-danger">Excluir</button>
+            <a asp-action="Index" class="da-btn da-btn-outline">Cancelar</a>
         </form>
     </div>
 </div>

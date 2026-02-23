@@ -1,11 +1,15 @@
-﻿@model IEnumerable<DesapegAutoWeb.Models.AnuncioViewModel>
+@model DesapegAutoWeb.Models.HomeViewModel
 @using System.Globalization
 @{
     ViewData["Title"] = "Início";
-    var anuncios = Model?.ToList() ?? new List<DesapegAutoWeb.Models.AnuncioViewModel>();
-    var isAdmin = User.IsInRole("Admin");
+    var anuncios  = Model?.Destaques    ?? new List<DesapegAutoWeb.Models.AnuncioViewModel>();
+    var recentes  = Model?.MaisRecentes ?? new List<DesapegAutoWeb.Models.AnuncioViewModel>();
+    var porMarca  = Model?.PorMarca     ?? new List<DesapegAutoWeb.Models.MarcaGroupViewModel>();
+    var porCat    = Model?.PorCategoria ?? new List<DesapegAutoWeb.Models.CategoriaGroupViewModel>();
+    var porFaixa  = Model?.PorFaixaPreco ?? new List<DesapegAutoWeb.Models.FaixaPrecoViewModel>();
+
+    var isAdmin    = User.IsInRole("Admin");
     var isSignedIn = User.Identity?.IsAuthenticated ?? false;
-    var canAnnounce = User.IsInRole("Admin") || User.IsInRole("Funcionario");
 }
 
 <div class="da-page">
@@ -102,85 +106,80 @@
 
             <article class="da-admin-card">
                 <div>
-                    <h3>Anúncios</h3>
-                    <p>Crie e acompanhe os anúncios de veículos.</p>
+                    <h3>Anunciar Veículo</h3>
+                    <p>Crie um novo anúncio de veículo no sistema.</p>
                 </div>
-                <a class="da-btn da-btn-primary da-btn-wide" asp-controller="Anuncio" asp-action="Create">Anunciar veículo</a>
+                <a class="da-btn da-btn-primary da-btn-wide" asp-controller="Anuncio" asp-action="Create">Anunciar Veículo</a>
+            </article>
+
+            <article class="da-admin-card">
+                <div>
+                    <h3>Ver Veículos</h3>
+                    <p>Visualize e gerencie os veículos anunciados.</p>
+                </div>
+                <a class="da-btn da-btn-primary da-btn-wide" asp-controller="Anuncio" asp-action="Index">Ver Veículos</a>
             </article>
         </section>
     }
     else
     {
-        <section class="da-card da-card-pad da-home-actions">
-            <div class="da-home-actions-main">
-                <div>
-                    <h2 class="da-subtitle">Quer anunciar seu veículo?</h2>
-                    <p class="da-muted">Para anunciar, é preciso vincular uma concessionária ao cadastro.</p>
+        @* ── Welcome + search ──────────────────────────────────────── *@
+        <section class="da-welcome-section">
+            <div class="da-welcome-hero">
+                <div class="da-welcome-content">
+                    <h2 class="da-welcome-title">Bem-vindo de volta!</h2>
+                    <p class="da-welcome-sub">Encontre o veículo perfeito para você</p>
                 </div>
-                <div class="da-home-actions-cta">
-                    @if (canAnnounce)
-                    {
-                        <a class="da-btn da-btn-primary da-btn-wide" asp-controller="Anuncio" asp-action="Create">Anunciar veículo</a>
-                    }
-                    else if (!isSignedIn)
-                    {
-                        <a class="da-btn da-btn-primary da-btn-wide" asp-area="Identity" asp-page="/Account/Login" asp-route-returnUrl="@Url.Action("Create", "Anuncio")">Entrar para anunciar</a>
-                    }
-                    else
-                    {
-                        <button type="button" class="da-btn da-btn-soft da-btn-wide" disabled>Disponível para Admin/Funcionário</button>
-                    }
+                <div class="da-welcome-visual">
+                    <svg viewBox="0 0 200 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M30 70 L20 70 Q15 70 15 65 L15 55 Q15 45 25 42 L60 35 L90 20 Q98 16 110 16 L150 16 Q165 16 172 25 L205 55 L218 58 Q225 60 226 68 L226 75 Q226 82 220 82 L205 82" stroke="rgba(255,255,255,0.6)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                        <circle cx="50" cy="84" r="12" stroke="rgba(255,255,255,0.6)" stroke-width="2.5" fill="rgba(255,255,255,0.08)"/>
+                        <circle cx="50" cy="84" r="5" fill="rgba(255,255,255,0.25)"/>
+                        <circle cx="170" cy="84" r="12" stroke="rgba(255,255,255,0.6)" stroke-width="2.5" fill="rgba(255,255,255,0.08)"/>
+                        <circle cx="170" cy="84" r="5" fill="rgba(255,255,255,0.25)"/>
+                        <path d="M75 50 L85 25 L135 25 L160 50 Z" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>
+                    </svg>
                 </div>
             </div>
-        </section>
-
-        <section class="da-card da-card-pad da-home-search">
-            <form asp-controller="Home" asp-action="Search" method="get" class="da-home-search-form">
-                <div class="da-home-search-row">
-                    <div class="da-field da-home-search-field">
-                        <div class="da-home-search-wrap">
-                            <svg class="da-home-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <div class="da-welcome-search">
+                <form asp-controller="Home" asp-action="Search" method="get" class="da-welcome-search-form">
+                    <div class="da-welcome-search-row">
+                        <div class="da-welcome-search-field">
+                            <svg class="da-welcome-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <circle cx="11" cy="11" r="8"></circle>
                                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                             </svg>
-                            <input type="text" name="termo" class="da-input da-home-search-input" placeholder="Busque por marca, modelo ou versão..." />
+                            <input type="text" name="termo" class="da-welcome-search-input" placeholder="Busque por marca, modelo ou versão..." />
                         </div>
+                        <button type="submit" class="da-welcome-search-btn">Buscar</button>
                     </div>
-                    <button type="submit" class="da-btn da-btn-primary da-home-search-btn">Buscar</button>
-                </div>
-                <div class="da-home-chips">
-                    <a href="@Url.Action("Search", "Home", new { termo = "SUV" })" class="da-filter-chip">SUVs</a>
-                    <a href="@Url.Action("Search", "Home", new { termo = "Sedan" })" class="da-filter-chip">Sedans</a>
-                    <a href="@Url.Action("Search", "Home", new { termo = "Hatch" })" class="da-filter-chip">Hatches</a>
-                    <a href="@Url.Action("Search", "Home", new { precoMax = 50000 })" class="da-filter-chip">Até R$ 50k</a>
-                    <a href="@Url.Action("Search", "Home", new { precoMax = 100000 })" class="da-filter-chip">Até R$ 100k</a>
-                </div>
-            </form>
+                    <div class="da-welcome-search-chips">
+                        <a href="@Url.Action("Search", "Home", new { termo = "SUV" })" class="da-filter-chip">SUVs</a>
+                        <a href="@Url.Action("Search", "Home", new { termo = "Sedan" })" class="da-filter-chip">Sedans</a>
+                        <a href="@Url.Action("Search", "Home", new { termo = "Hatch" })" class="da-filter-chip">Hatches</a>
+                        <a href="@Url.Action("Search", "Home", new { precoMax = 50000 })" class="da-filter-chip">Até R$ 50k</a>
+                        <a href="@Url.Action("Search", "Home", new { precoMax = 100000 })" class="da-filter-chip">Até R$ 100k</a>
+                    </div>
+                </form>
+            </div>
         </section>
 
+        @* ── Destaques ──────────────────────────────────────────────── *@
         <div class="da-home-header">
             <h2 class="da-subtitle" id="destaques">Destaques</h2>
             <a asp-controller="Home" asp-action="Search">Ver todos →</a>
         </div>
 
-        <section class="da-home-results">
+        <section class="da-vehicle-grid">
             @if (anuncios.Any())
             {
                 foreach (var anuncio in anuncios)
                 {
                     var nomeVeiculo = $"{anuncio.Veiculo?.NomeMarca} {anuncio.Veiculo?.NomeModelo}".Trim();
-                    if (string.IsNullOrWhiteSpace(nomeVeiculo))
-                    {
-                        nomeVeiculo = "Veículo";
-                    }
-
+                    if (string.IsNullOrWhiteSpace(nomeVeiculo)) nomeVeiculo = "Veículo";
                     <article class="da-vehicle-card da-premium-card">
                         <div class="da-vehicle-image da-vehicle-image-new">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                                <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                                <polyline points="21 15 16 10 5 21"></polyline>
-                            </svg>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
                         </div>
                         <div class="da-vehicle-body da-vehicle-body-new">
                             <h3 class="da-vehicle-name">@nomeVeiculo</h3>
@@ -200,15 +199,187 @@
             else
             {
                 <div class="da-empty-state">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M7 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/>
-                        <path d="M17 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/>
-                        <path d="M5 17H3v-6l2-5h9l4 5h1a2 2 0 0 1 2 2v4h-2m-4 0H9m-6-6h15m-6 0V6"/>
-                    </svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/><path d="M17 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/><path d="M5 17H3v-6l2-5h9l4 5h1a2 2 0 0 1 2 2v4h-2m-4 0H9m-6-6h15m-6 0V6"/></svg>
                     <p class="da-empty-state-title">Nenhum anúncio disponível</p>
                     <p class="da-empty-state-desc">Novos veículos serão exibidos aqui em breve.</p>
                 </div>
             }
         </section>
+
+        @* ── Marcas ─────────────────────────────────────────────────── *@
+        @if (porMarca.Any())
+        {
+            <div class="da-home-header">
+                <h2 class="da-subtitle">Marcas</h2>
+                <a asp-controller="Home" asp-action="Search">Ver todos →</a>
+            </div>
+
+            @foreach (var grupo in porMarca)
+            {
+                <div class="da-group-block">
+                    <div class="da-group-header">
+                        <div class="da-group-header-left">
+                            <h3 class="da-group-title">@grupo.NomeMarca</h3>
+                            <span class="da-group-count">@grupo.TotalAnuncios anúncio@(grupo.TotalAnuncios != 1 ? "s" : "")</span>
+                        </div>
+                        <a href="@Url.Action("Search", "Home", new { termo = grupo.NomeMarca })" class="da-group-link">Ver todos →</a>
+                    </div>
+                    <section class="da-vehicle-grid">
+                        @foreach (var anuncio in grupo.Anuncios)
+                        {
+                            var nomeVeiculo = $"{anuncio.Veiculo?.NomeMarca} {anuncio.Veiculo?.NomeModelo}".Trim();
+                            if (string.IsNullOrWhiteSpace(nomeVeiculo)) nomeVeiculo = "Veículo";
+                            <article class="da-vehicle-card da-premium-card">
+                                <div class="da-vehicle-image da-vehicle-image-new">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                                </div>
+                                <div class="da-vehicle-body da-vehicle-body-new">
+                                    <h3 class="da-vehicle-name">@nomeVeiculo</h3>
+                                    <div class="da-anuncio-meta">
+                                        <span class="da-vehicle-year">@anuncio.Veiculo?.Ano</span>
+                                        @if (anuncio.Veiculo?.Quilometragem > 0)
+                                        {
+                                            <span class="da-muted">· @anuncio.Veiculo.Quilometragem.ToString("N0") km</span>
+                                        }
+                                    </div>
+                                    <p class="da-vehicle-price">@((anuncio.Veiculo?.Preco ?? 0m).ToString("C0", new CultureInfo("pt-BR")))</p>
+                                    <a asp-controller="Anuncio" asp-action="Details" asp-route-id="@anuncio.Id" class="da-btn da-btn-outline da-btn-wide">Ver detalhes</a>
+                                </div>
+                            </article>
+                        }
+                    </section>
+                </div>
+            }
+        }
+
+        @* ── Categorias ─────────────────────────────────────────────── *@
+        @if (porCat.Any())
+        {
+            <div class="da-home-header">
+                <h2 class="da-subtitle">Categorias</h2>
+                <a asp-controller="Home" asp-action="Search">Ver todos →</a>
+            </div>
+
+            @foreach (var grupo in porCat)
+            {
+                <div class="da-group-block">
+                    <div class="da-group-header">
+                        <div class="da-group-header-left">
+                            <h3 class="da-group-title">@grupo.Categoria</h3>
+                            <span class="da-group-count">@grupo.TotalAnuncios anúncio@(grupo.TotalAnuncios != 1 ? "s" : "")</span>
+                        </div>
+                        <a href="@Url.Action("Search", "Home", new { termo = grupo.Categoria })" class="da-group-link">Ver todos →</a>
+                    </div>
+                    <section class="da-vehicle-grid">
+                        @foreach (var anuncio in grupo.Anuncios)
+                        {
+                            var nomeVeiculo = $"{anuncio.Veiculo?.NomeMarca} {anuncio.Veiculo?.NomeModelo}".Trim();
+                            if (string.IsNullOrWhiteSpace(nomeVeiculo)) nomeVeiculo = "Veículo";
+                            <article class="da-vehicle-card da-premium-card">
+                                <div class="da-vehicle-image da-vehicle-image-new">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                                </div>
+                                <div class="da-vehicle-body da-vehicle-body-new">
+                                    <h3 class="da-vehicle-name">@nomeVeiculo</h3>
+                                    <div class="da-anuncio-meta">
+                                        <span class="da-vehicle-year">@anuncio.Veiculo?.Ano</span>
+                                        @if (anuncio.Veiculo?.Quilometragem > 0)
+                                        {
+                                            <span class="da-muted">· @anuncio.Veiculo.Quilometragem.ToString("N0") km</span>
+                                        }
+                                    </div>
+                                    <p class="da-vehicle-price">@((anuncio.Veiculo?.Preco ?? 0m).ToString("C0", new CultureInfo("pt-BR")))</p>
+                                    <a asp-controller="Anuncio" asp-action="Details" asp-route-id="@anuncio.Id" class="da-btn da-btn-outline da-btn-wide">Ver detalhes</a>
+                                </div>
+                            </article>
+                        }
+                    </section>
+                </div>
+            }
+        }
+
+        @* ── Faixas de Preço ────────────────────────────────────────── *@
+        @if (porFaixa.Any())
+        {
+            <div class="da-home-header">
+                <h2 class="da-subtitle">Faixas de Preço</h2>
+                <a asp-controller="Home" asp-action="Search">Ver todos →</a>
+            </div>
+
+            @foreach (var faixa in porFaixa)
+            {
+                var routeValues = new System.Collections.Generic.Dictionary<string, object?>();
+                if (faixa.PrecoMin.HasValue) routeValues["precoMin"] = faixa.PrecoMin.Value;
+                if (faixa.PrecoMax.HasValue) routeValues["precoMax"] = faixa.PrecoMax.Value;
+
+                <div class="da-group-block">
+                    <div class="da-group-header">
+                        <div class="da-group-header-left">
+                            <h3 class="da-group-title">@faixa.Label</h3>
+                            <span class="da-group-count">@faixa.TotalAnuncios anúncio@(faixa.TotalAnuncios != 1 ? "s" : "")</span>
+                        </div>
+                        <a href="@Url.Action("Search", "Home", routeValues)" class="da-group-link">Ver todos →</a>
+                    </div>
+                    <section class="da-vehicle-grid">
+                        @foreach (var anuncio in faixa.Anuncios)
+                        {
+                            var nomeVeiculo = $"{anuncio.Veiculo?.NomeMarca} {anuncio.Veiculo?.NomeModelo}".Trim();
+                            if (string.IsNullOrWhiteSpace(nomeVeiculo)) nomeVeiculo = "Veículo";
+                            <article class="da-vehicle-card da-premium-card">
+                                <div class="da-vehicle-image da-vehicle-image-new">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                                </div>
+                                <div class="da-vehicle-body da-vehicle-body-new">
+                                    <h3 class="da-vehicle-name">@nomeVeiculo</h3>
+                                    <div class="da-anuncio-meta">
+                                        <span class="da-vehicle-year">@anuncio.Veiculo?.Ano</span>
+                                        @if (anuncio.Veiculo?.Quilometragem > 0)
+                                        {
+                                            <span class="da-muted">· @anuncio.Veiculo.Quilometragem.ToString("N0") km</span>
+                                        }
+                                    </div>
+                                    <p class="da-vehicle-price">@((anuncio.Veiculo?.Preco ?? 0m).ToString("C0", new CultureInfo("pt-BR")))</p>
+                                    <a asp-controller="Anuncio" asp-action="Details" asp-route-id="@anuncio.Id" class="da-btn da-btn-outline da-btn-wide">Ver detalhes</a>
+                                </div>
+                            </article>
+                        }
+                    </section>
+                </div>
+            }
+        }
+
+        @* ── Mais Recentes ──────────────────────────────────────────── *@
+        @if (recentes.Any())
+        {
+            <div class="da-home-header">
+                <h2 class="da-subtitle">Mais Recentes</h2>
+                <a asp-controller="Home" asp-action="Search">Ver todos →</a>
+            </div>
+
+            <section class="da-vehicle-grid">
+                @foreach (var anuncio in recentes)
+                {
+                    var nomeVeiculo = $"{anuncio.Veiculo?.NomeMarca} {anuncio.Veiculo?.NomeModelo}".Trim();
+                    if (string.IsNullOrWhiteSpace(nomeVeiculo)) nomeVeiculo = "Veículo";
+                    <article class="da-vehicle-card da-premium-card">
+                        <div class="da-vehicle-image da-vehicle-image-new">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                        </div>
+                        <div class="da-vehicle-body da-vehicle-body-new">
+                            <h3 class="da-vehicle-name">@nomeVeiculo</h3>
+                            <div class="da-anuncio-meta">
+                                <span class="da-vehicle-year">@anuncio.Veiculo?.Ano</span>
+                                @if (anuncio.Veiculo?.Quilometragem > 0)
+                                {
+                                    <span class="da-muted">· @anuncio.Veiculo.Quilometragem.ToString("N0") km</span>
+                                }
+                            </div>
+                            <p class="da-vehicle-price">@((anuncio.Veiculo?.Preco ?? 0m).ToString("C0", new CultureInfo("pt-BR")))</p>
+                            <a asp-controller="Anuncio" asp-action="Details" asp-route-id="@anuncio.Id" class="da-btn da-btn-outline da-btn-wide">Ver detalhes</a>
+                        </div>
+                    </article>
+                }
+            </section>
+        }
     }
 </div>

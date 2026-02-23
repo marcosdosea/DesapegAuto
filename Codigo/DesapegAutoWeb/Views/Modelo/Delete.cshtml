@@ -2,21 +2,24 @@
 
 @{
     ViewData["Title"] = "Excluir Modelo";
+    var versoes = (Model.Versoes ?? string.Empty)
+        .Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries)
+        .Select(v => v.Trim())
+        .Where(v => !string.IsNullOrWhiteSpace(v))
+        .ToList();
 }
 
 <div class="da-page">
-    <h1 class="da-title">Excluir Modelo</h1>
+    <div class="da-delete-confirm">
+        <div class="da-delete-confirm__icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <h1 class="da-delete-confirm__title">Excluir Modelo</h1>
+        <p class="da-delete-confirm__subtitle">Tem certeza que deseja excluir este modelo? Esta ação não pode ser desfeita.</p>
 
-    <div class="da-confirm-box">
-        <p>Tem certeza que deseja excluir este modelo? Esta acao nao pode ser desfeita.</p>
-    </div>
+        <div class="da-delete-confirm__entity">@Model.Nome</div>
 
-    <div class="da-card da-card-pad">
-        <div class="da-detail-list">
-            <div class="da-detail-item">
-                <p class="da-detail-item-label">Nome</p>
-                <p class="da-detail-item-value">@Model.Nome</p>
-            </div>
+        <div class="da-detail-list" style="text-align:left;margin:1rem 0;">
             <div class="da-detail-item">
                 <p class="da-detail-item-label">Marca</p>
                 <p class="da-detail-item-value">@(Model.NomeMarca ?? $"Marca #{Model.IdMarca}")</p>
@@ -25,18 +28,26 @@
                 <p class="da-detail-item-label">Categoria</p>
                 <p class="da-detail-item-value">@(Model.NomeCategoria ?? Model.Categoria ?? $"Categoria #{Model.IdCategoria}")</p>
             </div>
-            <div class="da-detail-item">
-                <p class="da-detail-item-label">Versoes</p>
-                <p class="da-detail-item-value">@(string.IsNullOrWhiteSpace(Model.Versoes) ? "Nenhuma" : Model.Versoes)</p>
-            </div>
+            @if (versoes.Any())
+            {
+                <div class="da-detail-item">
+                    <p class="da-detail-item-label">Versões</p>
+                    <div class="da-version-chips" style="margin-top:.25rem;">
+                        @foreach (var versao in versoes)
+                        {
+                            <span class="da-version-chip">@versao</span>
+                        }
+                    </div>
+                </div>
+            }
         </div>
 
-        <form asp-action="Delete">
+        <p class="da-delete-confirm__warning">Anúncios associados a este modelo podem ser afetados.</p>
+
+        <form asp-action="Delete" class="da-delete-confirm__actions">
             <input type="hidden" asp-for="Id" />
-            <div class="da-action-row">
-                <button type="submit" class="da-btn-danger">Excluir</button>
-                <a asp-action="Index" class="da-btn-outline">Cancelar</a>
-            </div>
+            <button type="submit" class="da-btn da-btn-danger">Excluir</button>
+            <a asp-action="Index" class="da-btn da-btn-outline">Cancelar</a>
         </form>
     </div>
 </div>

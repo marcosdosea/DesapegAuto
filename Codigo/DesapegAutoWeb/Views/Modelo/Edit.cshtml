@@ -10,7 +10,7 @@
 <div class="da-page">
     <h1 class="da-title">Editar Modelo</h1>
 
-    <div class="da-card da-card-pad">
+    <div class="da-card da-card-pad" style="max-width:560px;">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input asp-for="Id" type="hidden" />
@@ -49,8 +49,8 @@
                 </div>
             </div>
             <div class="da-action-row">
-                <button type="submit" class="da-btn-primary">Salvar</button>
-                <a asp-action="Index" class="da-btn-outline">Cancelar</a>
+                <button type="submit" class="da-btn da-btn-primary">Salvar</button>
+                <a asp-action="Index" class="da-btn da-btn-outline">Cancelar</a>
             </div>
         </form>
     </div>

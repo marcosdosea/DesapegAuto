@@ -5,26 +5,21 @@
 }
 
 <div class="da-page">
-    <h1 class="da-title">Excluir Marca</h1>
-
-    <div class="da-confirm-box">
-        <p>Tem certeza que deseja excluir esta marca? Esta ação não pode ser desfeita.</p>
-    </div>
-
-    <div class="da-card da-card-pad">
-        <div class="da-detail-list">
-            <div class="da-detail-item">
-                <p class="da-detail-item-label">Nome</p>
-                <p class="da-detail-item-value">@Model.Nome</p>
-            </div>
+    <div class="da-delete-confirm">
+        <div class="da-delete-confirm__icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
         </div>
+        <h1 class="da-delete-confirm__title">Excluir Marca</h1>
+        <p class="da-delete-confirm__subtitle">Tem certeza que deseja excluir esta marca? Esta ação não pode ser desfeita.</p>
 
-        <form asp-action="Delete">
+        <div class="da-delete-confirm__entity">@Model.Nome</div>
+
+        <p class="da-delete-confirm__warning">Modelos associados a esta marca podem ser afetados.</p>
+
+        <form asp-action="Delete" class="da-delete-confirm__actions">
             <input type="hidden" asp-for="Id" />
-            <div class="da-action-row">
-                <button type="submit" class="da-btn-danger">Excluir</button>
-                <a asp-action="Index" class="da-btn-outline">Cancelar</a>
-            </div>
+            <button type="submit" class="da-btn da-btn-danger">Excluir</button>
+            <a asp-action="Index" class="da-btn da-btn-outline">Cancelar</a>
         </form>
     </div>
 </div>
