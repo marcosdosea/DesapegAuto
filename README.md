@@ -54,6 +54,15 @@ O projeto é destinado a dois grupos principais:
         </figcapture>
       </a>
     </td>
+    <td align="center">
+      <a href="https://github.com/LuizAugustoFH-77" target="_blank">
+        <img style="border-radius:50%;" src="https://avatars.githubusercontent.com/u/183416985?v=4" width="100px;" alt="Foto de Luiz Augusto no GitHub"/><br>
+        <figcapture>
+          <strong>Luiz Augusto</strong>
+          <p>Desenvolvedor</p>
+        </figcapture>
+      </a>
+    </td>
   </tr>
 </table>
 <table align="center">

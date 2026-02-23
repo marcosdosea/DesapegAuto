@@ -61,8 +61,17 @@
                 </div>
 
                 <div class="da-field">
-                    <label asp-for="Ano" class="da-label">Ano</label>
-                    <input type="number" class="da-input" asp-for="Ano" placeholder="Ano" />
+                    <label class="da-label" for="Ano">Ano</label>
+                    <input type="text"
+                           inputmode="numeric"
+                           maxlength="4"
+                           class="da-input ano-field"
+                           id="Ano"
+                           name="Ano"
+                           value="@(Model.Ano > 0 ? Model.Ano.ToString() : "")"
+                           placeholder="Ex: 2024"
+                           autocomplete="off" />
+                    <small id="ano-error-msg" class="text-danger" style="font-size:0.82rem;display:none;"></small>
                     <span asp-validation-for="Ano" class="text-danger"></span>
                 </div>
 
@@ -73,8 +82,15 @@
                 </div>
 
                 <div class="da-field">
-                    <label asp-for="Preco" class="da-label">Preco</label>
-                    <input type="number" class="da-input" asp-for="Preco" placeholder="Preco" />
+                    <label class="da-label" for="Preco">Preco</label>
+                    <input type="text"
+                           inputmode="decimal"
+                           class="da-input preco-field"
+                           id="Preco"
+                           name="Preco"
+                           value="@(Model.Preco > 0 ? Model.Preco.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture).Replace(".", ",") : "")"
+                           placeholder="Ex: 50000,00"
+                           autocomplete="off" />
                     <span asp-validation-for="Preco" class="text-danger"></span>
                 </div>
 

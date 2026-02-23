@@ -73,15 +73,27 @@ namespace DesapegAutoWebTests.Controllers
         [TestMethod]
         public void IndexTest_Valido()
         {
+            // Arrange – GetAll() is already set up; also need GetAll() on marca/modelo services
+            mockMarcaService.Setup(s => s.GetAll()).Returns(new List<Marca>
+            {
+                new Marca { Id = 1, Nome = "Toyota" },
+                new Marca { Id = 2, Nome = "Honda" }
+            });
+            mockModeloService.Setup(s => s.GetAll()).Returns(new List<Modelo>
+            {
+                new Modelo { Id = 1, Nome = "Corolla", IdMarca = 1, Categoria = "Sedan" },
+                new Modelo { Id = 2, Nome = "Civic",   IdMarca = 2, Categoria = "Sedan" }
+            });
+
             // Act
             var result = controller.Index();
 
             // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             var viewResult = (ViewResult)result;
-            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(IEnumerable<AnuncioViewModel>));
-            var lista = (IEnumerable<AnuncioViewModel>)viewResult.ViewData.Model!;
-            Assert.IsTrue(lista.Count() <= 3, "Index deve retornar no m�ximo 3 an�ncios");
+            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(HomeViewModel));
+            var homeModel = (HomeViewModel)viewResult.ViewData.Model!;
+            Assert.IsTrue(homeModel.Destaques.Count <= 3, "Index deve retornar no máximo 3 destaques");
         }
 
         [TestMethod]

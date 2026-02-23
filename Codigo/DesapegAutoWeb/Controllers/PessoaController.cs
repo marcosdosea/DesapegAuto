@@ -1,5 +1,6 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Core;
+using Core.Exceptions;
 using Core.Service;
 using DesapegAutoWeb.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -23,7 +24,6 @@ namespace DesapegAutoWeb.Controllers
         public ActionResult Index()
         {
             var listaPessoas = _pessoaService.GetAll();
-            // Mapeando a lista de Pessoas para uma lista de PessoaViewModel
             var listaPessoasViewModel = _mapper.Map<List<PessoaViewModel>>(listaPessoas);
             return View(listaPessoasViewModel);
         }
@@ -32,6 +32,7 @@ namespace DesapegAutoWeb.Controllers
         public ActionResult Details(int id)
         {
             var pessoa = _pessoaService.Get(id);
+            if (pessoa == null) return NotFound();
             var pessoaViewModel = _mapper.Map<PessoaViewModel>(pessoa);
             return View(pessoaViewModel);
         }
@@ -49,9 +50,16 @@ namespace DesapegAutoWeb.Controllers
         {
             if (ModelState.IsValid)
             {
-                var pessoa = _mapper.Map<Pessoa>(pessoaViewModel);
-                _pessoaService.Create(pessoa);
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    var pessoa = _mapper.Map<Pessoa>(pessoaViewModel);
+                    _pessoaService.Create(pessoa);
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (ServiceException ex)
+                {
+                    ModelState.AddModelError(string.Empty, ex.Message);
+                }
             }
             return View(pessoaViewModel);
         }
@@ -60,6 +68,7 @@ namespace DesapegAutoWeb.Controllers
         public ActionResult Edit(int id)
         {
             var pessoa = _pessoaService.Get(id);
+            if (pessoa == null) return NotFound();
             var pessoaViewModel = _mapper.Map<PessoaViewModel>(pessoa);
             return View(pessoaViewModel);
         }
@@ -76,9 +85,16 @@ namespace DesapegAutoWeb.Controllers
 
             if (ModelState.IsValid)
             {
-                var pessoa = _mapper.Map<Pessoa>(pessoaViewModel);
-                _pessoaService.Edit(pessoa);
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    var pessoa = _mapper.Map<Pessoa>(pessoaViewModel);
+                    _pessoaService.Edit(pessoa);
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (ServiceException ex)
+                {
+                    ModelState.AddModelError(string.Empty, ex.Message);
+                }
             }
             return View(pessoaViewModel);
         }
@@ -87,6 +103,7 @@ namespace DesapegAutoWeb.Controllers
         public ActionResult Delete(int id)
         {
             var pessoa = _pessoaService.Get(id);
+            if (pessoa == null) return NotFound();
             var pessoaViewModel = _mapper.Map<PessoaViewModel>(pessoa);
             return View(pessoaViewModel);
         }
@@ -96,8 +113,16 @@ namespace DesapegAutoWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, PessoaViewModel pessoaViewModel)
         {
-            _pessoaService.Delete(id);
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                _pessoaService.Delete(id);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (ServiceException ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return View(pessoaViewModel);
+            }
         }
     }
 }

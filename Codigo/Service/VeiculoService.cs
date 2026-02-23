@@ -48,14 +48,21 @@ namespace Service
             }
 
             var veiculoMesmaPlaca = _context.Veiculos
-                .FirstOrDefault(v => v.Id != veiculo.Id && 
+                .FirstOrDefault(v => v.Id != veiculo.Id &&
                                    v.Placa.ToLower() == veiculo.Placa.ToLower());
             if (veiculoMesmaPlaca != null)
             {
                 throw new ServiceException("Erro: Já existe outro veículo cadastrado com esta placa.");
             }
 
-            _context.Update(veiculo);
+            veiculoExistente.Placa = veiculo.Placa;
+            veiculoExistente.Ano = veiculo.Ano;
+            veiculoExistente.Cor = veiculo.Cor;
+            veiculoExistente.Quilometragem = veiculo.Quilometragem;
+            veiculoExistente.Preco = veiculo.Preco;
+            veiculoExistente.IdConcessionaria = veiculo.IdConcessionaria;
+            veiculoExistente.IdModelo = veiculo.IdModelo;
+            veiculoExistente.IdMarca = veiculo.IdMarca;
             _context.SaveChanges();
         }
 

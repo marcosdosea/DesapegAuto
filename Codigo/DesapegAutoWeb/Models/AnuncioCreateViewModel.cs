@@ -17,7 +17,7 @@ namespace DesapegAutoWeb.Models
         public int IdModelo { get; set; }
 
         [Required(ErrorMessage = "O ano e obrigatorio.")]
-        [Range(1900, 2025, ErrorMessage = "O ano deve ser valido.")]
+        [Range(1886, 2200, ErrorMessage = "O ano deve ser valido.")]
         public int Ano { get; set; }
 
         [Required(ErrorMessage = "A cor e obrigatoria.")]

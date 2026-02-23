@@ -1,13 +1,13 @@
-﻿@model DesapegAutoWeb.Models.AnuncioViewModel
+@model DesapegAutoWeb.Models.AnuncioViewModel
 @using System.Globalization
 @{
-    ViewData["Title"] = "Detalhes do Veículo";
+    ViewData["Title"] = "Detalhes do Anuncio";
 
     var veiculo = Model.Veiculo;
     var nomeVeiculo = $"{veiculo?.NomeMarca} {veiculo?.NomeModelo}".Trim();
     if (string.IsNullOrWhiteSpace(nomeVeiculo))
     {
-        nomeVeiculo = "Veículo";
+        nomeVeiculo = "Veiculo";
     }
 
     var opcionais = (Model.Opcionais ?? string.Empty)
@@ -15,133 +15,192 @@
         .Select(item => item.Trim())
         .Where(item => !string.IsNullOrWhiteSpace(item))
         .ToList();
+
+    var statusLabel = Model.StatusAnuncio switch
+    {
+        "V" => "Vendido",
+        "P" => "Pendente",
+        "I" => "Indisponivel",
+        _ => "Disponivel"
+    };
+
+    var statusClass = Model.StatusAnuncio switch
+    {
+        "V" => "da-badge-sold",
+        "P" => "da-badge-pending",
+        _ => "da-badge-available"
+    };
 }
 
 <div class="da-page">
-    <div class="da-gallery-grid">
-        <div class="da-gallery-item"><div class="da-vehicle-placeholder">Foto principal</div></div>
-        <div class="da-gallery-item"><div class="da-vehicle-placeholder">Foto</div></div>
-        <div class="da-gallery-item"><div class="da-vehicle-placeholder">Foto</div></div>
-        <div class="da-gallery-item"><div class="da-vehicle-placeholder">Foto</div></div>
+
+    <div class="da-ad-hero da-premium-card">
+        <div class="da-ad-hero-icon">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M7 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/>
+                <path d="M17 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/>
+                <path d="M5 17H3v-6l2-5h9l4 5h1a2 2 0 0 1 2 2v4h-2m-4 0H9m-6-6h15m-6 0V6"/>
+            </svg>
+        </div>
+        <div class="da-ad-hero-info">
+            <h1 class="da-ad-hero-title">@nomeVeiculo</h1>
+            <div class="da-ad-hero-tags">
+                <span class="da-badge @statusClass">@statusLabel</span>
+                @if (veiculo != null)
+                {
+                    <span class="da-ad-tag">@veiculo.Ano</span>
+                    <span class="da-ad-tag">@veiculo.Cor</span>
+                    @if (veiculo.Quilometragem > 0)
+                    {
+                        <span class="da-ad-tag">@veiculo.Quilometragem.ToString("N0") km</span>
+                    }
+                }
+            </div>
+        </div>
+        <div class="da-ad-hero-price">
+            <span class="da-ad-price-label">Preço</span>
+            <span class="da-ad-price-value">@((veiculo?.Preco ?? 0m).ToString("C0", new CultureInfo("pt-BR")))</span>
+        </div>
     </div>
 
-    <section class="da-detail-summary">
-        <article class="da-detail-main">
-            <h1 class="da-detail-name">@nomeVeiculo</h1>
-            <p class="da-detail-sub">@veiculo?.Ano</p>
-            <p class="da-detail-sub da-muted">Anunciado por: Concessionária</p>
-        </article>
+    <div class="da-ad-content">
 
-        <aside class="da-price-box">
-            <p class="da-price-value">@((veiculo?.Preco ?? 0m).ToString("C0", new CultureInfo("pt-BR")))</p>
-            @if (User.IsInRole("Admin") || User.IsInRole("Funcionario"))
+        <div class="da-ad-main">
+
+            <section class="da-card da-ad-section">
+                <h2 class="da-ad-section-title">Dados do Veículo</h2>
+                <div class="da-detail-grid">
+                    <div class="da-detail-cell da-detail-cell-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                        <div>
+                            <p class="da-detail-key">Marca</p>
+                            <p class="da-detail-val">@(veiculo?.NomeMarca ?? "—")</p>
+                        </div>
+                    </div>
+                    <div class="da-detail-cell da-detail-cell-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" y1="22" x2="4" y2="15"></line></svg>
+                        <div>
+                            <p class="da-detail-key">Modelo</p>
+                            <p class="da-detail-val">@(veiculo?.NomeModelo ?? "—")</p>
+                        </div>
+                    </div>
+                    <div class="da-detail-cell da-detail-cell-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                        <div>
+                            <p class="da-detail-key">Ano</p>
+                            <p class="da-detail-val">@(veiculo?.Ano.ToString() ?? "—")</p>
+                        </div>
+                    </div>
+                    <div class="da-detail-cell da-detail-cell-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r="0.5"></circle><circle cx="17.5" cy="10.5" r="0.5"></circle><circle cx="8.5" cy="7.5" r="0.5"></circle><circle cx="6.5" cy="12.5" r="0.5"></circle><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 011.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"></path></svg>
+                        <div>
+                            <p class="da-detail-key">Cor</p>
+                            <p class="da-detail-val">@(veiculo?.Cor ?? "—")</p>
+                        </div>
+                    </div>
+                    <div class="da-detail-cell da-detail-cell-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V10"></path><path d="M18 20V4"></path><path d="M6 20v-4"></path></svg>
+                        <div>
+                            <p class="da-detail-key">Quilometragem</p>
+                            <p class="da-detail-val">@(veiculo != null ? $"{veiculo.Quilometragem:N0} km" : "—")</p>
+                        </div>
+                    </div>
+                    <div class="da-detail-cell da-detail-cell-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                        <div>
+                            <p class="da-detail-key">Placa</p>
+                            <p class="da-detail-val">@(veiculo?.Placa ?? "—")</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            @if (!string.IsNullOrWhiteSpace(Model.Descricao))
             {
-                <a class="da-btn da-btn-primary da-btn-wide" asp-controller="Venda" asp-action="Create" asp-route-idVeiculo="@Model.IdVeiculo">Vender veiculo</a>
+                <section class="da-card da-ad-section">
+                    <h2 class="da-ad-section-title">Descrição</h2>
+                    <p class="da-ad-description">@Model.Descricao</p>
+                </section>
             }
-            else
-            {
-                <a class="da-btn da-btn-primary da-btn-wide" asp-controller="Compra" asp-action="Create" asp-route-id="@Model.Id">Comprar</a>
-            }
-        </aside>
-    </section>
 
-    <section class="da-description-box">
-        <h2 class="da-subtitle">Descrição</h2>
-        <p class="da-muted">@(string.IsNullOrWhiteSpace(Model.Descricao) ? "Sem descrição informada." : Model.Descricao)</p>
-    </section>
-
-    <section>
-        <div class="da-tab-head" role="tablist" aria-label="Detalhes do veículo">
-            <button type="button" class="da-tab-btn is-active" data-tab="detalhes">Detalhes</button>
-            <button type="button" class="da-tab-btn" data-tab="opcionais">Opcionais</button>
-            <button type="button" class="da-tab-btn" data-tab="caracteristicas">Características</button>
-        </div>
-
-        <div id="tab-detalhes" class="da-tab-panel is-active">
-            <div class="da-detail-grid">
-                <div class="da-detail-cell">
-                    <p class="da-detail-key">Marca</p>
-                    <p class="da-detail-val">@veiculo?.NomeMarca</p>
-                </div>
-                <div class="da-detail-cell">
-                    <p class="da-detail-key">Modelo</p>
-                    <p class="da-detail-val">@veiculo?.NomeModelo</p>
-                </div>
-                <div class="da-detail-cell">
-                    <p class="da-detail-key">Ano</p>
-                    <p class="da-detail-val">@veiculo?.Ano</p>
-                </div>
-                <div class="da-detail-cell">
-                    <p class="da-detail-key">Cor</p>
-                    <p class="da-detail-val">@veiculo?.Cor</p>
-                </div>
-                <div class="da-detail-cell">
-                    <p class="da-detail-key">Quilometragem</p>
-                    <p class="da-detail-val">@veiculo?.Quilometragem km</p>
-                </div>
-                <div class="da-detail-cell">
-                    <p class="da-detail-key">Placa</p>
-                    <p class="da-detail-val">@veiculo?.Placa</p>
-                </div>
-            </div>
-        </div>
-
-        <div id="tab-opcionais" class="da-tab-panel">
             @if (opcionais.Any())
             {
-                <div class="da-chips">
-                    @foreach (var opcional in opcionais)
-                    {
-                        <span class="da-chip">@opcional</span>
-                    }
-                </div>
+                <section class="da-card da-ad-section">
+                    <h2 class="da-ad-section-title">Diferenciais</h2>
+                    <div class="da-opcionais-grid">
+                        @foreach (var opcional in opcionais)
+                        {
+                            <div class="da-opcional-item">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                <span>@opcional</span>
+                            </div>
+                        }
+                    </div>
+                </section>
             }
-            else
-            {
-                <div class="da-empty">Nenhum opcional informado.</div>
-            }
+
         </div>
 
-        <div id="tab-caracteristicas" class="da-tab-panel">
-            <div class="da-detail-grid">
-                <div class="da-detail-cell">
-                    <p class="da-detail-key">Status</p>
-                    <p class="da-detail-val">@Model.StatusAnuncio</p>
-                </div>
-                <div class="da-detail-cell">
-                    <p class="da-detail-key">Visualizações</p>
-                    <p class="da-detail-val">@Model.Visualizacoes</p>
-                </div>
-                <div class="da-detail-cell">
-                    <p class="da-detail-key">Interações</p>
-                    <p class="da-detail-val">@(Model.Interacoes ?? 0)</p>
-                </div>
-                <div class="da-detail-cell">
-                    <p class="da-detail-key">Data de publicação</p>
-                    <p class="da-detail-val">@Model.DataPublicacao.ToString("dd/MM/yyyy")</p>
+        <aside class="da-ad-sidebar">
+
+            <div class="da-card da-ad-section">
+                <h2 class="da-ad-section-title">Informações do Anúncio</h2>
+                <div class="da-ad-info-list">
+                    <div class="da-ad-info-row">
+                        <span class="da-ad-info-label da-ad-info-label-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                            Publicado em
+                        </span>
+                        <span class="da-ad-info-value">@Model.DataPublicacao.ToString("dd/MM/yyyy")</span>
+                    </div>
+                    <div class="da-ad-info-row">
+                        <span class="da-ad-info-label da-ad-info-label-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                            Visualizações
+                        </span>
+                        <span class="da-ad-info-value">@Model.Visualizacoes</span>
+                    </div>
+                    <div class="da-ad-info-row">
+                        <span class="da-ad-info-label da-ad-info-label-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                            Interações
+                        </span>
+                        <span class="da-ad-info-value">@(Model.Interacoes ?? 0)</span>
+                    </div>
+                    <div class="da-ad-info-row">
+                        <span class="da-ad-info-label da-ad-info-label-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                            Status
+                        </span>
+                        <span class="da-badge @statusClass">@statusLabel</span>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
-</div>
 
-@section Scripts {
-    <script>
-        document.querySelectorAll('.da-tab-btn').forEach(function (button) {
-            button.addEventListener('click', function () {
-                document.querySelectorAll('.da-tab-btn').forEach(function (btn) {
-                    btn.classList.remove('is-active');
-                });
-                document.querySelectorAll('.da-tab-panel').forEach(function (panel) {
-                    panel.classList.remove('is-active');
-                });
-
-                button.classList.add('is-active');
-                var panel = document.getElementById('tab-' + button.dataset.tab);
-                if (panel) {
-                    panel.classList.add('is-active');
+            <div class="da-card da-ad-section da-ad-cta-box">
+                @if (Model.StatusAnuncio != "V")
+                {
+                    @if (User.IsInRole("Admin") || User.IsInRole("Funcionario"))
+                    {
+                        <a class="da-btn da-btn-primary da-btn-wide" asp-controller="Venda" asp-action="Create" asp-route-idVeiculo="@Model.IdVeiculo">
+                            Vender veiculo
+                        </a>
+                    }
+                    else
+                    {
+                        <a class="da-btn da-btn-primary da-btn-wide" asp-controller="Compra" asp-action="Create" asp-route-id="@Model.Id">
+                            Tenho interesse
+                        </a>
+                    }
                 }
-            });
-        });
-    </script>
-}
+                else
+                {
+                    <p class="da-ad-sold-notice">Este veiculo ja foi vendido.</p>
+                }
+            </div>
+
+        </aside>
+
+    </div>
+
+</div>

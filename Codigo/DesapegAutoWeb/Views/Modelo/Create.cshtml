@@ -1,41 +1,60 @@
 @model DesapegAutoWeb.Models.ModeloViewModel
+@using Microsoft.AspNetCore.Mvc.Rendering
 
 @{
-    ViewData["Title"] = "Criar Modelo";
+    ViewData["Title"] = "Novo Modelo";
+    var marcas = ViewBag.Marcas as List<SelectListItem> ?? new List<SelectListItem>();
+    var categorias = ViewBag.Categorias as List<SelectListItem> ?? new List<SelectListItem>();
 }
 
-<partial name="AdminHeader" />
+<div class="da-page">
+    <h1 class="da-title">Novo Modelo</h1>
 
-<div class="admin-card mt-4">
-    <h2>Criar Modelo</h2>
-    <hr />
-
-    <form asp-action="Create" method="post">
-        <div class="mb-3">
-            <label asp-for="Nome" class="form-label"></label>
-            <input asp-for="Nome" class="form-control" />
-            <span asp-validation-for="Nome" class="text-danger"></span>
-        </div>
-        <div class="mb-3">
-            <label asp-for="Categoria" class="form-label"></label>
-            <input asp-for="Categoria" class="form-control" />
-            <span asp-validation-for="Categoria" class="text-danger"></span>
-        </div>
-        <div class="mb-3">
-            <label asp-for="Versoes" class="form-label"></label>
-            <input asp-for="Versoes" class="form-control" />
-            <span asp-validation-for="Versoes" class="text-danger"></span>
-        </div>
-        <div class="mb-3">
-            <label asp-for="IdMarca" class="form-label"></label>
-            <input asp-for="IdMarca" class="form-control" />
-            <span asp-validation-for="IdMarca" class="text-danger"></span>
-        </div>
-        <button type="submit" class="btn btn-primary">Criar</button>
-        <a asp-action="Index" class="btn btn-secondary">Voltar</a>
-    </form>
+    <div class="da-card da-card-pad">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="da-form-grid">
+                <div class="da-field">
+                    <label asp-for="Nome" class="da-label">Nome do Modelo</label>
+                    <input asp-for="Nome" class="da-input" placeholder="Digite o nome do modelo" />
+                    <span asp-validation-for="Nome" class="text-danger"></span>
+                </div>
+                <div class="da-field">
+                    <label asp-for="IdMarca" class="da-label">Marca</label>
+                    <select asp-for="IdMarca" class="da-select">
+                        <option value="">Selecione a marca</option>
+                        @foreach (var marca in marcas)
+                        {
+                            <option value="@marca.Value">@marca.Text</option>
+                        }
+                    </select>
+                    <span asp-validation-for="IdMarca" class="text-danger"></span>
+                </div>
+                <div class="da-field">
+                    <label asp-for="IdCategoria" class="da-label">Categoria</label>
+                    <select asp-for="IdCategoria" class="da-select">
+                        <option value="">Selecione a categoria</option>
+                        @foreach (var categoria in categorias)
+                        {
+                            <option value="@categoria.Value">@categoria.Text</option>
+                        }
+                    </select>
+                    <span asp-validation-for="IdCategoria" class="text-danger"></span>
+                </div>
+                <div class="da-field">
+                    <label asp-for="Versoes" class="da-label">Versoes</label>
+                    <input asp-for="Versoes" class="da-input" placeholder="Separe por virgula. Ex.: GLI, XEi, Altis" />
+                    <span asp-validation-for="Versoes" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="da-action-row">
+                <button type="submit" class="da-btn-primary">Cadastrar</button>
+                <a asp-action="Index" class="da-btn-outline">Cancelar</a>
+            </div>
+        </form>
+    </div>
 </div>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

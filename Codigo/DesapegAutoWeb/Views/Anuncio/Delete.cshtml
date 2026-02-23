@@ -1,21 +1,37 @@
 @model DesapegAutoWeb.Models.AnuncioViewModel
 @{
-    ViewData["Title"] = "Excluir Anúncio";
+    ViewData["Title"] = "Excluir AnÃºncio";
 }
-<h2>Excluir Anúncio</h2>
-<h4>Tem certeza que deseja excluir este anúncio?</h4>
-<div>
-    <dl class="row">
-        <dt class="col-sm-2">Veículo</dt>
-        <dd class="col-sm-10">@Model.IdVeiculo</dd>
-        <dt class="col-sm-2">Descrição</dt>
-        <dd class="col-sm-10">@Model.Descricao</dd>
-        <dt class="col-sm-2">Status</dt>
-        <dd class="col-sm-10">@Model.StatusAnuncio</dd>
-    </dl>
-    <form asp-action="Delete" method="post">
-        <input type="hidden" asp-for="Id" />
-        <button type="submit" class="btn btn-danger">Excluir</button>
-        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
-    </form>
+
+<div class="da-page">
+    <h1 class="da-title">Excluir AnÃºncio</h1>
+
+    <div class="da-confirm-box">
+        <p>Tem certeza que deseja excluir este anÃºncio? Esta aÃ§Ã£o nÃ£o pode ser desfeita.</p>
+    </div>
+
+    <div class="da-card da-card-pad">
+        <div class="da-detail-list">
+            <div class="da-detail-item">
+                <p class="da-detail-item-label">VeÃ­culo</p>
+                <p class="da-detail-item-value">@Model.IdVeiculo</p>
+            </div>
+            <div class="da-detail-item">
+                <p class="da-detail-item-label">Status</p>
+                <p class="da-detail-item-value">@Model.StatusAnuncio</p>
+            </div>
+            <div class="da-detail-item" style="grid-column: 1 / -1;">
+                <p class="da-detail-item-label">DescriÃ§Ã£o</p>
+                <p class="da-detail-item-value">@Model.Descricao</p>
+            </div>
+        </div>
+
+        <form asp-action="Delete" method="post">
+            <input type="hidden" asp-for="Id" />
+            <div class="da-action-row">
+                <button type="submit" class="da-btn-danger">Excluir</button>
+                <a asp-action="Index" class="da-btn-outline">Cancelar</a>
+            </div>
+        </form>
+    </div>
 </div>

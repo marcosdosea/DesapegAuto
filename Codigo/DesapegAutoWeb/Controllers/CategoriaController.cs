@@ -31,6 +31,7 @@ namespace DesapegAutoWeb.Controllers
         public ActionResult Details(int id)
         {
             var categoria = categoriaService.Get(id);
+            if (categoria == null) return NotFound();
             var categoriaViewModel = mapper.Map<CategoriaViewModel>(categoria);
             return View(categoriaViewModel);
         }
@@ -74,6 +75,7 @@ namespace DesapegAutoWeb.Controllers
         public ActionResult Edit(int id)
         {
             var categoria = categoriaService.Get(id);
+            if (categoria == null) return NotFound();
             var categoriaViewModel = mapper.Map<CategoriaViewModel>(categoria);
             return View(categoriaViewModel);
         }
@@ -106,6 +108,7 @@ namespace DesapegAutoWeb.Controllers
         public ActionResult Delete(int id)
         {
             var categoria = categoriaService.Get(id);
+            if (categoria == null) return NotFound();
             var categoriaViewModel = mapper.Map<CategoriaViewModel>(categoria);
             return View(categoriaViewModel);
         }

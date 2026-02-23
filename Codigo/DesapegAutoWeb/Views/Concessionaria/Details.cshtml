@@ -1,26 +1,39 @@
 @model DesapegAutoWeb.Models.ConcessionariaViewModel
 
 @{
-    ViewData["Title"] = "Detalhes da Concession·ria";
+    ViewData["Title"] = "Detalhes da Concession√°ria";
 }
 
-<h1>Detalhes da Concession·ria</h1>
-<hr />
-<div>
-    <dl class="row">
-        <dt class="col-sm-2">@Html.DisplayNameFor(m => m.Nome)</dt>
-        <dd class="col-sm-10">@Model.Nome</dd>
-        <dt class="col-sm-2">@Html.DisplayNameFor(m => m.Cnpj)</dt>
-        <dd class="col-sm-10">@Model.Cnpj</dd>
-        <dt class="col-sm-2">@Html.DisplayNameFor(m => m.Email)</dt>
-        <dd class="col-sm-10">@Model.Email</dd>
-        <dt class="col-sm-2">@Html.DisplayNameFor(m => m.Telefone)</dt>
-        <dd class="col-sm-10">@Model.Telefone</dd>
-        <dt class="col-sm-2">@Html.DisplayNameFor(m => m.Senha)</dt>
-        <dd class="col-sm-10">@Model.Senha</dd>
-        <dt class="col-sm-2">@Html.DisplayNameFor(m => m.Endereco)</dt>
-        <dd class="col-sm-10">@Model.Endereco</dd>
-    </dl>
-    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Editar</a>
-    <a asp-action="Index" class="btn btn-secondary">Voltar</a>
+<div class="da-page">
+    <h1 class="da-title">Detalhes da Concession√°ria</h1>
+
+    <div class="da-card da-card-pad">
+        <div class="da-detail-list">
+            <div class="da-detail-item">
+                <p class="da-detail-item-label">Nome</p>
+                <p class="da-detail-item-value">@Model.Nome</p>
+            </div>
+            <div class="da-detail-item">
+                <p class="da-detail-item-label">CNPJ</p>
+                <p class="da-detail-item-value">@Model.Cnpj</p>
+            </div>
+            <div class="da-detail-item">
+                <p class="da-detail-item-label">Email</p>
+                <p class="da-detail-item-value">@Model.Email</p>
+            </div>
+            <div class="da-detail-item">
+                <p class="da-detail-item-label">Telefone</p>
+                <p class="da-detail-item-value">@Model.Telefone</p>
+            </div>
+            <div class="da-detail-item">
+                <p class="da-detail-item-label">Endere√ßo</p>
+                <p class="da-detail-item-value">@Model.Endereco</p>
+            </div>
+        </div>
+
+        <div class="da-action-row">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="da-btn-primary">Editar</a>
+            <a asp-action="Index" class="da-btn-outline">Voltar</a>
+        </div>
+    </div>
 </div>

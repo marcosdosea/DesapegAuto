@@ -211,9 +211,12 @@ namespace DesapegAutoWebTests.Controllers
             // Arrange
             var veiculoVM = new VeiculoViewModel { Id = 99, Placa = "XXX-9999", Ano = 2020, Cor = "Cinza", Quilometragem = 50000, Preco = 25000.00m };
 
-            // Act & Assert - Método Delete lança exceção, verificamos o comportamento
-            var exception = Assert.ThrowsException<ServiceException>(() => controller.Delete(99, veiculoVM));
-            Assert.IsTrue(exception.Message.Contains("Veículo não encontrado"));
+            // Act
+            var result = controller.Delete(99, veiculoVM);
+
+            // Assert
+            Assert.IsInstanceOfType(result, typeof(ViewResult));
+            Assert.IsFalse(controller.ModelState.IsValid);
             mockService.Verify(s => s.Delete(99), Times.Once);
         }
 

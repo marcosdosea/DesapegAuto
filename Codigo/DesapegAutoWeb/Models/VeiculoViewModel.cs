@@ -22,7 +22,7 @@ namespace DesapegAutoWeb.Models
 
         [Required(ErrorMessage = "O ano é obrigatório.")]
         [Display(Name = "Ano de Fabricação")]
-        [Range(1900, 2025, ErrorMessage = "O ano deve ser válido.")] 
+        [Range(1900, 2100, ErrorMessage = "O ano deve ser válido.")]
         public int Ano { get; set; }
 
         [Required(ErrorMessage = "A cor é obrigatória.")]

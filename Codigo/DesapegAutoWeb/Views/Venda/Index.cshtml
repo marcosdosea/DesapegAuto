@@ -1,82 +1,68 @@
-﻿@model IEnumerable<Core.DTO.VendaDTO>
+@model IEnumerable<Core.DTO.VendaDTO>
 @using System
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Vendas";
+    var vendas = Model?.ToList() ?? new List<Core.DTO.VendaDTO>();
 }
 
-<h1>Index</h1>
+<div class="da-page">
+    <div class="da-top-actions">
+        <h1 class="da-title">Vendas</h1>
+        <a asp-action="Create" class="da-btn-primary">Nova Venda</a>
+    </div>
 
-@if (TempData["SuccessMessage"] is string successMessage)
-{
-    <div class="alert alert-success" role="alert">@successMessage</div>
-}
+    @if (TempData["SuccessMessage"] is string successMessage)
+    {
+        <div class="da-alert da-alert-success" role="alert">@successMessage</div>
+    }
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DataVenda)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ValorFinal)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FormaPagamento)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NomeConcessionaria)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NomePessoa)
-            </th>
-            <th>
-                Status
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DataVenda)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ValorFinal)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FormaPagamento)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NomeConcessionaria)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NomePessoa)
-            </td>
-            <td>
-                @item.StatusAnuncio
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-                @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-                @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-                @if (string.Equals(item.StatusAnuncio, "P", StringComparison.OrdinalIgnoreCase))
-                {
-                    <text> | </text>
-                    @Html.ActionLink("Confirmar", "Confirmar", new { id=item.Id })
-                }
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    <div class="da-card da-card-pad">
+        @if (!vendas.Any())
+        {
+            <div class="da-empty">Nenhuma venda cadastrada.</div>
+        }
+        else
+        {
+            <div style="overflow-x: auto;">
+                <table class="da-table">
+                    <thead>
+                        <tr>
+                            <th>Data Venda</th>
+                            <th>Valor Final</th>
+                            <th>Forma Pagamento</th>
+                            <th>Concessionaria</th>
+                            <th>Comprador</th>
+                            <th>Status</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in vendas)
+                        {
+                            <tr>
+                                <td>@item.DataVenda.ToString("dd/MM/yyyy")</td>
+                                <td>R$ @item.ValorFinal.ToString("N2")</td>
+                                <td>@item.FormaPagamento</td>
+                                <td>@item.NomeConcessionaria</td>
+                                <td>@item.NomePessoa</td>
+                                <td>@item.StatusAnuncio</td>
+                                <td>
+                                    <div class="da-table-actions">
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="da-action-edit">Editar</a>
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="da-action-view">Ver</a>
+                                        <a asp-action="Delete" asp-route-id="@item.Id" class="da-action-delete">Excluir</a>
+                                        @if (string.Equals(item.StatusAnuncio, "P", StringComparison.OrdinalIgnoreCase))
+                                        {
+                                            <a asp-action="Confirmar" asp-route-id="@item.Id" class="da-action-confirm">Confirmar</a>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

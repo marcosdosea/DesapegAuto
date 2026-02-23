@@ -1,34 +1,25 @@
-﻿@model DesapegAutoWeb.Models.MarcaViewModel
+@model DesapegAutoWeb.Models.MarcaViewModel
 
 @{
     ViewData["Title"] = "Excluir Marca";
 }
 
-<div class="container mt-4">
-    <div class="dashboard-header">
-        <h1 class="admin-title">Excluir Marca</h1>
-    </div>
-
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="admin-card text-center">
-                <h2 class="text-danger">Tem certeza que deseja excluir esta marca?</h2>
-                <hr />
-                <div class="my-4">
-                    <p class="lead"><strong>Marca:</strong> @Html.DisplayFor(model => model.Nome)</p>
-                    <p class="text-muted">ID: @Html.DisplayFor(model => model.Id)</p>
-                </div>
-
-                <form asp-action="Delete">
-                    <input type="hidden" asp-for="Id" />
-                    <button type="submit" class="btn btn-danger admin-btn">
-                        <i class="fa-solid fa-trash-can me-2"></i> Excluir
-                    </button>
-                    <a asp-action="Index" class="btn btn-secondary mt-3">
-                        <i class="fa-solid fa-arrow-left me-2"></i> Voltar para a Lista
-                    </a>
-                </form>
-            </div>
+<div class="da-page">
+    <div class="da-delete-confirm">
+        <div class="da-delete-confirm__icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
         </div>
+        <h1 class="da-delete-confirm__title">Excluir Marca</h1>
+        <p class="da-delete-confirm__subtitle">Tem certeza que deseja excluir esta marca? Esta ação não pode ser desfeita.</p>
+
+        <div class="da-delete-confirm__entity">@Model.Nome</div>
+
+        <p class="da-delete-confirm__warning">Modelos associados a esta marca podem ser afetados.</p>
+
+        <form asp-action="Delete" class="da-delete-confirm__actions">
+            <input type="hidden" asp-for="Id" />
+            <button type="submit" class="da-btn da-btn-danger">Excluir</button>
+            <a asp-action="Index" class="da-btn da-btn-outline">Cancelar</a>
+        </form>
     </div>
 </div>

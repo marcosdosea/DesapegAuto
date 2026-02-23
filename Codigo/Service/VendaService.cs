@@ -24,7 +24,17 @@ namespace Service
 
         public void Edit(Venda venda)
         {
-            context.Update(venda);
+            var vendaExistente = context.Venda.Find(venda.Id);
+            if (vendaExistente == null)
+            {
+                throw new ServiceException("Erro: Venda não encontrada. A operação foi cancelada.");
+            }
+
+            vendaExistente.IdConcessionaria = venda.IdConcessionaria;
+            vendaExistente.IdPessoa = venda.IdPessoa;
+            vendaExistente.DataVenda = venda.DataVenda;
+            vendaExistente.ValorFinal = venda.ValorFinal;
+            vendaExistente.FormaPagamento = venda.FormaPagamento;
             context.SaveChanges();
         }
 
