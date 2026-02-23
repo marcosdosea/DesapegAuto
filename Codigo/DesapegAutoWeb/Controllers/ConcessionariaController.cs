@@ -43,6 +43,7 @@ namespace DesapegAutoWeb.Controllers
         public ActionResult Details(int id)
         {
             var c = concessionariaService.Get(id);
+            if (c == null) return NotFound();
             var vm = mapper.Map<ConcessionariaViewModel>(c);
             return View(vm);
         }
@@ -104,6 +105,7 @@ namespace DesapegAutoWeb.Controllers
         public ActionResult Edit(int id)
         {
             var c = concessionariaService.Get(id);
+            if (c == null) return NotFound();
             var vm = mapper.Map<ConcessionariaViewModel>(c);
             return View(vm);
         }
@@ -146,6 +148,7 @@ namespace DesapegAutoWeb.Controllers
         public ActionResult Delete(int id)
         {
             var c = concessionariaService.Get(id);
+            if (c == null) return NotFound();
             var vm = mapper.Map<ConcessionariaViewModel>(c);
             return View(vm);
         }

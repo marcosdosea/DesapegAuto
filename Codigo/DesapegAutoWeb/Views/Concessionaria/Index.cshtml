@@ -5,8 +5,6 @@
 }
 
 <div class="da-page">
-    <h1 class="da-title">Administracao</h1>
-
     @if (TempData["SuccessMessage"] is string successMessage)
     {
         <div class="alert alert-success" role="alert">@successMessage</div>
@@ -98,29 +96,3 @@
     </div>
 </div>
 
-@section Scripts {
-    <script>
-        (function () {
-            function maskCnpj(value) {
-                const digits = value.replace(/\D/g, "").slice(0, 14);
-                if (digits.length <= 2) return digits;
-                if (digits.length <= 5) return digits.slice(0, 2) + "." + digits.slice(2);
-                if (digits.length <= 8) return digits.slice(0, 2) + "." + digits.slice(2, 5) + "." + digits.slice(5);
-                if (digits.length <= 12) return digits.slice(0, 2) + "." + digits.slice(2, 5) + "." + digits.slice(5, 8) + "/" + digits.slice(8);
-                return digits.slice(0, 2) + "." + digits.slice(2, 5) + "." + digits.slice(5, 8) + "/" + digits.slice(8, 12) + "-" + digits.slice(12);
-            }
-
-            document.querySelectorAll(".cnpj-mask").forEach(function (input) {
-                input.addEventListener("input", function () {
-                    this.value = maskCnpj(this.value);
-                });
-
-                input.addEventListener("paste", function (event) {
-                    event.preventDefault();
-                    const text = (event.clipboardData || window.clipboardData).getData("text");
-                    this.value = maskCnpj(text);
-                });
-            });
-        })();
-    </script>
-}

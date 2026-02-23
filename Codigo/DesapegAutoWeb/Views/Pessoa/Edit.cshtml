@@ -1,61 +1,54 @@
-﻿@model DesapegAutoWeb.Models.PessoaViewModel
+@model DesapegAutoWeb.Models.PessoaViewModel
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Editar Pessoa";
 }
 
-<h1>Edit</h1>
+<div class="da-page">
+    <h1 class="da-title">Editar Pessoa</h1>
 
-<h4>PessoaViewModel</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
+    <div class="da-card da-card-pad">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Id" class="control-label"></label>
-                <input asp-for="Id" class="form-control" />
-                <span asp-validation-for="Id" class="text-danger"></span>
+            <input asp-for="Id" type="hidden" />
+            <div class="da-form-grid">
+                <div class="da-field">
+                    <label asp-for="Nome" class="da-label">Nome</label>
+                    <input asp-for="Nome" class="da-input" />
+                    <span asp-validation-for="Nome" class="text-danger"></span>
+                </div>
+                <div class="da-field">
+                    <label asp-for="Cpf" class="da-label">CPF</label>
+                    <input asp-for="Cpf" class="da-input" />
+                    <span asp-validation-for="Cpf" class="text-danger"></span>
+                </div>
+                <div class="da-field">
+                    <label asp-for="Telefone" class="da-label">Telefone</label>
+                    <input asp-for="Telefone" class="da-input" />
+                    <span asp-validation-for="Telefone" class="text-danger"></span>
+                </div>
+                <div class="da-field">
+                    <label asp-for="Email" class="da-label">Email</label>
+                    <input asp-for="Email" class="da-input" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="da-field">
+                    <label asp-for="Senha" class="da-label">Senha</label>
+                    <input asp-for="Senha" class="da-input" type="password" />
+                    <span asp-validation-for="Senha" class="text-danger"></span>
+                </div>
+                <div class="da-field">
+                    <label asp-for="ConfirmacaoSenha" class="da-label">Confirmação de Senha</label>
+                    <input asp-for="ConfirmacaoSenha" class="da-input" type="password" />
+                    <span asp-validation-for="ConfirmacaoSenha" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Nome" class="control-label"></label>
-                <input asp-for="Nome" class="form-control" />
-                <span asp-validation-for="Nome" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Cpf" class="control-label"></label>
-                <input asp-for="Cpf" class="form-control" />
-                <span asp-validation-for="Cpf" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Telefone" class="control-label"></label>
-                <input asp-for="Telefone" class="form-control" />
-                <span asp-validation-for="Telefone" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Senha" class="control-label"></label>
-                <input asp-for="Senha" class="form-control" />
-                <span asp-validation-for="Senha" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ConfirmacaoSenha" class="control-label"></label>
-                <input asp-for="ConfirmacaoSenha" class="form-control" />
-                <span asp-validation-for="ConfirmacaoSenha" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+            <div class="da-action-row">
+                <button type="submit" class="da-btn-primary">Salvar</button>
+                <a asp-action="Index" class="da-btn-outline">Cancelar</a>
             </div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {

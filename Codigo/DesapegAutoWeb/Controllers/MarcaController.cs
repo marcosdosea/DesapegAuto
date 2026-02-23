@@ -31,6 +31,7 @@ namespace DesapegAutoWeb.Controllers
         public ActionResult Details(int id)
         {
             var marca = marcaService.Get(id);
+            if (marca == null) return NotFound();
             var marcaViewModel = mapper.Map<MarcaViewModel>(marca);
             return View(marcaViewModel);
         }
@@ -74,6 +75,7 @@ namespace DesapegAutoWeb.Controllers
         public ActionResult Edit(int id)
         {
             var marca = marcaService.Get(id);
+            if (marca == null) return NotFound();
             var marcaViewModel = mapper.Map<MarcaViewModel>(marca);
             return View(marcaViewModel);
         }
@@ -106,6 +108,7 @@ namespace DesapegAutoWeb.Controllers
         public ActionResult Delete(int id)
         {
             var marca = marcaService.Get(id);
+            if (marca == null) return NotFound();
             var marcaViewModel = mapper.Map<MarcaViewModel>(marca);
             return View(marcaViewModel);
         }

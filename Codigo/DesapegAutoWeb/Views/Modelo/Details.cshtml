@@ -4,28 +4,32 @@
     ViewData["Title"] = "Detalhes do Modelo";
 }
 
-<div class="admin-card mt-4">
-    <h2>Detalhes do Modelo</h2>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">ID</dt>
-        <dd class="col-sm-10">@Model.Id</dd>
+<div class="da-page">
+    <h1 class="da-title">Detalhes do Modelo</h1>
 
-        <dt class="col-sm-2">Nome</dt>
-        <dd class="col-sm-10">@Model.Nome</dd>
+    <div class="da-card da-card-pad">
+        <div class="da-detail-list">
+            <div class="da-detail-item">
+                <p class="da-detail-item-label">Nome</p>
+                <p class="da-detail-item-value">@Model.Nome</p>
+            </div>
+            <div class="da-detail-item">
+                <p class="da-detail-item-label">Marca</p>
+                <p class="da-detail-item-value">@(Model.NomeMarca ?? $"Marca #{Model.IdMarca}")</p>
+            </div>
+            <div class="da-detail-item">
+                <p class="da-detail-item-label">Categoria</p>
+                <p class="da-detail-item-value">@(Model.NomeCategoria ?? Model.Categoria ?? $"Categoria #{Model.IdCategoria}")</p>
+            </div>
+            <div class="da-detail-item">
+                <p class="da-detail-item-label">Versoes</p>
+                <p class="da-detail-item-value">@(string.IsNullOrWhiteSpace(Model.Versoes) ? "Nenhuma" : Model.Versoes)</p>
+            </div>
+        </div>
 
-        <dt class="col-sm-2">Categoria</dt>
-        <dd class="col-sm-10">@Model.Categoria</dd>
-
-        <dt class="col-sm-2">Versões</dt>
-        <dd class="col-sm-10">@Model.Versoes</dd>
-
-        <dt class="col-sm-2">Id Marca</dt>
-        <dd class="col-sm-10">@Model.IdMarca</dd>
-    </dl>
-
-    <div class="mt-3">
-        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary me-2">Editar</a>
-        <a asp-action="Index" class="btn btn-secondary">Voltar</a>
+        <div class="da-action-row">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="da-btn-primary">Editar</a>
+            <a asp-action="Index" class="da-btn-outline">Voltar</a>
+        </div>
     </div>
 </div>

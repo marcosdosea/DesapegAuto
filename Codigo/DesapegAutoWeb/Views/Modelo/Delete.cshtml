@@ -4,31 +4,39 @@
     ViewData["Title"] = "Excluir Modelo";
 }
 
-<div class="container mt-4">
-    <div class="dashboard-header">
-        <h1 class="admin-title">Excluir Modelo</h1>
+<div class="da-page">
+    <h1 class="da-title">Excluir Modelo</h1>
+
+    <div class="da-confirm-box">
+        <p>Tem certeza que deseja excluir este modelo? Esta acao nao pode ser desfeita.</p>
     </div>
 
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="admin-card text-center">
-                <h2 class="text-danger">Tem certeza que deseja excluir este modelo?</h2>
-                <hr />
-                <div class="my-4">
-                    <p class="lead"><strong>Modelo:</strong> @Html.DisplayFor(model => model.Nome)</p>
-                    <p class="text-muted">ID: @Html.DisplayFor(model => model.Id)</p>
-                </div>
-
-                <form asp-action="Delete">
-                    <input type="hidden" asp-for="Id" />
-                    <button type="submit" class="btn btn-danger admin-btn">
-                        <i class="fa-solid fa-trash-can me-2"></i> Excluir
-                    </button>
-                    <a asp-action="Index" class="btn btn-secondary mt-3">
-                        <i class="fa-solid fa-arrow-left me-2"></i> Voltar para a Lista
-                    </a>
-                </form>
+    <div class="da-card da-card-pad">
+        <div class="da-detail-list">
+            <div class="da-detail-item">
+                <p class="da-detail-item-label">Nome</p>
+                <p class="da-detail-item-value">@Model.Nome</p>
+            </div>
+            <div class="da-detail-item">
+                <p class="da-detail-item-label">Marca</p>
+                <p class="da-detail-item-value">@(Model.NomeMarca ?? $"Marca #{Model.IdMarca}")</p>
+            </div>
+            <div class="da-detail-item">
+                <p class="da-detail-item-label">Categoria</p>
+                <p class="da-detail-item-value">@(Model.NomeCategoria ?? Model.Categoria ?? $"Categoria #{Model.IdCategoria}")</p>
+            </div>
+            <div class="da-detail-item">
+                <p class="da-detail-item-label">Versoes</p>
+                <p class="da-detail-item-value">@(string.IsNullOrWhiteSpace(Model.Versoes) ? "Nenhuma" : Model.Versoes)</p>
             </div>
         </div>
+
+        <form asp-action="Delete">
+            <input type="hidden" asp-for="Id" />
+            <div class="da-action-row">
+                <button type="submit" class="da-btn-danger">Excluir</button>
+                <a asp-action="Index" class="da-btn-outline">Cancelar</a>
+            </div>
+        </form>
     </div>
 </div>

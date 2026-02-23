@@ -33,7 +33,14 @@ namespace Service
         /// <param name="versao">Dados da versão</param>
         public void Edit(Versao versao)
         {
-            context.Update(versao);
+            var versaoExistente = context.Versaos.Find(versao.Id);
+            if (versaoExistente == null)
+            {
+                throw new ServiceException("Erro: Versão não encontrada. A operação foi cancelada.");
+            }
+
+            versaoExistente.Nome = versao.Nome;
+            versaoExistente.IdModelo = versao.IdModelo;
             context.SaveChanges();
         }
 

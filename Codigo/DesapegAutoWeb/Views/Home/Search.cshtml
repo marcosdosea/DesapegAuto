@@ -12,7 +12,7 @@
     <div class="da-search-layout">
         <aside class="da-filter-panel">
             <div class="da-top-actions">
-                <h2 class="da-filter-title" style="margin:0;">Filtros</h2>
+                <h2 class="da-filter-title">Filtros</h2>
                 <a asp-controller="Home" asp-action="Index" class="da-btn da-btn-soft" aria-label="Voltar">←</a>
             </div>
 
@@ -20,13 +20,19 @@
                 <button type="submit" class="da-btn da-btn-outline da-btn-wide">Limpar filtros</button>
 
                 <div class="da-field">
-                    <p class="da-label">Localização</p>
+                    <p class="da-label da-label-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                        Localização
+                    </p>
                     <input type="text" name="localizacao" class="da-input" value="@ViewBag.Localizacao" placeholder="Digite sua cidade ou estado" />
                 </div>
 
                 <div class="da-field">
-                    <p class="da-label">Preço</p>
-                    <p class="da-muted">Escolha um intervalo</p>
+                    <p class="da-label da-label-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                        Preço
+                    </p>
+                    <p class="da-muted da-muted-sm">Escolha um intervalo</p>
                     <div class="da-inline-range">
                         <input type="number" name="precoMin" class="da-input" value="@ViewBag.PrecoMin" placeholder="Mínimo" />
                         <input type="number" name="precoMax" class="da-input" value="@ViewBag.PrecoMax" placeholder="Máximo" />
@@ -34,8 +40,11 @@
                 </div>
 
                 <div class="da-field">
-                    <p class="da-label">Ano</p>
-                    <p class="da-muted">Escolha um intervalo</p>
+                    <p class="da-label da-label-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                        Ano
+                    </p>
+                    <p class="da-muted da-muted-sm">Escolha um intervalo</p>
                     <div class="da-inline-range">
                         <input type="number" name="anoMin" class="da-input" value="@ViewBag.AnoMin" placeholder="De" />
                         <input type="number" name="anoMax" class="da-input" value="@ViewBag.AnoMax" placeholder="Até" />
@@ -43,8 +52,11 @@
                 </div>
 
                 <div class="da-field">
-                    <p class="da-label">Quilometragem</p>
-                    <p class="da-muted">Escolha um intervalo</p>
+                    <p class="da-label da-label-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V10"></path><path d="M18 20V4"></path><path d="M6 20v-4"></path></svg>
+                        Quilometragem
+                    </p>
+                    <p class="da-muted da-muted-sm">Escolha um intervalo</p>
                     <div class="da-inline-range">
                         <input type="number" name="kmMin" class="da-input" value="@ViewBag.KmMin" placeholder="Mínimo" />
                         <input type="number" name="kmMax" class="da-input" value="@ViewBag.KmMax" placeholder="Máximo" />
@@ -52,7 +64,10 @@
                 </div>
 
                 <div class="da-field">
-                    <p class="da-label">Opcionais</p>
+                    <p class="da-label da-label-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                        Opcionais
+                    </p>
                     <div class="da-checkbox-grid">
                         <label class="da-check-item"><input type="checkbox" name="opcionais" value="ar condicionado" @(IsSelected("ar condicionado") ? "checked" : "") />Ar condicionado</label>
                         <label class="da-check-item"><input type="checkbox" name="opcionais" value="direção hidráulica" @(IsSelected("direção hidráulica") ? "checked" : "") />Direção hidráulica</label>
@@ -69,7 +84,13 @@
         </aside>
 
         <section class="da-results-panel">
-            <h2 class="da-subtitle">Resultados da pesquisa</h2>
+            <div class="da-results-header">
+                <h2 class="da-subtitle">Resultados da pesquisa</h2>
+                @if (anuncios.Any())
+                {
+                    <span class="da-muted da-muted-sm">@anuncios.Count veículo(s) encontrado(s)</span>
+                }
+            </div>
 
             @if (anuncios.Any())
             {
@@ -81,22 +102,46 @@
                         nomeVeiculo = "Veículo";
                     }
 
-                    <article class="da-result-card">
-                        <div class="da-result-image">
-                            <div class="da-vehicle-placeholder">Imagem do veículo</div>
+                    <article class="da-result-card da-premium-card">
+                        <div class="da-result-image-new">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                <polyline points="21 15 16 10 5 21"></polyline>
+                            </svg>
                         </div>
-                        <div class="da-result-body">
-                            <h3 class="da-vehicle-name">@nomeVeiculo</h3>
-                            <p class="da-vehicle-year">@anuncio.Veiculo?.Ano</p>
-                            <p class="da-vehicle-price">@((anuncio.Veiculo?.Preco ?? 0m).ToString("C0", new CultureInfo("pt-BR")))</p>
-                            <a asp-controller="Anuncio" asp-action="Details" asp-route-id="@anuncio.Id" class="da-btn da-btn-outline da-btn-wide">Ver detalhes</a>
+                        <div class="da-result-body-new">
+                            <div>
+                                <div class="da-result-top">
+                                    <h3 class="da-vehicle-name">@nomeVeiculo</h3>
+                                    <p class="da-vehicle-price">@((anuncio.Veiculo?.Preco ?? 0m).ToString("C0", new CultureInfo("pt-BR")))</p>
+                                </div>
+                                <div class="da-result-badges">
+                                    <span class="da-result-badge">@anuncio.Veiculo?.Ano</span>
+                                    @if (anuncio.Veiculo?.Quilometragem > 0)
+                                    {
+                                        <span class="da-result-badge">@anuncio.Veiculo?.Quilometragem.ToString("N0") km</span>
+                                    }
+                                    <span class="da-result-badge">@anuncio.Veiculo?.Cor</span>
+                                </div>
+                            </div>
+                            <div class="da-result-bottom">
+                                <a asp-controller="Anuncio" asp-action="Details" asp-route-id="@anuncio.Id" class="da-btn da-btn-primary">Ver detalhes</a>
+                            </div>
                         </div>
                     </article>
                 }
             }
             else
             {
-                <div class="da-empty">Nenhum veículo encontrado com os filtros selecionados.</div>
+                <div class="da-empty-state">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <p class="da-empty-state-title">Nenhum veículo encontrado</p>
+                    <p class="da-empty-state-desc">Tente ajustar os filtros ou buscar por outro termo.</p>
+                </div>
             }
         </section>
     </div>

@@ -4,11 +4,13 @@ using Core.Service;
 using DesapegAutoWeb.Controllers;
 using DesapegAutoWeb.Mappers;
 using DesapegAutoWeb.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 
 namespace DesapegAutoWebTests.Controllers
 {
@@ -60,6 +62,12 @@ namespace DesapegAutoWebTests.Controllers
                 mockMarcaService.Object,
                 mockConcessionariaService.Object,
                 mapper);
+
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { }, "mock"));
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext { User = user }
+            };
         }
 
         [TestMethod]

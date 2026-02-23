@@ -35,6 +35,7 @@ namespace DesapegAutoWeb.Controllers
         public ActionResult Details(int id)
         {
             var versao = versaoService.Get(id);
+            if (versao == null) return NotFound();
             var versaoViewModel = mapper.Map<VersaoViewModel>(versao);
             return View(versaoViewModel);
         }
@@ -98,6 +99,7 @@ namespace DesapegAutoWeb.Controllers
         public ActionResult Delete(int id)
         {
             var versao = versaoService.Get(id);
+            if (versao == null) return NotFound();
             var versaoViewModel = mapper.Map<VersaoViewModel>(versao);
             return View(versaoViewModel);
         }

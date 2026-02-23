@@ -1,84 +1,69 @@
-﻿@model DesapegAutoWeb.Models.ConcessionariaViewModel
+@model DesapegAutoWeb.Models.ConcessionariaViewModel
 
 @{
-    ViewData["Title"] = "Editar Concessionaria";
+    ViewData["Title"] = "Editar Concessionária";
     var selfEdit = ViewBag.SelfEdit as bool? == true;
 }
 
-<h1>Editar Concessionaria</h1>
-<hr />
-<div class="row">
-    <div class="col-md-6">
+<div class="da-page">
+    <h1 class="da-title">Editar Concessionária</h1>
+
+    <div class="da-card da-card-pad">
         <form asp-action="@(selfEdit ? "MeuCadastro" : "Edit")">
-            <input type="hidden" asp-for="Id" />
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Nome" class="control-label">Nome *</label>
-                <input asp-for="Nome" class="form-control" />
-                <span asp-validation-for="Nome" class="text-danger"></span>
+            <input type="hidden" asp-for="Id" />
+            <div class="da-form-grid">
+                <div class="da-field">
+                    <label asp-for="Nome" class="da-label">Nome</label>
+                    <input asp-for="Nome" class="da-input" />
+                    <span asp-validation-for="Nome" class="text-danger"></span>
+                </div>
+                <div class="da-field">
+                    <label asp-for="Cnpj" class="da-label">CNPJ</label>
+                    <input asp-for="Cnpj" class="da-input cnpj-mask" inputmode="numeric" maxlength="18" />
+                    <span asp-validation-for="Cnpj" class="text-danger"></span>
+                </div>
+                <div class="da-field">
+                    <label asp-for="Email" class="da-label">Email</label>
+                    <input asp-for="Email" class="da-input" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="da-field">
+                    <label asp-for="Telefone" class="da-label">Telefone</label>
+                    <input asp-for="Telefone" class="da-input" />
+                    <span asp-validation-for="Telefone" class="text-danger"></span>
+                </div>
+                <div class="da-field">
+                    <label asp-for="Senha" class="da-label">Senha</label>
+                    <input asp-for="Senha" class="da-input" type="password" />
+                    <span asp-validation-for="Senha" class="text-danger"></span>
+                </div>
+                <div class="da-field">
+                    <label asp-for="ConfirmarSenha" class="da-label">Confirmar Senha</label>
+                    <input asp-for="ConfirmarSenha" class="da-input" type="password" />
+                    <span asp-validation-for="ConfirmarSenha" class="text-danger"></span>
+                </div>
+                <div class="da-field">
+                    <label asp-for="Endereco" class="da-label">Endereço</label>
+                    <input asp-for="Endereco" class="da-input" />
+                    <span asp-validation-for="Endereco" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Cnpj" class="control-label">CNPJ *</label>
-                <input asp-for="Cnpj" class="form-control cnpj-mask" inputmode="numeric" maxlength="18" />
-                <span asp-validation-for="Cnpj" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Email" class="control-label">Email *</label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Telefone" class="control-label">Telefone *</label>
-                <input asp-for="Telefone" class="form-control" />
-                <span asp-validation-for="Telefone" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Senha" class="control-label">Senha *</label>
-                <input asp-for="Senha" class="form-control" type="password" maxlength="8" />
-                <span asp-validation-for="Senha" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ConfirmarSenha" class="control-label">Confirmar senha *</label>
-                <input asp-for="ConfirmarSenha" class="form-control" type="password" maxlength="8" />
-                <span asp-validation-for="ConfirmarSenha" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Endereco" class="control-label">Endereco *</label>
-                <input asp-for="Endereco" class="form-control" />
-                <span asp-validation-for="Endereco" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Salvar" class="btn btn-primary" />
+            <div class="da-action-row">
+                <button type="submit" class="da-btn-primary">Salvar</button>
                 @if (selfEdit)
                 {
-                    <a asp-controller="Anuncio" asp-action="Index" class="btn btn-secondary">Voltar</a>
+                    <a asp-controller="Anuncio" asp-action="Index" class="da-btn-outline">Voltar</a>
                 }
                 else
                 {
-                    <a asp-action="Index" class="btn btn-secondary">Voltar</a>
+                    <a asp-action="Index" class="da-btn-outline">Voltar</a>
                 }
             </div>
         </form>
     </div>
 </div>
+
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-    <script>
-        (function () {
-            function maskCnpj(value) {
-                const digits = value.replace(/\D/g, "").slice(0, 14);
-                if (digits.length <= 2) return digits;
-                if (digits.length <= 5) return digits.slice(0, 2) + "." + digits.slice(2);
-                if (digits.length <= 8) return digits.slice(0, 2) + "." + digits.slice(2, 5) + "." + digits.slice(5);
-                if (digits.length <= 12) return digits.slice(0, 2) + "." + digits.slice(2, 5) + "." + digits.slice(5, 8) + "/" + digits.slice(8);
-                return digits.slice(0, 2) + "." + digits.slice(2, 5) + "." + digits.slice(5, 8) + "/" + digits.slice(8, 12) + "-" + digits.slice(12);
-            }
-
-            document.querySelectorAll(".cnpj-mask").forEach(function (input) {
-                input.addEventListener("input", function () {
-                    this.value = maskCnpj(this.value);
-                });
-            });
-        })();
-    </script>
 }

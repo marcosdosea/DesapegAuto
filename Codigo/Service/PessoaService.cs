@@ -8,7 +8,7 @@ using System.Linq;
 namespace Service
 {
     /// <summary>
-    /// Implementa os servi�os de neg�cio para a entidade Pessoa.
+    /// Implementa os serviços de negócio para a entidade Pessoa.
     /// </summary>
     public class PessoaService : IPessoaService
     {
@@ -31,7 +31,7 @@ namespace Service
 
             if (pessoaExistente != null)
             {
-                throw new ServiceException("Erro: CPF j� cadastrado no sistema.");
+                throw new ServiceException("Erro: CPF já cadastrado no sistema.");
             }
 
             var emailExistente = context.Pessoas
@@ -39,7 +39,7 @@ namespace Service
 
             if (emailExistente != null)
             {
-                throw new ServiceException("Erro: E-mail j� cadastrado no sistema.");
+                throw new ServiceException("Erro: E-mail já cadastrado no sistema.");
             }
 
             context.Add(pessoa);
@@ -56,26 +56,29 @@ namespace Service
             var pessoaExistente = context.Pessoas.Find(pessoa.Id);
             if (pessoaExistente == null)
             {
-                throw new ServiceException("Erro: Pessoa n�o encontrada. A opera��o foi cancelada.");
+                throw new ServiceException("Erro: Pessoa não encontrada. A operação foi cancelada.");
             }
 
             var cpfExistente = context.Pessoas
-                .FirstOrDefault(p => p.Id != pessoa.Id && 
+                .FirstOrDefault(p => p.Id != pessoa.Id &&
                                    p.Cpf.ToLower() == pessoa.Cpf.ToLower());
             if (cpfExistente != null)
             {
-                throw new ServiceException("Erro: CPF j� cadastrado para outra pessoa.");
+                throw new ServiceException("Erro: CPF já cadastrado para outra pessoa.");
             }
 
             var emailExistente = context.Pessoas
-                .FirstOrDefault(p => p.Id != pessoa.Id && 
+                .FirstOrDefault(p => p.Id != pessoa.Id &&
                                    p.Email.ToLower() == pessoa.Email.ToLower());
             if (emailExistente != null)
             {
-                throw new ServiceException("Erro: E-mail j� cadastrado para outra pessoa.");
+                throw new ServiceException("Erro: E-mail já cadastrado para outra pessoa.");
             }
 
-            context.Update(pessoa);
+            pessoaExistente.Nome = pessoa.Nome;
+            pessoaExistente.Cpf = pessoa.Cpf;
+            pessoaExistente.Email = pessoa.Email;
+            pessoaExistente.Telefone = pessoa.Telefone;
             context.SaveChanges();
         }
 
@@ -88,7 +91,7 @@ namespace Service
             var pessoa = context.Pessoas.Find(idPessoa);
             if (pessoa == null)
             {
-                throw new ServiceException("Erro: Pessoa n�o encontrada. A opera��o foi cancelada.");
+                throw new ServiceException("Erro: Pessoa não encontrada. A operação foi cancelada.");
             }
 
             context.Remove(pessoa);
@@ -99,7 +102,7 @@ namespace Service
         /// Busca uma pessoa pelo seu ID.
         /// </summary>
         /// <param name="idPessoa">O ID da pessoa.</param>
-        /// <returns>A pessoa encontrada ou null se n�o existir.</returns>
+        /// <returns>A pessoa encontrada ou null se não existir.</returns>
         public Pessoa? Get(int idPessoa)
         {
             return context.Pessoas.Find(idPessoa);
@@ -122,7 +125,7 @@ namespace Service
         /// <summary>
         /// Retorna uma lista com todas as pessoas cadastradas.
         /// </summary>
-        /// <returns>Uma cole��o de todas as pessoas.</returns>
+        /// <returns>Uma coleção de todas as pessoas.</returns>
         public IEnumerable<Pessoa> GetAll()
         {
             return context.Pessoas.AsNoTracking();
@@ -132,7 +135,7 @@ namespace Service
         /// Busca pessoas pelo nome.
         /// </summary>
         /// <param name="nome">O nome a ser buscado.</param>
-        /// <returns>Uma cole��o de pessoas que correspondem ao crit�rio de busca.</returns>
+        /// <returns>Uma coleção de pessoas que correspondem ao critério de busca.</returns>
         public IEnumerable<Pessoa> GetByNome(string nome)
         {
             return context.Pessoas

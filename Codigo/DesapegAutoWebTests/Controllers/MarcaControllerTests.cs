@@ -3,7 +3,9 @@ using Core;
 using Core.Service;
 using DesapegAutoWeb.Mappers;
 using DesapegAutoWeb.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Moq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using DesapegAutoWeb.Controllers;
@@ -37,6 +39,7 @@ namespace DesapegAutoWeb.Controllers.Tests
                 .Verifiable();
 
             controller = new MarcaController(mockService.Object, mapper);
+            controller.TempData = new TempDataDictionary(new DefaultHttpContext(), Mock.Of<ITempDataProvider>());
         }
 
         [TestMethod()]
@@ -102,9 +105,9 @@ namespace DesapegAutoWeb.Controllers.Tests
 
             // Assert
             Assert.AreEqual(1, controller.ModelState.ErrorCount);
-            Assert.IsInstanceOfType(result, typeof(ViewResult));
-            ViewResult viewResult = (ViewResult)result;
-            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(MarcaViewModel));
+            Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
+            RedirectToActionResult redirectResult = (RedirectToActionResult)result;
+            Assert.AreEqual("Index", redirectResult.ActionName);
         }
 
 

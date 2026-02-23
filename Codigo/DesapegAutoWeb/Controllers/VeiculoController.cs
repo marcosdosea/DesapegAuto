@@ -1,5 +1,6 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Core;
+using Core.Exceptions;
 using Core.Service;
 using DesapegAutoWeb.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -35,6 +36,7 @@ namespace DesapegAutoWeb.Controllers
         public ActionResult Details(int id)
         {
             var veiculo = veiculoService.Get(id);
+            if (veiculo == null) return NotFound();
             var veiculoViewModel = mapper.Map<VeiculoViewModel>(veiculo);
             return View(veiculoViewModel);
         }
@@ -54,9 +56,16 @@ namespace DesapegAutoWeb.Controllers
         {
             if (ModelState.IsValid)
             {
-                var veiculo = mapper.Map<Veiculo>(veiculoViewModel);
-                veiculoService.Create(veiculo);
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    var veiculo = mapper.Map<Veiculo>(veiculoViewModel);
+                    veiculoService.Create(veiculo);
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (ServiceException ex)
+                {
+                    ModelState.AddModelError(string.Empty, ex.Message);
+                }
             }
             return View(veiculoViewModel);
         }
@@ -66,6 +75,7 @@ namespace DesapegAutoWeb.Controllers
         public ActionResult Edit(int id)
         {
             var veiculo = veiculoService.Get(id);
+            if (veiculo == null) return NotFound();
             var veiculoViewModel = mapper.Map<VeiculoViewModel>(veiculo);
             return View(veiculoViewModel);
         }
@@ -78,9 +88,16 @@ namespace DesapegAutoWeb.Controllers
         {
             if (ModelState.IsValid)
             {
-                var veiculo = mapper.Map<Veiculo>(veiculoViewModel);
-                veiculoService.Edit(veiculo);
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    var veiculo = mapper.Map<Veiculo>(veiculoViewModel);
+                    veiculoService.Edit(veiculo);
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (ServiceException ex)
+                {
+                    ModelState.AddModelError(string.Empty, ex.Message);
+                }
             }
             return View(veiculoViewModel);
         }
@@ -90,6 +107,7 @@ namespace DesapegAutoWeb.Controllers
         public ActionResult Delete(int id)
         {
             var veiculo = veiculoService.Get(id);
+            if (veiculo == null) return NotFound();
             var veiculoViewModel = mapper.Map<VeiculoViewModel>(veiculo);
             return View(veiculoViewModel);
         }
@@ -100,14 +118,32 @@ namespace DesapegAutoWeb.Controllers
         [Authorize(Roles = "Admin,Funcionario")]
         public ActionResult Delete(int id, VeiculoViewModel veiculoViewModel)
         {
-            var anuncio = anuncioService.GetAll().FirstOrDefault(a => a.IdVeiculo == id);
-            if (anuncio != null && anuncio.IdVenda != 0)
+            try
             {
-                ModelState.AddModelError(string.Empty, "Nao e possivel remover. Veiculo esta em uma venda pendente ou concluida.");
+                var anuncio = anuncioService.GetAll().FirstOrDefault(a => a.IdVeiculo == id);
+                if (anuncio != null && anuncio.IdVenda != 0)
+                {
+                    ModelState.AddModelError(string.Empty, "Nao e possivel remover. Veiculo esta em uma venda pendente ou concluida.");
+                    var veiculo = veiculoService.Get(id);
+                    if (veiculo != null)
+                    {
+                        veiculoViewModel = mapper.Map<VeiculoViewModel>(veiculo);
+                    }
+                    return View(veiculoViewModel);
+                }
+                veiculoService.Delete(id);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (ServiceException ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+                var veiculo = veiculoService.Get(id);
+                if (veiculo != null)
+                {
+                    veiculoViewModel = mapper.Map<VeiculoViewModel>(veiculo);
+                }
                 return View(veiculoViewModel);
             }
-            veiculoService.Delete(id);
-            return RedirectToAction(nameof(Index));
         }
     }
 }

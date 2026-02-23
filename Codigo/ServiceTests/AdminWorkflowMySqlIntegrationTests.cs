@@ -10,6 +10,7 @@ using System.Text.Json;
 namespace ServiceTests
 {
     [TestClass]
+    [TestCategory("Integration")]
     public class AdminWorkflowMySqlIntegrationTests
     {
         [TestMethod]

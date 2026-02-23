@@ -1,59 +1,53 @@
-﻿@model IEnumerable<DesapegAutoWeb.Models.PessoaViewModel>
+@model IEnumerable<DesapegAutoWeb.Models.PessoaViewModel>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Pessoas";
 }
 
-<h1>Index</h1>
+<div class="da-page">
+    <div class="da-top-actions">
+        <h1 class="da-title">Pessoas</h1>
+        <a asp-action="Create" class="da-btn-primary">Nova Pessoa</a>
+    </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Nome)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Cpf)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Telefone)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Email)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Nome)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Cpf)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Telefone)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-                @Html.ActionLink("Details", "Details", new { id = item.Id }) |
-                @Html.ActionLink("Delete", "Delete", new { id = item.Id })
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    <div class="da-card da-card-pad">
+        @if (!Model.Any())
+        {
+            <div class="da-empty">Nenhuma pessoa cadastrada.</div>
+        }
+        else
+        {
+            <div style="overflow-x: auto;">
+                <table class="da-table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>CPF</th>
+                            <th>Telefone</th>
+                            <th>Email</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.Nome</td>
+                                <td>@item.Cpf</td>
+                                <td>@item.Telefone</td>
+                                <td>@item.Email</td>
+                                <td>
+                                    <div class="da-table-actions">
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="da-action-edit">Editar</a>
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="da-action-view">Ver</a>
+                                        <a asp-action="Delete" asp-route-id="@item.Id" class="da-action-delete">Excluir</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
