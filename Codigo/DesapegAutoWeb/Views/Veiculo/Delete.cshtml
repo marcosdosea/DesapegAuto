@@ -39,7 +39,8 @@
             </div>
         </div>
 
-        <form asp-action="Delete">
+        <form asp-action="Delete" asp-route-id="@Model.Id">
+            <input asp-for="Id" type="hidden" />
             <div class="da-action-row">
                 <button type="submit" class="da-btn-danger">Excluir</button>
                 <a asp-action="Index" class="da-btn-outline">Cancelar</a>

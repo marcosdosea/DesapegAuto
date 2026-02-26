@@ -11,8 +11,8 @@ namespace DesapegAutoWeb.Models
         public string Nome { get; set; } = null!;
 
         [Required(ErrorMessage = "O CNPJ e obrigatorio.")]
-        [StringLength(18, MinimumLength = 18, ErrorMessage = "O CNPJ deve estar no formato 00.000.000/0000-00.")]
-        [RegularExpression(@"^\d{2}\.\d{3}\.\d{3}/\d{4}-\d{2}$", ErrorMessage = "O CNPJ deve estar no formato 00.000.000/0000-00.")]
+        [StringLength(14, MinimumLength = 14, ErrorMessage = "O CNPJ deve ter 14 digitos.")]
+        [RegularExpression(@"^\d{14}$", ErrorMessage = "CNPJ invalido.")]
         public string Cnpj { get; set; } = null!;
 
         [Required(ErrorMessage = "O email e obrigatorio.")]
@@ -20,11 +20,12 @@ namespace DesapegAutoWeb.Models
         public string Email { get; set; } = null!;
 
         [Required(ErrorMessage = "O telefone e obrigatorio.")]
+        [RegularExpression(@"^\d{10,11}$", ErrorMessage = "Telefone invalido.")]
         public string Telefone { get; set; } = null!;
 
         [Required(ErrorMessage = "A senha e obrigatoria.")]
         [DataType(DataType.Password)]
-        [StringLength(8, MinimumLength = 6, ErrorMessage = "A senha deve ter entre 6 e 8 caracteres.")]
+        [StringLength(20, MinimumLength = 6, ErrorMessage = "A senha deve ter entre 6 e 20 caracteres.")]
         [RegularExpression("^(?=.*[A-Za-z])(?=.*\\d).+$", ErrorMessage = "A senha deve conter ao menos uma letra e um numero.")]
         public string Senha { get; set; } = null!;
 

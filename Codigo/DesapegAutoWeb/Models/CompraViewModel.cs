@@ -15,10 +15,12 @@ namespace DesapegAutoWeb.Models
         public string Email { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "O CPF e obrigatorio.")]
-        [StringLength(14, MinimumLength = 11, ErrorMessage = "CPF invalido.")]
+        [StringLength(11, MinimumLength = 11, ErrorMessage = "CPF deve ter 11 numeros.")]
+        [RegularExpression(@"^\d{11}$", ErrorMessage = "CPF invalido.")]
         public string Cpf { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "O telefone e obrigatorio.")]
+        [RegularExpression(@"^\d{10,11}$", ErrorMessage = "Telefone invalido.")]
         public string Telefone { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "A forma de pagamento e obrigatoria.")]

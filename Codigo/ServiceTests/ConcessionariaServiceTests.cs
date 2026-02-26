@@ -28,7 +28,7 @@ namespace ServiceTests
         }
 
         [TestMethod]
-        public void Create_ComCnpjSomenteDigitos_FormataAntesDeSalvar()
+        public void Create_ComCnpjSomenteDigitos_SalvaSomenteDigitos()
         {
             var concessionaria = new Concessionaria
             {
@@ -44,7 +44,7 @@ namespace ServiceTests
             var saved = concessionariaService.Get(id);
 
             Assert.IsNotNull(saved);
-            Assert.AreEqual("12.345.678/0001-90", saved.Cnpj);
+            Assert.AreEqual("12345678000190", saved.Cnpj);
         }
 
         [TestMethod]

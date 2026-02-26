@@ -76,7 +76,8 @@ namespace DesapegAutoWeb.Controllers
 
             if (!idVeiculo.HasValue)
             {
-                return NotFound();
+                TempData["ErrorMessage"] = "Selecione um veiculo para iniciar a venda.";
+                return RedirectToAction("Index", "Anuncio");
             }
 
             var anuncio = anuncioService.GetAll().FirstOrDefault(a => a.IdVeiculo == idVeiculo.Value);
@@ -86,9 +87,11 @@ namespace DesapegAutoWeb.Controllers
                 return RedirectToAction("Index", "Anuncio");
             }
 
-            if (anuncio.IdVenda != 0 || string.Equals(anuncio.StatusAnuncio, "V", StringComparison.OrdinalIgnoreCase))
+            if (anuncio.IdVenda != 0 ||
+                string.Equals(anuncio.StatusAnuncio, "V", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(anuncio.StatusAnuncio, "P", StringComparison.OrdinalIgnoreCase))
             {
-                TempData["ErrorMessage"] = "Este veiculo ja foi vendido.";
+                TempData["ErrorMessage"] = "Este veiculo nao esta disponivel para nova venda.";
                 return RedirectToAction("Index", "Anuncio");
             }
 
@@ -112,7 +115,12 @@ namespace DesapegAutoWeb.Controllers
                 }
             }
 
-            var model = new VendaViewModel { IdVeiculo = idVeiculo.Value };
+            var model = new VendaViewModel
+            {
+                IdVeiculo = idVeiculo.Value,
+                IdConcessionaria = veiculoService?.Get(idVeiculo.Value)?.IdConcessionaria ?? 0,
+                DataVenda = DateTime.Today
+            };
             return View(model);
         }
 
@@ -121,21 +129,58 @@ namespace DesapegAutoWeb.Controllers
         [Authorize(Roles = "Admin,Funcionario")]
         public ActionResult Create(VendaViewModel vendaViewModel)
         {
+            var anuncio = anuncioService.GetAll().FirstOrDefault(a => a.IdVeiculo == vendaViewModel.IdVeiculo);
+            if (anuncio == null)
+            {
+                TempData["ErrorMessage"] = "Anuncio nao encontrado para este veiculo.";
+                return RedirectToAction("Index", "Anuncio");
+            }
+
+            if (anuncio.IdVenda != 0 ||
+                string.Equals(anuncio.StatusAnuncio, "V", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(anuncio.StatusAnuncio, "P", StringComparison.OrdinalIgnoreCase))
+            {
+                TempData["ErrorMessage"] = "Este veiculo nao esta disponivel para nova venda.";
+                return RedirectToAction("Index", "Anuncio");
+            }
+
+            var veiculo = veiculoService?.Get(vendaViewModel.IdVeiculo);
+            if (veiculo != null && vendaViewModel.IdConcessionaria == 0)
+            {
+                vendaViewModel.IdConcessionaria = veiculo.IdConcessionaria;
+                ModelState.Remove(nameof(vendaViewModel.IdConcessionaria));
+                TryValidateModel(vendaViewModel);
+            }
+
             if (ModelState.IsValid)
             {
                 var venda = mapper.Map<Venda>(vendaViewModel);
                 vendaService.Create(venda);
-                var anuncio = anuncioService.GetAll().FirstOrDefault(a => a.IdVeiculo == vendaViewModel.IdVeiculo);
-                if (anuncio != null)
-                {
-                    anuncio.IdVenda = venda.Id;
-                    anuncio.StatusAnuncio = "V";
-                    anuncioService.Edit(anuncio);
-                }
+                anuncio.IdVenda = venda.Id;
+                anuncio.StatusAnuncio = "V";
+                anuncioService.Edit(anuncio);
                 return RedirectToAction(nameof(Index));
             }
 
             PopulateViewBags(vendaViewModel);
+            if (veiculoService != null)
+            {
+                var veiculoPreview = veiculoService.Get(vendaViewModel.IdVeiculo);
+                if (veiculoPreview != null)
+                {
+                    var modelo = modeloService?.Get(veiculoPreview.IdModelo);
+                    var marca = marcaService?.Get(veiculoPreview.IdMarca);
+                    ViewBag.VeiculoPreview = new
+                    {
+                        Id = veiculoPreview.Id,
+                        Nome = $"{marca?.Nome} {modelo?.Nome}".Trim(),
+                        Ano = veiculoPreview.Ano,
+                        Preco = veiculoPreview.Preco.ToString("C0", new CultureInfo("pt-BR")),
+                        Cor = veiculoPreview.Cor,
+                        Quilometragem = veiculoPreview.Quilometragem
+                    };
+                }
+            }
             return View(vendaViewModel);
         }
 

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Authorization;
 using Core.Exceptions;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
 namespace DesapegAutoWeb.Controllers
@@ -129,6 +130,14 @@ namespace DesapegAutoWeb.Controllers
 
             try
             {
+                var opcionaisTexto = string.Join(", ", anuncioViewModel.OpcionaisSelecionados ?? new List<string>());
+                if (opcionaisTexto.Length > 255)
+                {
+                    ModelState.AddModelError(nameof(anuncioViewModel.OpcionaisSelecionados), "Os opcionais selecionados excedem o limite permitido.");
+                    PopulateCreateViewBags(anuncioViewModel.IdMarca, anuncioViewModel.IdModelo, anuncioViewModel.IdConcessionaria);
+                    return View(anuncioViewModel);
+                }
+
                 var veiculo = new Veiculo
                 {
                     IdConcessionaria = anuncioViewModel.IdConcessionaria,
@@ -147,7 +156,7 @@ namespace DesapegAutoWeb.Controllers
                     IdVeiculo = veiculoId,
                     IdVenda = 0,
                     Descricao = anuncioViewModel.Descricao ?? string.Empty,
-                    Opcionais = string.Join(", ", anuncioViewModel.OpcionaisSelecionados ?? new List<string>()),
+                    Opcionais = opcionaisTexto,
                     StatusAnuncio = "D",
                     Visualizacoes = 0
                 };
@@ -158,6 +167,10 @@ namespace DesapegAutoWeb.Controllers
             catch (ServiceException ex)
             {
                 ModelState.AddModelError(string.Empty, ex.Message);
+            }
+            catch (DbUpdateException)
+            {
+                ModelState.AddModelError(string.Empty, "Nao foi possivel salvar o anuncio. Verifique os dados informados.");
             }
 
             PopulateCreateViewBags(anuncioViewModel.IdMarca, anuncioViewModel.IdModelo, anuncioViewModel.IdConcessionaria);

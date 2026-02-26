@@ -3,8 +3,10 @@ using Core.Exceptions;
 using Core.Service;
 using DesapegAutoWeb.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace DesapegAutoWeb.Controllers
 {
@@ -43,10 +45,16 @@ namespace DesapegAutoWeb.Controllers
                 return NotFound();
             }
 
-            if (anuncio.IdVenda != 0 || string.Equals(anuncio.StatusAnuncio, "V", StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(anuncio.StatusAnuncio, "V", StringComparison.OrdinalIgnoreCase))
             {
                 TempData["ErrorMessage"] = "Este veiculo ja foi vendido.";
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Details", "Anuncio", new { id = anuncio.Id });
+            }
+
+            if (string.Equals(anuncio.StatusAnuncio, "P", StringComparison.OrdinalIgnoreCase) || anuncio.IdVenda != 0)
+            {
+                TempData["ErrorMessage"] = "Este veiculo esta com compra pendente no momento.";
+                return RedirectToAction("Details", "Anuncio", new { id = anuncio.Id });
             }
 
             var veiculo = veiculoService.Get(anuncio.IdVeiculo);
@@ -89,6 +97,13 @@ namespace DesapegAutoWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(CompraViewModel model)
         {
+            model.Cpf = NormalizeDigits(model.Cpf);
+            model.Telefone = NormalizeDigits(model.Telefone);
+
+            ModelState.Remove(nameof(model.Cpf));
+            ModelState.Remove(nameof(model.Telefone));
+            TryValidateModel(model);
+
             var anuncio = anuncioService.Get(model.IdAnuncio);
             if (anuncio == null)
             {
@@ -101,10 +116,16 @@ namespace DesapegAutoWeb.Controllers
                 return NotFound();
             }
 
-            if (anuncio.IdVenda != 0 || string.Equals(anuncio.StatusAnuncio, "V", StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(anuncio.StatusAnuncio, "V", StringComparison.OrdinalIgnoreCase))
             {
                 TempData["ErrorMessage"] = "Este veiculo ja foi vendido.";
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Details", "Anuncio", new { id = anuncio.Id });
+            }
+
+            if (string.Equals(anuncio.StatusAnuncio, "P", StringComparison.OrdinalIgnoreCase) || anuncio.IdVenda != 0)
+            {
+                TempData["ErrorMessage"] = "Este veiculo esta com compra pendente no momento.";
+                return RedirectToAction("Details", "Anuncio", new { id = anuncio.Id });
             }
 
             if (!ModelState.IsValid)
@@ -150,6 +171,22 @@ namespace DesapegAutoWeb.Controllers
             {
                 ModelState.AddModelError(string.Empty, ex.Message);
             }
+            catch (DbUpdateException ex)
+            {
+                var message = ex.InnerException?.Message ?? ex.Message;
+                if (message.Contains("cpf", StringComparison.OrdinalIgnoreCase))
+                {
+                    ModelState.AddModelError(nameof(model.Cpf), "CPF invalido. Digite somente 11 numeros.");
+                }
+                else if (message.Contains("telefone", StringComparison.OrdinalIgnoreCase))
+                {
+                    ModelState.AddModelError(nameof(model.Telefone), "Telefone invalido. Digite somente 10 ou 11 numeros.");
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Nao foi possivel concluir a compra. Verifique os dados informados.");
+                }
+            }
 
             PopulatePreview(anuncio, veiculo);
             return View(model);
@@ -173,6 +210,13 @@ namespace DesapegAutoWeb.Controllers
             ViewBag.Quilometragem = veiculo.Quilometragem;
             ViewBag.Concessionaria = concessionaria?.Nome ?? "Concessionaria";
             ViewBag.Descricao = string.IsNullOrWhiteSpace(anuncio.Descricao) ? "Sem descricao informada." : anuncio.Descricao;
+        }
+
+        private static string NormalizeDigits(string? value)
+        {
+            return string.IsNullOrWhiteSpace(value)
+                ? string.Empty
+                : Regex.Replace(value, "[^0-9]", string.Empty);
         }
     }
 }

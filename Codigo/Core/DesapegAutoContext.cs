@@ -61,7 +61,7 @@ public partial class DesapegAutoContext : DbContext
             entity.Property(e => e.IdVenda).HasColumnName("idVenda");
             entity.Property(e => e.Interacoes).HasColumnName("interacoes");
             entity.Property(e => e.Opcionais)
-                .HasMaxLength(50)
+                .HasMaxLength(255)
                 .HasColumnName("opcionais");
             entity.Property(e => e.StatusAnuncio)
                 .HasMaxLength(20)
@@ -89,7 +89,7 @@ public partial class DesapegAutoContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Cnpj)
-                .HasMaxLength(18)
+                .HasMaxLength(14)
                 .HasColumnName("cnpj");
             entity.Property(e => e.Email)
                 .HasMaxLength(50)
@@ -101,7 +101,7 @@ public partial class DesapegAutoContext : DbContext
                 .HasMaxLength(50)
                 .HasColumnName("nome");
             entity.Property(e => e.Senha)
-                .HasMaxLength(8)
+                .HasMaxLength(20)
                 .HasColumnName("senha");
             entity.Property(e => e.Telefone)
                 .HasMaxLength(11)
@@ -194,7 +194,7 @@ public partial class DesapegAutoContext : DbContext
                 .HasMaxLength(50)
                 .HasColumnName("nome");
             entity.Property(e => e.Senha)
-                .HasMaxLength(8)
+                .HasMaxLength(20)
                 .HasColumnName("senha");
             entity.Property(e => e.Telefone)
                 .HasMaxLength(11)

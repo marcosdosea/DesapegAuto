@@ -2,6 +2,7 @@
 @{
     ViewData["Title"] = "Administracao de Marcas";
     var marcas = Model?.ToList() ?? new List<DesapegAutoWeb.Models.MarcaViewModel>();
+    var formData = ViewBag.FormData as DesapegAutoWeb.Models.MarcaViewModel;
 }
 
 <div class="da-page">
@@ -35,7 +36,8 @@
             <form asp-action="Create" method="post" class="da-stack">
                 <div class="da-field">
                     <label class="da-label" for="Nome">Nome da Marca</label>
-                    <input class="da-input" id="Nome" name="Nome" placeholder="Digite o nome da marca" required />
+                    <input class="da-input @(ViewData.ModelState[nameof(DesapegAutoWeb.Models.MarcaViewModel.Nome)]?.Errors.Count > 0 ? "input-validation-error" : "")" id="Nome" name="Nome" value="@(formData?.Nome ?? string.Empty)" placeholder="Digite o nome da marca" required />
+                    <span class="text-danger">@Html.ValidationMessage("Nome")</span>
                 </div>
                 <button type="submit" class="da-btn da-btn-primary da-btn-wide">Inserir Marca</button>
             </form>
@@ -89,3 +91,7 @@
         </section>
     </div>
 </div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

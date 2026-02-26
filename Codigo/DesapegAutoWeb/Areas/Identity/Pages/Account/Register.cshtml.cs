@@ -26,6 +26,7 @@ namespace DesapegAutoWeb.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IUserStore<ApplicationUser> _userStore;
         private readonly IUserEmailStore<ApplicationUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
@@ -33,12 +34,14 @@ namespace DesapegAutoWeb.Areas.Identity.Pages.Account
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
+            RoleManager<IdentityRole> roleManager,
             IUserStore<ApplicationUser> userStore,
             SignInManager<ApplicationUser> signInManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender)
         {
             _userManager = userManager;
+            _roleManager = roleManager;
             _userStore = userStore;
             _emailStore = GetEmailStore();
             _signInManager = signInManager;
@@ -129,14 +132,38 @@ namespace DesapegAutoWeb.Areas.Identity.Pages.Account
                     _logger.LogInformation("User created a new account with password.");
 
                     var allowedRoles = new[] { "Cliente", "Funcionario", "Admin" };
-                    var selectedRole = string.IsNullOrWhiteSpace(Input.Role) ? "Cliente" : Input.Role;
-                    if (!allowedRoles.Contains(selectedRole))
+                    var selectedRole = string.IsNullOrWhiteSpace(Input.Role) ? "Cliente" : Input.Role.Trim();
+                    var canonicalRole = allowedRoles.FirstOrDefault(r =>
+                        string.Equals(r, selectedRole, StringComparison.OrdinalIgnoreCase));
+
+                    if (canonicalRole is null)
                     {
                         ModelState.AddModelError(string.Empty, "Tipo de conta invalido.");
                         return Page();
                     }
 
-                    await _userManager.AddToRoleAsync(user, selectedRole);
+                    if (!await _roleManager.RoleExistsAsync(canonicalRole))
+                    {
+                        var createRoleResult = await _roleManager.CreateAsync(new IdentityRole(canonicalRole));
+                        if (!createRoleResult.Succeeded)
+                        {
+                            foreach (var error in createRoleResult.Errors)
+                            {
+                                ModelState.AddModelError(string.Empty, error.Description);
+                            }
+                            return Page();
+                        }
+                    }
+
+                    var addToRoleResult = await _userManager.AddToRoleAsync(user, canonicalRole);
+                    if (!addToRoleResult.Succeeded)
+                    {
+                        foreach (var error in addToRoleResult.Errors)
+                        {
+                            ModelState.AddModelError(string.Empty, error.Description);
+                        }
+                        return Page();
+                    }
 
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);

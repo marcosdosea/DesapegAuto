@@ -5,6 +5,7 @@ using Core.Service;
 using DesapegAutoWeb.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
 namespace DesapegAutoWeb.Controllers
@@ -13,12 +14,21 @@ namespace DesapegAutoWeb.Controllers
     {
         private readonly IVeiculoService veiculoService;
         private readonly IAnuncioService anuncioService;
+        private readonly IMarcaService marcaService;
+        private readonly IModeloService modeloService;
         private readonly IMapper mapper;
 
-        public VeiculoController(IVeiculoService veiculoService, IAnuncioService anuncioService, IMapper mapper)
+        public VeiculoController(
+            IVeiculoService veiculoService,
+            IAnuncioService anuncioService,
+            IMarcaService marcaService,
+            IModeloService modeloService,
+            IMapper mapper)
         {
             this.veiculoService = veiculoService;
             this.anuncioService = anuncioService;
+            this.marcaService = marcaService;
+            this.modeloService = modeloService;
             this.mapper = mapper;
         }
 
@@ -27,7 +37,30 @@ namespace DesapegAutoWeb.Controllers
         public ActionResult Index()
         {
             var listaVeiculos = veiculoService.GetAll();
-            var listaVeiculosViewModel = mapper.Map<IEnumerable<VeiculoViewModel>>(listaVeiculos);
+            var listaVeiculosViewModel = mapper.Map<IEnumerable<VeiculoViewModel>>(listaVeiculos).ToList();
+
+            var anunciosPorVeiculo = anuncioService.GetAll()
+                .GroupBy(a => a.IdVeiculo)
+                .ToDictionary(g => g.Key, g => g.First());
+
+            foreach (var veiculo in listaVeiculosViewModel)
+            {
+                var marca = marcaService.Get(veiculo.IdMarca);
+                var modelo = modeloService.Get(veiculo.IdModelo);
+
+                veiculo.NomeMarca = marca?.Nome ?? "-";
+                veiculo.NomeModelo = modelo?.Nome ?? "-";
+
+                if (anunciosPorVeiculo.TryGetValue(veiculo.Id, out var anuncio))
+                {
+                    veiculo.Status = MapStatus(anuncio.StatusAnuncio);
+                }
+                else
+                {
+                    veiculo.Status = "Sem anúncio";
+                }
+            }
+
             return View(listaVeiculosViewModel);
         }
 
@@ -38,6 +71,15 @@ namespace DesapegAutoWeb.Controllers
             var veiculo = veiculoService.Get(id);
             if (veiculo == null) return NotFound();
             var veiculoViewModel = mapper.Map<VeiculoViewModel>(veiculo);
+
+            var marca = marcaService.Get(veiculo.IdMarca);
+            var modelo = modeloService.Get(veiculo.IdModelo);
+            veiculoViewModel.NomeMarca = marca?.Nome ?? "-";
+            veiculoViewModel.NomeModelo = modelo?.Nome ?? "-";
+
+            var anuncio = anuncioService.GetAll().FirstOrDefault(a => a.IdVeiculo == veiculo.Id);
+            veiculoViewModel.Status = anuncio != null ? MapStatus(anuncio.StatusAnuncio) : "Sem anúncio";
+
             return View(veiculoViewModel);
         }
 
@@ -121,9 +163,9 @@ namespace DesapegAutoWeb.Controllers
             try
             {
                 var anuncio = anuncioService.GetAll().FirstOrDefault(a => a.IdVeiculo == id);
-                if (anuncio != null && anuncio.IdVenda != 0)
+                if (anuncio != null)
                 {
-                    ModelState.AddModelError(string.Empty, "Nao e possivel remover. Veiculo esta em uma venda pendente ou concluida.");
+                    ModelState.AddModelError(string.Empty, "Nao e possivel remover este veiculo porque existe um anuncio vinculado. Remova o anuncio primeiro.");
                     var veiculo = veiculoService.Get(id);
                     if (veiculo != null)
                     {
@@ -133,6 +175,16 @@ namespace DesapegAutoWeb.Controllers
                 }
                 veiculoService.Delete(id);
                 return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateException)
+            {
+                ModelState.AddModelError(string.Empty, "Nao foi possivel remover o veiculo porque ele possui registros vinculados.");
+                var veiculo = veiculoService.Get(id);
+                if (veiculo != null)
+                {
+                    veiculoViewModel = mapper.Map<VeiculoViewModel>(veiculo);
+                }
+                return View(veiculoViewModel);
             }
             catch (ServiceException ex)
             {
@@ -144,6 +196,17 @@ namespace DesapegAutoWeb.Controllers
                 }
                 return View(veiculoViewModel);
             }
+        }
+
+        private static string MapStatus(string? statusAnuncio)
+        {
+            return statusAnuncio switch
+            {
+                "V" => "Vendido",
+                "P" => "Pendente",
+                "I" => "Indisponível",
+                _ => "Disponível"
+            };
         }
     }
 }

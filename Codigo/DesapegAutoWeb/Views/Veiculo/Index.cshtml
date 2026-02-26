@@ -1,4 +1,5 @@
 @model IEnumerable<DesapegAutoWeb.Models.VeiculoViewModel>
+@using System.Globalization
 
 @{
     ViewData["Title"] = "Veículos";
@@ -42,7 +43,7 @@
                                 <td>@item.Cor</td>
                                 <td>@item.Placa</td>
                                 <td>@item.Quilometragem.ToString("N0") km</td>
-                                <td>R$ @item.Preco.ToString("N2")</td>
+                                <td>@item.Preco.ToString("C2", new CultureInfo("pt-BR"))</td>
                                 <td>@item.Status</td>
                                 <td>
                                     <div class="da-table-actions">

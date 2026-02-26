@@ -16,6 +16,8 @@ namespace DesapegAutoWebTests.Controllers
         private static VeiculoController controller = null!;
         private static Mock<IVeiculoService> mockService = null!;
         private static Mock<IAnuncioService> mockAnuncioService = null!;
+        private static Mock<IMarcaService> mockMarcaService = null!;
+        private static Mock<IModeloService> mockModeloService = null!;
 
         [TestInitialize]
         public void Initialize()
@@ -23,6 +25,8 @@ namespace DesapegAutoWebTests.Controllers
             // Arrange
             mockService = new Mock<IVeiculoService>();
             mockAnuncioService = new Mock<IAnuncioService>();
+            mockMarcaService = new Mock<IMarcaService>();
+            mockModeloService = new Mock<IModeloService>();
             IMapper mapper = new MapperConfiguration(cfg =>
                 cfg.AddProfile(new VeiculoProfile())).CreateMapper();
 
@@ -44,7 +48,18 @@ namespace DesapegAutoWebTests.Controllers
             mockAnuncioService.Setup(service => service.GetAll())
                 .Returns(new List<Anuncio>());
 
-            controller = new VeiculoController(mockService.Object, mockAnuncioService.Object, mapper);
+            mockMarcaService.Setup(service => service.Get(It.IsAny<int>()))
+                .Returns((int id) => new Marca { Id = id, Nome = "Marca Teste" });
+
+            mockModeloService.Setup(service => service.Get(It.IsAny<int>()))
+                .Returns((int id) => new Modelo { Id = id, Nome = "Modelo Teste" });
+
+            controller = new VeiculoController(
+                mockService.Object,
+                mockAnuncioService.Object,
+                mockMarcaService.Object,
+                mockModeloService.Object,
+                mapper);
         }
 
         [TestMethod()]

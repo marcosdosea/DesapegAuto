@@ -4,6 +4,7 @@ using Core.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Service
 {
@@ -26,6 +27,9 @@ namespace Service
         /// <returns>O ID da pessoa cadastrada.</returns>
         public int Create(Pessoa pessoa)
         {
+            pessoa.Cpf = NormalizeDigits(pessoa.Cpf);
+            pessoa.Telefone = NormalizeDigits(pessoa.Telefone);
+
             var pessoaExistente = context.Pessoas
                 .FirstOrDefault(p => p.Cpf.ToLower() == pessoa.Cpf.ToLower());
 
@@ -53,6 +57,9 @@ namespace Service
         /// <param name="pessoa">Objeto pessoa com os dados atualizados.</param>
         public void Edit(Pessoa pessoa)
         {
+            pessoa.Cpf = NormalizeDigits(pessoa.Cpf);
+            pessoa.Telefone = NormalizeDigits(pessoa.Telefone);
+
             var pessoaExistente = context.Pessoas.Find(pessoa.Id);
             if (pessoaExistente == null)
             {
@@ -117,6 +124,7 @@ namespace Service
 
         public Pessoa? GetByCpf(string cpf)
         {
+            cpf = NormalizeDigits(cpf);
             return context.Pessoas
                 .AsNoTracking()
                 .FirstOrDefault(p => p.Cpf.ToLower() == cpf.ToLower());
@@ -142,6 +150,13 @@ namespace Service
                 .Where(p => p.Nome.ToLower().Contains(nome.ToLower()))
                 .AsNoTracking()
                 .ToList();
+        }
+
+        private static string NormalizeDigits(string? value)
+        {
+            return string.IsNullOrWhiteSpace(value)
+                ? string.Empty
+                : Regex.Replace(value, "[^0-9]", string.Empty);
         }
     }
 }

@@ -2,18 +2,7 @@
 @{
     ViewData["Title"] = "Administracao de Concessionarias";
     var concessionarias = Model?.ToList() ?? new List<DesapegAutoWeb.Models.ConcessionariaViewModel>();
-
-    Func<string, string> FormatCnpj = raw => {
-        var d = System.Text.RegularExpressions.Regex.Replace(raw ?? "", @"\D", "");
-        if (d.Length != 14) return raw ?? "";
-        return $"{d[..2]}.{d[2..5]}.{d[5..8]}/{d[8..12]}-{d[12..14]}";
-    };
-    Func<string, string> FormatTelefone = raw => {
-        var d = System.Text.RegularExpressions.Regex.Replace(raw ?? "", @"\D", "");
-        if (d.Length == 11) return $"({d[..2]}) {d[2..7]}-{d[7..11]}";
-        if (d.Length == 10) return $"({d[..2]}) {d[2..6]}-{d[6..10]}";
-        return raw ?? "";
-    };
+    var formData = ViewBag.FormData as DesapegAutoWeb.Models.ConcessionariaViewModel;
 }
 
 <div class="da-page">
@@ -47,38 +36,45 @@
             <form asp-action="Create" method="post" class="da-stack">
                 <div class="da-field">
                     <label class="da-label" for="Nome">Nome da Concessionaria *</label>
-                    <input class="da-input" id="Nome" name="Nome" required />
+                    <input class="da-input @(ViewData.ModelState[nameof(DesapegAutoWeb.Models.ConcessionariaViewModel.Nome)]?.Errors.Count > 0 ? "input-validation-error" : "")" id="Nome" name="Nome" value="@(formData?.Nome ?? string.Empty)" required />
+                    <span class="text-danger">@Html.ValidationMessage("Nome")</span>
                 </div>
 
                 <div class="da-field">
                     <label class="da-label" for="Cnpj">CNPJ *</label>
-                    <input class="da-input cnpj-mask" id="Cnpj" name="Cnpj" placeholder="00.000.000/0000-00" inputmode="numeric" maxlength="18" required />
+                    <input class="da-input @(ViewData.ModelState[nameof(DesapegAutoWeb.Models.ConcessionariaViewModel.Cnpj)]?.Errors.Count > 0 ? "input-validation-error" : "")" id="Cnpj" name="Cnpj" value="@(formData?.Cnpj ?? string.Empty)" placeholder="Somente números" inputmode="numeric" maxlength="14" required />
+                    <span class="text-danger">@Html.ValidationMessage("Cnpj")</span>
                 </div>
 
                 <div class="da-field">
                     <label class="da-label" for="Email">E-mail *</label>
-                    <input type="email" class="da-input" id="Email" name="Email" required />
+                    <input type="email" class="da-input @(ViewData.ModelState[nameof(DesapegAutoWeb.Models.ConcessionariaViewModel.Email)]?.Errors.Count > 0 ? "input-validation-error" : "")" id="Email" name="Email" value="@(formData?.Email ?? string.Empty)" required />
+                    <span class="text-danger">@Html.ValidationMessage("Email")</span>
                 </div>
 
                 <div class="da-field">
                     <label class="da-label" for="Telefone">Telefone *</label>
-                    <input class="da-input telefone-mask" id="Telefone" name="Telefone" placeholder="(00) 00000-0000" inputmode="numeric" maxlength="16" required />
+                    <input class="da-input @(ViewData.ModelState[nameof(DesapegAutoWeb.Models.ConcessionariaViewModel.Telefone)]?.Errors.Count > 0 ? "input-validation-error" : "")" id="Telefone" name="Telefone" value="@(formData?.Telefone ?? string.Empty)" placeholder="Somente números" inputmode="numeric" maxlength="11" required />
+                    <span class="text-danger">@Html.ValidationMessage("Telefone")</span>
                 </div>
 
                 <div class="da-field">
                     <label class="da-label" for="Endereco">Endereco *</label>
-                    <textarea class="da-textarea" id="Endereco" name="Endereco" required></textarea>
+                    <textarea class="da-textarea @(ViewData.ModelState[nameof(DesapegAutoWeb.Models.ConcessionariaViewModel.Endereco)]?.Errors.Count > 0 ? "input-validation-error" : "")" id="Endereco" name="Endereco" required>@(formData?.Endereco ?? string.Empty)</textarea>
+                    <span class="text-danger">@Html.ValidationMessage("Endereco")</span>
                 </div>
 
                 <div class="da-field">
                     <label class="da-label" for="Senha">Senha *</label>
-                    <input type="password" class="da-input" id="Senha" name="Senha" maxlength="8" pattern="(?=.*[A-Za-z])(?=.*\d).+" title="A senha deve conter ao menos uma letra e um numero." required />
-                    <small class="text-muted">A senha deve conter ao menos uma letra e um numero.</small>
+                    <input type="password" class="da-input @(ViewData.ModelState[nameof(DesapegAutoWeb.Models.ConcessionariaViewModel.Senha)]?.Errors.Count > 0 ? "input-validation-error" : "")" id="Senha" name="Senha" maxlength="20" minlength="6" pattern="(?=.*[A-Za-z])(?=.*\d).{6,20}" title="A senha deve conter entre 6 e 20 caracteres, com ao menos uma letra e um numero." required />
+                    <small class="text-muted">Entre 6 e 20 caracteres, com ao menos uma letra e um numero.</small>
+                    <span class="text-danger">@Html.ValidationMessage("Senha")</span>
                 </div>
 
                 <div class="da-field">
                     <label class="da-label" for="ConfirmarSenha">Confirmar senha *</label>
-                    <input type="password" class="da-input" id="ConfirmarSenha" name="ConfirmarSenha" required />
+                    <input type="password" class="da-input @(ViewData.ModelState[nameof(DesapegAutoWeb.Models.ConcessionariaViewModel.ConfirmarSenha)]?.Errors.Count > 0 ? "input-validation-error" : "")" id="ConfirmarSenha" name="ConfirmarSenha" required />
+                    <span class="text-danger">@Html.ValidationMessage("ConfirmarSenha")</span>
                 </div>
 
                 <button type="submit" class="da-btn da-btn-primary da-btn-wide">Cadastrar Concessionaria</button>
@@ -115,8 +111,8 @@
                                             <br /><small style="color:var(--da-muted)">@item.Endereco</small>
                                         }
                                     </td>
-                                     <td>@FormatCnpj(item.Cnpj)</td>
-                                     <td>@FormatTelefone(item.Telefone)</td>
+                                     <td>@item.Cnpj</td>
+                                     <td>@item.Telefone</td>
                                     <td>@item.Email</td>
                                     <td class="da-table-actions">
                                         <a asp-action="Edit" asp-route-id="@item.Id" class="da-action-edit" title="Editar">
@@ -145,3 +141,7 @@
         </section>
     </div>
 </div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -49,8 +49,7 @@ namespace DesapegAutoWeb.Controllers
         {
             if (!ModelState.IsValid)
             {
-                TempData["ErrorMessage"] = "Preencha os campos obrigatorios para cadastrar a marca.";
-                return RedirectToAction(nameof(Index));
+                return RenderIndexWithForm(marcaViewModel);
             }
 
             try
@@ -61,11 +60,13 @@ namespace DesapegAutoWeb.Controllers
             }
             catch (ServiceException ex)
             {
-                TempData["ErrorMessage"] = ex.Message;
+                ModelState.AddModelError(nameof(marcaViewModel.Nome), ex.Message);
+                return RenderIndexWithForm(marcaViewModel);
             }
             catch (DbUpdateException)
             {
-                TempData["ErrorMessage"] = "Nao foi possivel salvar a marca devido a uma inconsistencia no banco de dados.";
+                ModelState.AddModelError(nameof(marcaViewModel.Nome), "Nao foi possivel salvar a marca devido a uma inconsistencia no banco de dados.");
+                return RenderIndexWithForm(marcaViewModel);
             }
 
             return RedirectToAction(nameof(Index));
@@ -133,6 +134,14 @@ namespace DesapegAutoWeb.Controllers
             }
 
             return RedirectToAction(nameof(Index));
+        }
+
+        private ActionResult RenderIndexWithForm(MarcaViewModel formData)
+        {
+            var listaMarcas = marcaService.GetAll();
+            var listaMarcasViewModel = mapper.Map<IEnumerable<MarcaViewModel>>(listaMarcas);
+            ViewBag.FormData = formData;
+            return View("Index", listaMarcasViewModel);
         }
     }
 }

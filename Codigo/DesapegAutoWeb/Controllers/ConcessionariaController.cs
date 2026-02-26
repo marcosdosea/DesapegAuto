@@ -59,10 +59,19 @@ namespace DesapegAutoWeb.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Create(ConcessionariaViewModel vm)
         {
+            // Strip non-digits from CNPJ and Telefone before validation
+            if (!string.IsNullOrEmpty(vm.Cnpj))
+                vm.Cnpj = System.Text.RegularExpressions.Regex.Replace(vm.Cnpj, @"\D", "");
+            if (!string.IsNullOrEmpty(vm.Telefone))
+                vm.Telefone = System.Text.RegularExpressions.Regex.Replace(vm.Telefone, @"\D", "");
+
+            ModelState.Remove(nameof(vm.Cnpj));
+            ModelState.Remove(nameof(vm.Telefone));
+            TryValidateModel(vm);
+
             if (!ModelState.IsValid)
             {
-                TempData["ErrorMessage"] = "Preencha os campos obrigatorios para cadastrar a concessionaria.";
-                return RedirectToAction(nameof(Index));
+                return RenderIndexWithForm(vm);
             }
 
             try
@@ -81,8 +90,11 @@ namespace DesapegAutoWeb.Controllers
                 if (!result.Succeeded)
                 {
                     concessionariaService.Delete(c.Id);
-                    TempData["ErrorMessage"] = string.Join(" ", result.Errors.Select(e => e.Description));
-                    return RedirectToAction(nameof(Index));
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(nameof(vm.Senha), error.Description);
+                    }
+                    return RenderIndexWithForm(vm);
                 }
 
                 await userManager.AddToRoleAsync(user, "Funcionario");
@@ -91,11 +103,29 @@ namespace DesapegAutoWeb.Controllers
             }
             catch (ServiceException ex)
             {
-                TempData["ErrorMessage"] = ex.Message;
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return RenderIndexWithForm(vm);
             }
-            catch (DbUpdateException)
+            catch (DbUpdateException ex)
             {
-                TempData["ErrorMessage"] = "Nao foi possivel salvar a concessionaria devido a uma inconsistencia no banco de dados. Verifique se a senha tem no maximo 8 caracteres e se todos os campos obrigatorios existem no banco.";
+                var message = ex.InnerException?.Message ?? ex.Message;
+                if (message.Contains("cnpj", StringComparison.OrdinalIgnoreCase))
+                {
+                    ModelState.AddModelError(nameof(vm.Cnpj), "CNPJ invalido. Digite somente 14 numeros.");
+                }
+                else if (message.Contains("telefone", StringComparison.OrdinalIgnoreCase))
+                {
+                    ModelState.AddModelError(nameof(vm.Telefone), "Telefone invalido. Digite somente 10 ou 11 numeros.");
+                }
+                else if (message.Contains("senha", StringComparison.OrdinalIgnoreCase))
+                {
+                    ModelState.AddModelError(nameof(vm.Senha), "Senha invalida para o tamanho permitido.");
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Erro ao salvar. Verifique os dados informados.");
+                }
+                return RenderIndexWithForm(vm);
             }
 
             return RedirectToAction(nameof(Index));
@@ -238,6 +268,14 @@ namespace DesapegAutoWeb.Controllers
         {
             var claim = User.FindFirst("ConcessionariaId");
             return claim != null && int.TryParse(claim.Value, out var id) ? id : null;
+        }
+
+        private ActionResult RenderIndexWithForm(ConcessionariaViewModel vm)
+        {
+            var lista = concessionariaService.GetAll();
+            var indexVm = mapper.Map<List<ConcessionariaViewModel>>(lista);
+            ViewBag.FormData = vm;
+            return View("Index", indexVm);
         }
     }
 }

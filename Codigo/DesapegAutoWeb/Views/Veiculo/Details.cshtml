@@ -1,4 +1,5 @@
 @model DesapegAutoWeb.Models.VeiculoViewModel
+@using System.Globalization
 
 @{
     ViewData["Title"] = "Detalhes do Veículo";
@@ -35,7 +36,7 @@
             </div>
             <div class="da-detail-item">
                 <p class="da-detail-item-label">Preço</p>
-                <p class="da-detail-item-value">R$ @Model.Preco.ToString("N2")</p>
+                <p class="da-detail-item-value">@Model.Preco.ToString("C2", new CultureInfo("pt-BR"))</p>
             </div>
             <div class="da-detail-item">
                 <p class="da-detail-item-label">Status</p>

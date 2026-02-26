@@ -16,11 +16,12 @@ namespace DesapegAutoWeb.Models
         public string Nome { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "O CPF é obrigatório.")]
-        [StringLength(14, MinimumLength = 14, ErrorMessage = "O CPF deve estar no formato 000.000.000-00.")]
+        [StringLength(11, MinimumLength = 11, ErrorMessage = "O CPF deve ter 11 digitos.")]
+        [RegularExpression(@"^\d{11}$", ErrorMessage = "CPF invalido.")]
         public string Cpf { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "O telefone é obrigatório.")]
-        [StringLength(15, MinimumLength = 14, ErrorMessage = "O telefone deve estar no formato (00) 00000-0000.")]
+        [RegularExpression(@"^\d{10,11}$", ErrorMessage = "Telefone invalido.")]
         public string Telefone { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "O e-mail é obrigatório.")]

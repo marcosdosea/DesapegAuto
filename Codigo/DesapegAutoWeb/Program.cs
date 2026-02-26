@@ -5,6 +5,7 @@ using Service;
 using Microsoft.AspNetCore.Identity;
 using DesapegAutoWeb.Areas.Identity.Data;
 using Microsoft.Extensions.Configuration;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace DesapegAutoWeb
 {
@@ -70,16 +71,24 @@ namespace DesapegAutoWeb
                 {
                     // Apply Identity migrations to ensure tables exist even when DB already exists.
                     var identityDbContext = services.GetRequiredService<ApplicationIdentityDbContext>();
+                    EnsureIdentityMigrationBaseline(identityDbContext);
                     identityDbContext.Database.Migrate();
                     logger.LogInformation("Banco de identidade migrado com sucesso.");
+                }
+                catch (Exception ex)
+                {
+                    logger.LogWarning(ex, "Migracao de identidade falhou (as tabelas podem ja existir). Continuando...");
+                }
 
-                    // Create default roles.
+                try
+                {
+                    // Create default roles (runs even if migration was skipped).
                     SeedRoles(services).Wait();
                     logger.LogInformation("Roles foram criadas com sucesso.");
                 }
                 catch (Exception ex)
                 {
-                    logger.LogWarning(ex, "Nao foi possivel inicializar o banco de dados ou criar as roles. " +
+                    logger.LogWarning(ex, "Nao foi possivel criar as roles. " +
                         "Verifique a conexao com o MySQL e a string de conexao no arquivo appsettings.json.");
                 }
             }
@@ -121,6 +130,28 @@ namespace DesapegAutoWeb
                     await roleManager.CreateAsync(new IdentityRole(roleName));
                 }
             }
+        }
+
+        private static void EnsureIdentityMigrationBaseline(ApplicationIdentityDbContext identityDbContext)
+        {
+            const string migrationId = "20251115235408_CreateIdentitySchema";
+            const string productVersion = "8.0.18";
+
+            identityDbContext.Database.ExecuteSqlRaw($@"
+                INSERT INTO __EFMigrationsHistory (MigrationId, ProductVersion)
+                SELECT {{0}}, {{1}}
+                FROM DUAL
+                WHERE EXISTS (
+                    SELECT 1
+                    FROM INFORMATION_SCHEMA.TABLES
+                    WHERE TABLE_SCHEMA = DATABASE()
+                      AND LOWER(TABLE_NAME) = 'aspnetroles'
+                )
+                AND NOT EXISTS (
+                    SELECT 1
+                    FROM __EFMigrationsHistory
+                    WHERE MigrationId = {{0}}
+                );", migrationId, productVersion);
         }
 
         

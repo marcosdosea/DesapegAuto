@@ -105,9 +105,9 @@ namespace DesapegAutoWeb.Controllers.Tests
 
             // Assert
             Assert.AreEqual(1, controller.ModelState.ErrorCount);
-            Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
-            RedirectToActionResult redirectResult = (RedirectToActionResult)result;
-            Assert.AreEqual("Index", redirectResult.ActionName);
+            Assert.IsInstanceOfType(result, typeof(ViewResult));
+            var viewResult = (ViewResult)result;
+            Assert.AreEqual("Index", viewResult.ViewName);
         }
 
 

@@ -9,7 +9,7 @@
 <div class="da-page">
     <div class="da-top-actions">
         <h1 class="da-title">Vendas</h1>
-        <a asp-action="Create" class="da-btn-primary">Nova Venda</a>
+        <a asp-controller="Anuncio" asp-action="Index" class="da-btn-primary">Selecionar veículo para venda</a>
     </div>
 
     @if (TempData["SuccessMessage"] is string successMessage)

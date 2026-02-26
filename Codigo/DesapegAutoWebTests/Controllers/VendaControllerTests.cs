@@ -162,6 +162,7 @@ namespace DesapegAutoWebTests.Controllers
             return new VendaViewModel
             {
                 Id = 3,
+                IdVeiculo = 1,
                 DataVenda = DateTime.Now,
                 ValorFinal = 90000.00m,
                 FormaPagamento = "Consórcio",
@@ -188,6 +189,7 @@ namespace DesapegAutoWebTests.Controllers
             return new VendaViewModel
             {
                 Id = 1,
+                IdVeiculo = 1,
                 DataVenda = DateTime.Now.AddDays(-1),
                 ValorFinal = 50000.00m,
                 FormaPagamento = "Financiamento",

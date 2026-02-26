@@ -19,7 +19,7 @@
                 </div>
                 <div class="da-field">
                     <label asp-for="Cnpj" class="da-label">CNPJ</label>
-                    <input asp-for="Cnpj" class="da-input cnpj-mask" inputmode="numeric" maxlength="18" />
+                    <input asp-for="Cnpj" class="da-input" inputmode="numeric" maxlength="14" placeholder="Somente números" />
                     <span asp-validation-for="Cnpj" class="text-danger"></span>
                 </div>
                 <div class="da-field">
@@ -29,7 +29,7 @@
                 </div>
                 <div class="da-field">
                     <label asp-for="Telefone" class="da-label">Telefone</label>
-                    <input asp-for="Telefone" class="da-input" />
+                    <input asp-for="Telefone" class="da-input" inputmode="numeric" maxlength="11" placeholder="Somente números" />
                     <span asp-validation-for="Telefone" class="text-danger"></span>
                 </div>
                 <div class="da-field">

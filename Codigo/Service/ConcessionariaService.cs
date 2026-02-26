@@ -75,7 +75,7 @@ namespace Service
                 throw new ServiceException("Erro: CNPJ invalido. Use 14 digitos.");
             }
 
-            return $"{digits[..2]}.{digits.Substring(2, 3)}.{digits.Substring(5, 3)}/{digits.Substring(8, 4)}-{digits.Substring(12, 2)}";
+            return digits;
         }
     }
 }
