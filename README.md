@@ -7,7 +7,8 @@ O DesapegAuto é uma plataforma moderna e intuitiva desenvolvida para facilitar 
 - [2. A Solução](#2-a-solução-sparkles)
 - [3. Público Alvo](#3-público-alvo)
 - [4. Links Úteis](#4-links-úteis)
-- [5. Equipe](#5-equipe-busts_in_silhouette)
+- [5. Apresentação DesapegAuto](#5-apresentação-desapegauto)
+- [6. Equipe](#6-equipe-busts_in_silhouette)
 
 ## 1. O Problema :warning:
 O setor automotivo enfrenta desafios significativos no ambiente digital, como a dificuldade em adaptar a mentalidade offline para online, falhas na mensuração de métricas e uma presença digital pouco estruturada. As concessionárias têm dificuldade em divulgar seus veículos de forma eficiente nos marketplaces gerais existentes.
@@ -23,8 +24,13 @@ O projeto é destinado a dois grupos principais:
 
 ## 4. Links Úteis
 - [Documento de Visão DesapegAuto](Gerenciamento/DocumentoVisaoDesapegAuto.docx/)
+- <a href="https://docs.google.com/document/d/19ZFi3m0BD3016IWZI41te5-ZOJuoEv3eKVhkAFK0jd0/edit?tab=t.0">Manual de Uso</a>
 
-## 5. Equipe :busts_in_silhouette:
+## 5. Apresentação DesapegAuto
+
+https://drive.google.com/drive/u/2/folders/1_18QyVuCxrDhrPRysFY8-FLHaiO-kiFe
+
+## 6. Equipe :busts_in_silhouette:
 <table align="center">
   <tr>
     <td align="center">
