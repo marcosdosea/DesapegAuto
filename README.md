@@ -28,7 +28,7 @@ O projeto é destinado a dois grupos principais:
 
 ## 5. Apresentação DesapegAuto
 
-https://drive.google.com/drive/u/2/folders/1_18QyVuCxrDhrPRysFY8-FLHaiO-kiFe
+[![Assista ao Short](https://img.youtube.com/vi/vg99OKlO8tY/0.jpg)](https://www.youtube.com/shorts/vg99OKlO8tY)
 
 ## 6. Equipe :busts_in_silhouette:
 <table align="center">
